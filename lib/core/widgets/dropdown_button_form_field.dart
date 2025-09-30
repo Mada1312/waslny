@@ -1,0 +1,109 @@
+import '../exports.dart';
+
+typedef DropdownItemBuilder<T> = String Function(T item);
+
+class CustomDropdownButtonFormField<T> extends StatelessWidget {
+  final List<T> items;
+  final T? value;
+  final ValueChanged<T?>? onChanged;
+  final FormFieldValidator<T>? validator;
+  final DropdownItemBuilder<T> itemBuilder;
+  final InputDecoration? decoration;
+  final String? title;
+  final bool isRequired;
+  final String? validationMessage;
+  final String? hintText;
+
+  const CustomDropdownButtonFormField({
+    super.key,
+    required this.items,
+    this.value,
+    this.onChanged,
+    this.validator,
+    this.decoration,
+    required this.itemBuilder,
+    this.title,
+    this.isRequired = false,
+    this.validationMessage,
+    this.hintText,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (title != null)
+          Padding(
+            padding: EdgeInsets.only(bottom: 8.h),
+            child: RichText(
+                text: TextSpan(children: [
+              TextSpan(text: title ?? '', style: getMediumStyle()),
+              TextSpan(
+                  text: isRequired ? ' *' : '',
+                  style: getMediumStyle(
+                    color: AppColors.red,
+                  )),
+            ])),
+          ),
+        DropdownButtonFormField<T>(
+          icon: Container(),
+          value: value,
+          validator: isRequired
+              ? validator ??
+                  (value) {
+                    if (value == null || value == '') {
+                      return validationMessage ?? '';
+                    }
+                    return null;
+                  }
+              : null,
+          hint: Text(
+            hintText ?? "choose".tr(),
+            style: getRegularStyle(fontSize: 14.sp, color: AppColors.darkGrey),
+          ),
+          decoration: InputDecoration(
+            hintText: hintText ?? "choose",
+            contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 12.h),
+            hintStyle:
+                getRegularStyle(fontSize: 10.sp, color: AppColors.darkGrey),
+            filled: true,
+            fillColor: AppColors.lightGrey,
+            border: OutlineInputBorder(
+                borderSide: BorderSide(color: AppColors.lightGrey, width: 1.5),
+                borderRadius: BorderRadius.all(Radius.circular(10.r))),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: AppColors.lightGrey, width: 1.5.w),
+              borderRadius: BorderRadius.all(Radius.circular(10.r)),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: AppColors.lightGrey, width: 1.5.w),
+              borderRadius: BorderRadius.all(Radius.circular(10.r)),
+            ),
+            alignLabelWithHint: true,
+            suffixIcon: Padding(
+              padding: EdgeInsets.only(right: 8.w),
+              child: Icon(Icons.keyboard_arrow_down, color: AppColors.darkGrey),
+            ),
+          ),
+          style: getMediumStyle(),
+          items: items.map((T item) {
+            return DropdownMenuItem<T>(
+              value: item,
+              child: AutoSizeText(
+                itemBuilder(item),
+                maxLines: 1,
+                // Use the itemBuilder to display the item
+                style: TextStyle(
+                  color: AppColors.black,
+                ),
+              ),
+            );
+          }).toList(),
+          onChanged: onChanged,
+        ),
+      ],
+    );
+  }
+}
