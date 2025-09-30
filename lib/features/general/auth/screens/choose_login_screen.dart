@@ -8,14 +8,15 @@ class ChooseLoginScreen extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          Image.asset(
-            ImageAssets.login,
-            fit: BoxFit.cover,
-            height: getHeightSize(context),
-            width: getWidthSize(context),
-          ),
+          // Image.asset(
+          //   ImageAssets.login,
+          //   fit: BoxFit.cover,
+          //   height: getHeightSize(context),
+          //   width: getWidthSize(context),
+          // ),
           Container(
-            color: AppColors.background.withOpacity(0.8),
+            color: AppColors.background,
+            // color: AppColors.background.withOpacity(0.8),
           ),
           Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,

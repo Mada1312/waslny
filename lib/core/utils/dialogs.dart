@@ -80,10 +80,12 @@ deleteAccountDialog(BuildContext context, {void Function()? onPressed}) async {
   await AwesomeDialog(
     context: context,
     customHeader: Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(20),
       child: Image.asset(
         ImageAssets.dialogLogo,
         // color: AppColors.primary,
+        width: 80,
+        height: 80,
       ),
     ),
     animType: AnimType.topSlide,
@@ -106,7 +108,7 @@ warningDialog(BuildContext context,
   await AwesomeDialog(
     context: context,
     customHeader: Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(20),
       child: Image.asset(
         ImageAssets.dialogLogo,
         // color: AppColors.primary,

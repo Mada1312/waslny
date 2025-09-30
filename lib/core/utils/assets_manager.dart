@@ -12,7 +12,7 @@ class ImageAssets {
   static const String introBackgroundImage2 = '$imagePath/on_boarding_2.png';
   static const String introBackgroundImage3 = '$imagePath/on_boarding_3.png';
   static const String onBoardingOverlay = '$imagePath/on_boarding_overlay.png';
- 
+
   static const String addShipment = '$imagePath/add_shipment.png';
   static const String contactUs = '$imagePath/contact_us.png';
   static const String currentShipment = '$imagePath/current_shipment.png';
@@ -34,7 +34,8 @@ class ImageAssets {
   static const String verifyIcon = '$imagePath/verify.png';
   static const String userCover = '$imagePath/user_cover.png';
   static const String driverBar = '$imagePath/driver_bar.png';
-  static const String loaderIcon = '$imagePath/loader.png';
+  static const String loaderIcon = '$imagePath/dialog_logo.png';
+  // static const String loaderIcon = '$imagePath/loader.png';
   static const String noData = '$imagePath/no_data.png';
 
   //Lottie
