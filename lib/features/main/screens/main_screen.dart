@@ -145,8 +145,8 @@ Future<bool> _showExitDialog(BuildContext context) async {
     customHeader: Padding(
       padding: const EdgeInsets.all(20),
       child: Image.asset(
-        ImageAssets.appIcon,
-        color: AppColors.primary,
+        ImageAssets.dialogLogo,
+        // color: AppColors.primary,
         width: 80,
         height: 80,
       ),

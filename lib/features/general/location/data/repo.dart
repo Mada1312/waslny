@@ -25,7 +25,7 @@ class LocationRepo {
         },
         options: Options(
           headers: {
-            'User-Agent': 'com.octobus.baraddy',
+            'User-Agent': 'com.octobus.waslny',
             'Accept-Language': lang,
           },
         ),
@@ -49,7 +49,7 @@ class LocationRepo {
         },
         options: Options(
           headers: {
-            'User-Agent': 'com.octobus.baraddy',
+            'User-Agent': 'com.octobus.waslny',
             'Accept-Language': lang,
           },
         ),

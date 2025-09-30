@@ -82,8 +82,8 @@ deleteAccountDialog(BuildContext context, {void Function()? onPressed}) async {
     customHeader: Padding(
       padding: const EdgeInsets.all(8.0),
       child: Image.asset(
-        ImageAssets.appIcon,
-        color: AppColors.primary,
+        ImageAssets.dialogLogo,
+        // color: AppColors.primary,
       ),
     ),
     animType: AnimType.topSlide,
@@ -108,8 +108,8 @@ warningDialog(BuildContext context,
     customHeader: Padding(
       padding: const EdgeInsets.all(8.0),
       child: Image.asset(
-        ImageAssets.appIcon,
-        color: AppColors.primary,
+        ImageAssets.dialogLogo,
+        // color: AppColors.primary,
         width: 80,
         height: 80,
       ),

@@ -339,9 +339,9 @@ class NotificationService {
   }
 
   AndroidNotificationDetails androidDetails = const AndroidNotificationDetails(
-    'your_channel_id_baraddy',
-    'your_channel_name_baraddy',
-    channelDescription: 'your_channel_description_baraddy',
+    'your_channel_id_waslny',
+    'your_channel_name_waslny',
+    channelDescription: 'your_channel_description_waslny',
     importance: Importance.max,
     priority: Priority.high,
     icon: '@mipmap/ic_launcher',

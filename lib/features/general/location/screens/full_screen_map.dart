@@ -140,7 +140,7 @@ class _FullScreenMapState extends State<FullScreenMap>
                       TileLayer(
                         urlTemplate:
                             "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-                        userAgentPackageName: 'com.octopus.baraddy',
+                        userAgentPackageName: 'com.octopus.waslny',
                       ),
 
                       MarkerLayer(markers: cubit.positionMarkers),
