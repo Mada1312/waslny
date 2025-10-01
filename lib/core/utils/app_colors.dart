@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'hex_color.dart';
 
 class AppColors {
+
   static Color primary = HexColor('#DFDD00');
 
   static Color secondPrimary = HexColor('#003D2E');
+
   static Color lightGrey = HexColor('#F2F2F2');
 
   static Color greyFieldColor = const Color(0xffF2F2F2);

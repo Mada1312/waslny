@@ -102,10 +102,10 @@ flutter_icons:
   android: true
   ios: true
   remove_alpha_ios: true
-  background_color: "#f0fcff"
+  background_color: "#003D2E"
   image_path: "assets/images/logo.jpg"
   adaptive_icon_foreground: "assets/images/logo.jpg"
-  adaptive_icon_background: "#f0fcff"
+  adaptive_icon_background: "#003D2E"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
