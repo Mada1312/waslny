@@ -56,7 +56,7 @@ class _DriverShipmentDetailsScreenState
         child: Scaffold(
           appBar: customAppBar(
             context,
-            title: 'shipment_details'.tr(),
+            title: 'trip_details'.tr(),
             onBack: () {
               if (widget.args.isNotification) {
                 Navigator.pushNamedAndRemoveUntil(

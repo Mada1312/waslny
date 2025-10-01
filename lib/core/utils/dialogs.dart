@@ -76,61 +76,88 @@ messageGetBar(String message) {
   ));
 }
 
-deleteAccountDialog(BuildContext context, {void Function()? onPressed}) async {
+warningDialog(
+  BuildContext context, {
+  void Function()? onPressedOk,
+  String? title,
+  String? btnOkText,
+  String? desc,
+}) async {
   await AwesomeDialog(
     context: context,
     customHeader: Padding(
       padding: const EdgeInsets.all(20),
       child: Image.asset(
         ImageAssets.dialogLogo,
-        // color: AppColors.primary,
         width: 80,
         height: 80,
       ),
     ),
     animType: AnimType.topSlide,
-    showCloseIcon: true,
-    padding: EdgeInsets.all(10.w),
-    title: "delete_account_desc".tr(),
-    titleTextStyle: getRegularStyle(fontSize: 16.sp),
-    btnOkText: "delete".tr(),
-    btnOkOnPress: onPressed,
-    btnCancelOnPress: () {},
-    btnCancelText: "cancel".tr(),
+    showCloseIcon: false, // لأنك هتعمل زرار Cancel بنفسك
+    body: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          title ?? "warning".tr(),
+          textAlign: TextAlign.center,
+          style: getRegularStyle(fontSize: 16.sp),
+        ),
+        const SizedBox(height: 10),
+        if (desc != null)
+          Text(
+            desc,
+            textAlign: TextAlign.center,
+            style: getMediumStyle(fontSize: 14.sp),
+          ),
+        const SizedBox(height: 20),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () {
+                    if (onPressedOk != null) onPressedOk();
+                    Navigator.of(context).pop();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.secondPrimary,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: Text(
+                    btnOkText ?? "confirm".tr(),
+                    style: getRegularStyle(color: AppColors.primary),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.secondPrimary,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: Text(
+                    "cancel".tr(),
+                    style: getRegularStyle(color: AppColors.primary),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    ),
   ).show();
 }
 
-warningDialog(BuildContext context,
-    {void Function()? onPressedOk,
-    String? title,
-    String? btnOkText,
-    String? desc}) async {
-  await AwesomeDialog(
-    context: context,
-    customHeader: Padding(
-      padding: const EdgeInsets.all(20),
-      child: Image.asset(
-        ImageAssets.dialogLogo,
-        // color: AppColors.primary,
-        width: 80,
-        height: 80,
-      ),
-    ),
-    animType: AnimType.topSlide,
-    reverseBtnOrder: true,
-    showCloseIcon: true,
-    padding: EdgeInsets.all(10.w),
-    title: title ?? "warning".tr(),
-    titleTextStyle: getRegularStyle(fontSize: 16.sp),
-    desc: desc,
-    descTextStyle: getMediumStyle(fontSize: 14.sp),
-    btnOkText: btnOkText ?? "confirm".tr(),
-    btnCancelIcon: Icons.close,
-    btnOkColor: AppColors.primary,
-    btnOkIcon: Icons.check,
-    btnOkOnPress: onPressedOk,
-    btnCancelOnPress: () {},
-    btnCancelText: "cancel".tr(),
-  ).show();
-}
 // test

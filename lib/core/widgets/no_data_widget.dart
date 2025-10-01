@@ -31,7 +31,7 @@ class CustomNoDataWidget extends StatelessWidget {
               onTap: onTap,
               child: Icon(
                 CupertinoIcons.arrow_clockwise,
-                color: AppColors.primary,
+                color: AppColors.secondPrimary,
                 size: 35,
               ),
             ),

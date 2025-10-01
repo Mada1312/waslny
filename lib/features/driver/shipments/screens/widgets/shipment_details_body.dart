@@ -93,7 +93,7 @@ class ShipmentDetailsDriverBody extends StatelessWidget {
         ),
         20.h.verticalSpace,
         Text(
-          "shipment_details".tr(),
+          "trip_details".tr(),
           style: getMediumStyle(
             fontSize: 16.sp,
           ),

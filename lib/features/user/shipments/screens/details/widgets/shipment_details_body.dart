@@ -89,14 +89,14 @@ class ShipmentDetailsUserBody extends StatelessWidget {
         ),
         20.h.verticalSpace,
         Text(
-          "shipment_details".tr(),
+          "trip_details".tr(),
           style: getMediumStyle(
             fontSize: 16.sp,
           ),
         ),
         10.h.verticalSpace,
         Text(
-          "    ${shipmentData?.description ?? "وصف الشحنة"}",
+          "    ${shipmentData?.description ?? "وصف الرحلة"}",
           style: getRegularStyle(
             fontSize: 16.sp,
             color: AppColors.darkGrey,

@@ -40,174 +40,140 @@ class _MainScreenState extends State<MainScreen> {
               return shouldExit;
             }
           },
-          child: Scaffold(
-            bottomNavigationBar: Theme(
-              data: Theme.of(context).copyWith(
-                splashColor: Colors.transparent,
-                highlightColor: Colors.transparent,
-                hoverColor: Colors.transparent,
+          child: SafeArea(
+            top: false,
+            child: Scaffold(
+              body: cubit.screens[cubit.currentIndex],
+              bottomNavigationBar: Container(
+                margin: EdgeInsets.only(bottom: 10.w, left: 20.h, right: 20.h),
+                padding: EdgeInsets.all(3.r),
+                decoration: BoxDecoration(
+                  color: AppColors.secondPrimary, // Dark green background
+                  borderRadius: BorderRadius.circular(100.r),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    _buildNavItem(
+                        ImageAssets.home, 0, cubit.currentIndex, cubit),
+                    _buildNavItem(ImageAssets.notifications, 1,
+                        cubit.currentIndex, cubit),
+                    _buildNavItem(
+                        ImageAssets.messages, 2, cubit.currentIndex, cubit),
+                    _buildNavItem(
+                        ImageAssets.myProfile, 3, cubit.currentIndex, cubit),
+                  ],
+                ),
               ),
-              child: BottomNavigationBar(
-                type: BottomNavigationBarType.fixed,
-                backgroundColor: AppColors.white,
-                showUnselectedLabels: true,
-                selectedItemColor: AppColors.primary,
-                unselectedItemColor: AppColors.dark2Grey,
-                elevation: 10,
-                items: [
-                  BottomNavigationBarItem(
-                    icon: Image.asset(
-                      ImageAssets.home,
-                      height: 25.h,
-                      width: 25.h,
-                      color: cubit.currentIndex == 0
-                          ? AppColors.primary
-                          : AppColors.dark2Grey,
-                    ),
-                    label: "home".tr(),
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Image.asset(
-                      ImageAssets.notifications,
-                      height: 25.h,
-                      width: 25.h,
-                      color: cubit.currentIndex == 1
-                          ? AppColors.primary
-                          : AppColors.dark2Grey,
-                    ),
-                    label: "notifications".tr(),
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Image.asset(
-                      ImageAssets.messages,
-                      height: 25.h,
-                      width: 25.h,
-                      color: cubit.currentIndex == 2
-                          ? AppColors.primary
-                          : AppColors.dark2Grey,
-                    ),
-                    label: "messages".tr(),
-                  ),
-                  if (widget.isDriver == true)
-                    BottomNavigationBarItem(
-                        icon: Image.asset(
-                          widget.isDriver
-                              ? ImageAssets.shipments
-                              : ImageAssets.messages,
-                          height: 25.h,
-                          width: 25.h,
-                          color: cubit.currentIndex == 3
-                              ? AppColors.primary
-                              : AppColors.dark2Grey,
-                        ),
-                        label: "shipments".tr()),
-                  BottomNavigationBarItem(
-                    icon: Image.asset(
-                      ImageAssets.myProfile,
-                      height: 25.h,
-                      width: 25.h,
-                      color: widget.isDriver == false
-                          ? cubit.currentIndex == 3
-                              ? AppColors.primary
-                              : AppColors.dark2Grey
-                          : cubit.currentIndex == 4
-                              ? AppColors.primary
-                              : AppColors.dark2Grey,
-                    ),
-                    label: "my_account".tr(),
-                  ),
-                ],
-                // useLegacyColorScheme: false,
-                currentIndex: cubit.currentIndex,
-                onTap: (index) {
-                  context.read<MainCubit>().changeIndex(index);
-                },
-              ),
-            ),
-            body: SafeArea(
-              top: false,
-              child: widget.isDriver
-                  ? cubit.driverScreens[cubit.currentIndex]
-                  : cubit.userScreens[cubit.currentIndex],
             ),
           ),
         );
       },
     );
   }
-}
 
-Future<bool> _showExitDialog(BuildContext context) async {
-  bool exitConfirmed = false;
-  await AwesomeDialog(
-    context: context,
-    animType: AnimType.bottomSlide,
-    customHeader: Padding(
-      padding: const EdgeInsets.all(20),
-      child: Image.asset(
-        ImageAssets.dialogLogo,
-        // color: AppColors.primary,
-        width: 80,
-        height: 80,
+  /// ✅ Custom nav item (using GestureDetector instead of BottomNavigationBarItem)
+  Widget _buildNavItem(
+      String asset, int index, int currentIndex, MainCubit cubit) {
+    final bool isSelected = currentIndex == index;
+    return GestureDetector(
+      onTap: () => cubit.changeIndex(index),
+      child: Container(
+        padding: EdgeInsets.all(15.sp),
+        decoration: isSelected
+            ? BoxDecoration(
+                color: AppColors.primary, // Yellow circle
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: AppColors.secondPrimary, // Green border
+                  width: 3,
+                ),
+              )
+            : null,
+        child: Image.asset(
+          asset,
+          height: 25,
+          width: 25,
+          color: isSelected
+              ? AppColors.secondPrimary // Dark green icon
+              : Colors.white, // Unselected white
+        ),
       ),
-    ),
-    body: Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          "exit_app".tr(),
-          textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 10),
-        Text(
-          "exit_app_desc".tr(),
-          textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 16),
-        ),
-        const SizedBox(height: 20),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () {
-                    exitConfirmed = true; // تأكيد تسجيل الخروج
-                    Navigator.of(context).pop(); // إغلاق الـ Dialog
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8)),
-                  ),
-                  child: Text("out".tr(),
-                      style: const TextStyle(color: Colors.white)),
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () {
-                    exitConfirmed = false; // المستخدم لا يريد الخروج
-                    Navigator.of(context).pop(); // إغلاق الـ Dialog
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.black,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8)),
-                  ),
-                  child: Text("cancel".tr(),
-                      style: const TextStyle(color: Colors.white)),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    ),
-  ).show();
+    );
+  }
 
-  return exitConfirmed;
+  Future<bool> _showExitDialog(BuildContext context) async {
+    bool exitConfirmed = false;
+    await AwesomeDialog(
+      context: context,
+      animType: AnimType.bottomSlide,
+      customHeader: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Image.asset(
+          ImageAssets.dialogLogo,
+          // color: AppColors.primary,
+          width: 80,
+          height: 80,
+        ),
+      ),
+      body: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            "exit_app".tr(),
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            "exit_app_desc".tr(),
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 16),
+          ),
+          const SizedBox(height: 20),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      exitConfirmed = true; // تأكيد تسجيل الخروج
+                      Navigator.of(context).pop(); // إغلاق الـ Dialog
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.secondPrimary,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8)),
+                    ),
+                    child: Text("out".tr(),
+                        style: getRegularStyle(color: AppColors.primary)),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      exitConfirmed = false; // المستخدم لا يريد الخروج
+                      Navigator.of(context).pop(); // إغلاق الـ Dialog
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.secondPrimary,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8)),
+                    ),
+                    child: Text("cancel".tr(),
+                        style: getRegularStyle(color: AppColors.primary)),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    ).show();
+
+    return exitConfirmed;
+  }
 }

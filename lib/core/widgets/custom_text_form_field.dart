@@ -149,7 +149,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                                 widget.isPassword
                                     ? Icons.visibility_off
                                     : Icons.visibility,
-                                color: AppColors.background,
+                                color: AppColors.secondPrimary,
                               ),
                               onPressed: () {
                                 setState(() {
@@ -162,7 +162,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                                 !widget.isPassword
                                     ? Icons.visibility_off
                                     : Icons.visibility,
-                                color: AppColors.background,
+                                color: AppColors.secondPrimary,
                               ),
                               onPressed: () {
                                 setState(() {
@@ -187,8 +187,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
                           Radius.circular(widget.borderRadius ?? 10.r))),
                   // focused border style
                   focusedBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: AppColors.background, width: 1.5),
+                      borderSide: BorderSide(
+                          color: AppColors.secondPrimary, width: 1.5),
                       borderRadius: BorderRadius.all(
                           Radius.circular(widget.borderRadius ?? 10.r))),
 
@@ -310,8 +310,8 @@ class CustomPhoneFormField extends StatelessWidget {
                       borderRadius: BorderRadius.all(Radius.circular(10.r))),
                   // focused border style
                   focusedBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: AppColors.background, width: 1.5),
+                      borderSide: BorderSide(
+                          color: AppColors.secondPrimary, width: 1.5),
                       borderRadius: BorderRadius.all(Radius.circular(10.r))),
 
                   // error border style

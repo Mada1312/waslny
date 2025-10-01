@@ -304,7 +304,7 @@ class _UserShipmentDetailsScreenState extends State<UserShipmentDetailsScreen> {
   PreferredSizeWidget buildAppBar(
       BuildContext context, UserShipmentsCubit cubit) {
     return customAppBar(context,
-        title: 'shipment_details'.tr(),
+        title: 'trip_details'.tr(),
         height: 100.h,
         onBack: widget.args.isFromNotification
             ? () {

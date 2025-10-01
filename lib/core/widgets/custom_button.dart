@@ -39,7 +39,7 @@ class CustomButton extends StatelessWidget {
         child: Text(
           title,
           style: getSemiBoldStyle(
-            color: textColor ?? AppColors.background,
+            color: textColor ?? AppColors.secondPrimary,
             fontSize: 18.sp,
           ),
         ),

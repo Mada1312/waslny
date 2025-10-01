@@ -27,7 +27,7 @@ class _DriverShipmentsScreenState extends State<DriverShipmentsScreen> {
       var cubit = context.read<DriverShipmentsCubit>();
       return Scaffold(
         appBar:
-            customAppBar(context, title: 'shipments'.tr(), leading: SizedBox()),
+            customAppBar(context, title: 'trips'.tr(), leading: SizedBox()),
         body: Center(
           child: state is GetShipmentsErrorState
               ? CustomNoDataWidget(
@@ -41,7 +41,7 @@ class _DriverShipmentsScreenState extends State<DriverShipmentsScreen> {
                   ? const CustomLoadingIndicator()
                   : cubit.shipmentsModel?.data?.isEmpty ?? true
                       ? CustomNoDataWidget(
-                          message: 'no_shipments'.tr(),
+                          message: 'no_trips'.tr(),
                         )
                       : ListView.separated(
                           itemBuilder: (context, index) => Padding(

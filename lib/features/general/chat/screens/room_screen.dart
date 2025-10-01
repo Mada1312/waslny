@@ -29,67 +29,26 @@ class _AllRoomScreenState extends State<AllRoomScreen> {
         return Scaffold(
           appBar: customAppBar(context,
               title: 'messages'.tr(), leading: SizedBox()),
-          body: (state is LoadingCreateChatRoomState)
-              ? const Center(child: CustomLoadingIndicator())
-              : (state is ErrorCreateChatRoomState)
-                  ? const Center(child: CircularProgressIndicator())
-                  : cubit.chatRoomModel?.data?.length == 0
-                      ? Center(
-                          child: CustomNoDataWidget(
-                            message: 'no_rooms'.tr(),
-                          ),
-                        )
-                      : ListView.builder(
-                          itemCount: cubit.chatRoomModel?.data?.length ?? 0,
-                          itemBuilder: (context, index) {
-                            return Material(
-                              color: Colors.white,
-                              shadowColor: Colors.grey,
-                              elevation: 1,
-                              child: ListTile(
-                                title: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 2.0, vertical: 0),
-                                  child: Row(
-                                    children: [
-                                      CircleAvatar(
-                                        backgroundImage: NetworkImage((context
-                                                        .read<LoginCubit>()
-                                                        .authData
-                                                        ?.data
-                                                        ?.userType ==
-                                                    0
-                                                ? (cubit
-                                                    .chatRoomModel
-                                                    ?.data?[index]
-                                                    .driver
-                                                    ?.image)
-                                                : cubit
-                                                    .chatRoomModel
-                                                    ?.data?[index]
-                                                    .user
-                                                    ?.image) ??
-                                            ''),
-                                      ),
-                                      Flexible(
-                                          child: Padding(
-                                        padding:
-                                            const EdgeInsetsDirectional.only(
-                                                start: 8.0),
-                                        child: Text(
-                                          "#${cubit.chatRoomModel?.data?[index].shipmentCode ?? ''}-${context.read<LoginCubit>().authData?.data?.userType == 0 ? (cubit.chatRoomModel?.data?[index].driver?.name ?? '') : (cubit.chatRoomModel?.data?[index].user?.name ?? '')}",
-                                          maxLines: 2,
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                      )),
-                                    ],
-                                  ),
-                                ),
+          body: Padding(
+            padding: EdgeInsets.all(12.w),
+            child: (state is LoadingCreateChatRoomState)
+                ? const Center(child: CustomLoadingIndicator())
+                : (state is ErrorCreateChatRoomState)
+                    ? const Center(child: CircularProgressIndicator())
+                    : cubit.chatRoomModel?.data?.length == 0
+                        ? Center(
+                            child: CustomNoDataWidget(
+                              message: 'no_rooms'.tr(),
+                            ),
+                          )
+                        : ListView.separated(
+                            itemCount: cubit.chatRoomModel?.data?.length ?? 0,
+                            separatorBuilder: (context, index) =>
+                                10.h.verticalSpace,
+                            itemBuilder: (context, index) {
+                              return GestureDetector(
                                 onTap: () {
-                                  //
-
+                                  // print(" ss");
                                   Navigator.pushNamed(
                                     context,
                                     Routes.messageRoute,
@@ -107,12 +66,57 @@ class _AllRoomScreenState extends State<AllRoomScreen> {
                                           "#${cubit.chatRoomModel?.data?[index].shipmentCode ?? ''}-${context.read<LoginCubit>().authData?.data?.userType == 0 ? (cubit.chatRoomModel?.data?[index].driver?.name ?? '') : (cubit.chatRoomModel?.data?[index].user?.name ?? '')}",
                                     ),
                                   );
-
-                                  //
                                 },
-                              ),
-                            );
-                          }),
+                                child: Container(
+                                  padding: EdgeInsets.all(10.w),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.menuContainer,
+                                    borderRadius: BorderRadius.circular(12.r),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 2.0, vertical: 0),
+                                    child: Row(
+                                      children: [
+                                        CircleAvatar(
+                                          backgroundImage: NetworkImage((context
+                                                          .read<LoginCubit>()
+                                                          .authData
+                                                          ?.data
+                                                          ?.userType ==
+                                                      0
+                                                  ? (cubit
+                                                      .chatRoomModel
+                                                      ?.data?[index]
+                                                      .driver
+                                                      ?.image)
+                                                  : cubit
+                                                      .chatRoomModel
+                                                      ?.data?[index]
+                                                      .user
+                                                      ?.image) ??
+                                              ''),
+                                        ),
+                                        Flexible(
+                                            child: Padding(
+                                          padding:
+                                              const EdgeInsetsDirectional.only(
+                                                  start: 8.0),
+                                          child: Text(
+                                            "#${cubit.chatRoomModel?.data?[index].shipmentCode ?? ''}-${context.read<LoginCubit>().authData?.data?.userType == 0 ? (cubit.chatRoomModel?.data?[index].driver?.name ?? '') : (cubit.chatRoomModel?.data?[index].user?.name ?? '')}",
+                                            maxLines: 2,
+                                            style: getBoldStyle(
+                                              fontSize: 16.sp,
+                                            ),
+                                          ),
+                                        )),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }),
+          ),
         );
       },
     );

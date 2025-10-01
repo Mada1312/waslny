@@ -57,7 +57,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 width: getWidthSize(context),
               ),
               Container(
-                color: AppColors.background.withOpacity(0.8),
+                color: AppColors.secondPrimary.withOpacity(0.8),
               ),
               Center(
                 child: Padding(

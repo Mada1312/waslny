@@ -38,12 +38,12 @@ TextStyle getLineOverStyle({bool isBold = true}) {
 TextStyle getUnderLine({Color? color, double? fontSize}) {
   return TextStyle(
     decoration: TextDecoration.underline,
-    decorationColor: color ?? AppColors.background,
+    decorationColor: color ?? AppColors.secondPrimary,
     // height: 2,
     decorationThickness: 4,
     fontSize: fontSize ?? 18.sp,
     fontFamily: AppStrings.fontFamily,
-    color: color ?? AppColors.background,
+    color: color ?? AppColors.secondPrimary,
     fontWeight: FontWeight.w600,
   );
 }
@@ -53,7 +53,7 @@ TextStyle getUnderLine({Color? color, double? fontSize}) {
 TextStyle getRegularStyle(
     {Color? color, double? fontHeight, double? fontSize}) {
   return _getTextStyle(
-      color: color ?? AppColors.background,
+      color: color ?? AppColors.secondPrimary,
       fontWeight: FontWeight.w400,
       fontSize: fontSize ?? 16.sp,
       fontHeight: fontHeight);
@@ -62,7 +62,7 @@ TextStyle getRegularStyle(
 // regular style 500
 TextStyle getMediumStyle({Color? color, double? fontHeight, double? fontSize}) {
   return _getTextStyle(
-      color: color ?? AppColors.background,
+      color: color ?? AppColors.secondPrimary,
       fontWeight: FontWeight.w500,
       fontSize: fontSize ?? 18.sp,
       fontHeight: fontHeight);
@@ -75,7 +75,7 @@ TextStyle getSemiBoldStyle(
     double? fontSize,
     FontWeight? fontweight}) {
   return _getTextStyle(
-      color: color ?? AppColors.background,
+      color: color ?? AppColors.secondPrimary,
       fontWeight: fontweight ?? FontWeight.w600,
       fontSize: fontSize ?? 18.sp,
       fontHeight: fontHeight);
@@ -88,7 +88,7 @@ TextStyle getBoldStyle(
     double? fontSize,
     FontWeight? fontweight}) {
   return _getTextStyle(
-      color: color ?? AppColors.background,
+      color: color ?? AppColors.secondPrimary,
       fontWeight: fontweight ?? FontWeight.w700,
       fontSize: fontSize ?? 18.sp,
       fontHeight: fontHeight);
@@ -97,7 +97,7 @@ TextStyle getBoldStyle(
 // Extra Bold style 800
 TextStyle getExtraStyle({Color? color, double? fontHeight, double? fontSize}) {
   return _getTextStyle(
-      color: color ?? AppColors.background,
+      color: color ?? AppColors.secondPrimary,
       fontWeight: FontWeight.w800,
       fontSize: fontSize ?? 18.sp,
       fontHeight: fontHeight);

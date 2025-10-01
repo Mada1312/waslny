@@ -3,14 +3,21 @@ import 'package:flutter/material.dart';
 import 'hex_color.dart';
 
 class AppColors {
-  static Color primary = HexColor('#003D2E');
-  // static Color primary = HexColor('#493F68');
-  static Color secondPrimary = HexColor('#5EC1E7');
+
+  static Color primary = HexColor('#DFDD00');
+
+  static Color secondPrimary = HexColor('#003D2E');
+
   static Color lightGrey = HexColor('#F2F2F2');
-  static Color background = HexColor('#003D2E');
+
   static Color greyFieldColor = const Color(0xffF2F2F2);
 
-  static Color darkGrey = HexColor('#939393');
+  static Color darkGrey = HexColor('#373737');
+  static Color menuContainer = HexColor('#e6eceb');
+  static Color unSeen = HexColor('#b3c5c1');
+  // static Color seen = HexColor('#b3c5c1');
+
+  // static Color darkGrey = HexColor('#939393');
   static Color dark2Grey = HexColor('#09183F');
   static Color grey = HexColor('#939393');
   static Color grey2 = HexColor('#D8DDE1');

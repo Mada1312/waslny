@@ -112,56 +112,63 @@ class CustomNotificationCard extends StatelessWidget {
           );
         }
       },
-      child: Row(
-        children: [
-          Image.asset(
-            ImageAssets.appIcon,
-            height: 50.h,
-            width: 50.h,
-            fit: BoxFit.cover,
-            color: AppColors.primary,
-          ),
-          10.horizontalSpace,
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        notificationModel.title ?? '',
-                        style: getBoldStyle(
-                          color: AppColors.primary,
-                          fontSize: 16.sp,
+      child: Container(
+        padding: EdgeInsets.all(10.w),
+        decoration: BoxDecoration(
+          color: AppColors.menuContainer,
+          borderRadius: BorderRadius.circular(12.r),
+        ),
+        child: Row(
+          children: [
+            Image.asset(
+              ImageAssets.logo,
+              height: 50.h,
+              width: 50.h,
+              fit: BoxFit.cover,
+              // color: AppColors.primary,
+            ),
+            10.horizontalSpace,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          notificationModel.title ?? '',
+                          style: getBoldStyle(
+                            // color: AppColors.primary,
+                            fontSize: 16.sp,
+                          ),
                         ),
                       ),
-                    ),
-                    5.horizontalSpace,
-                    Text(
-                      notificationModel.createdAt ?? '',
-                      style: getBoldStyle(
-                          color: AppColors.secondPrimary, fontSize: 12.sp),
-                    ),
-                  ],
-                ),
-                5.verticalSpace,
-                Text(
-                  notificationModel.body ?? '',
-                  style: getRegularStyle(
-                    color: notificationModel.body != null &&
-                            (notificationModel.body!.contains('قبول') ||
-                                notificationModel.body!.contains('accepted'))
-                        ? AppColors.green
-                        : AppColors.darkGrey,
-                    fontSize: 14.sp,
+                      5.horizontalSpace,
+                      Text(
+                        notificationModel.createdAt ?? '',
+                        style: getBoldStyle(
+                            color: AppColors.secondPrimary, fontSize: 12.sp),
+                      ),
+                    ],
                   ),
-                ),
-              ],
+                  5.verticalSpace,
+                  Text(
+                    notificationModel.body ?? '',
+                    style: getRegularStyle(
+                      color: notificationModel.body != null &&
+                              (notificationModel.body!.contains('قبول') ||
+                                  notificationModel.body!.contains('accepted'))
+                          ? AppColors.green
+                          : AppColors.darkGrey,
+                      fontSize: 14.sp,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

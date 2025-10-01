@@ -62,7 +62,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                     ),
                     Container(
                       decoration: BoxDecoration(
-                        color: AppColors.background.withOpacity(0.6),
+                        color: AppColors.secondPrimary.withOpacity(0.6),
                       ),
                     ),
                     Column(
@@ -112,7 +112,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                                           10.w.horizontalSpace,
                                           Flexible(
                                             child: Text(
-                                              "${"shipments_count".tr()}${cubit.homeModel?.data?.totalShipments.toString() ?? "0"}",
+                                              "${"trips_count".tr()}${cubit.homeModel?.data?.totalShipments.toString() ?? "0"}",
                                               style: getSemiBoldStyle(
                                                 fontSize: 18.sp,
                                                 color: AppColors.white,
@@ -149,8 +149,8 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                                       child: Text(
                                         cubit.homeModel?.data?.hasShipment ==
                                                 false
-                                            ? "new_shipments".tr()
-                                            : "shipment_details".tr(),
+                                            ? "new_trips".tr()
+                                            : "trip_details".tr(),
                                         style: getSemiBoldStyle(
                                           fontSize: 16.sp,
                                         ),
@@ -219,7 +219,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                         : cubit.homeModel?.data?.hasShipment == false
                             ? cubit.homeModel?.data?.shipments?.isEmpty == true
                                 ? CustomNoDataWidget(
-                                    message: 'no_shipments'.tr(),
+                                    message: 'no_trips'.tr(),
                                     onTap: () {
                                       cubit.getDriverHomeData(context);
                                     },
