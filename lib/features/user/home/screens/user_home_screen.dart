@@ -57,7 +57,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                     //! Shadow of image
                     Container(
                       decoration: BoxDecoration(
-                        color: AppColors.background.withOpacity(0.8),
+                        color: AppColors.secondPrimary.withOpacity(0.8),
                         // borderRadius: BorderRadius.only(
                         //   // bottomLeft: Radius.circular(20.sp),
                         //   // bottomRight: Radius.circular(20.sp),
@@ -103,7 +103,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                               Expanded(
                                 child: CustomMainContainer(
                                   image: ImageAssets.addShipment,
-                                  title: "add_shipment".tr(),
+                                  title: "add_trip".tr(),
                                   onTap: () {
                                     Navigator.pushNamed(
                                         context, Routes.addNewShipmentRoute,
@@ -115,7 +115,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                               Expanded(
                                 child: CustomMainContainer(
                                   image: ImageAssets.currentShipment,
-                                  title: "current_shipment".tr(),
+                                  title: "current_trips".tr(),
                                   onTap: () {
                                     context
                                         .read<UserShipmentsCubit>()
@@ -166,7 +166,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                     10.w.horizontalSpace,
                                     Flexible(
                                       child: Text(
-                                        "${"shipments_count".tr()}${cubit.homeModel?.data?.totalShipments.toString() ?? "0"}",
+                                        "${"trips_count".tr()}${cubit.homeModel?.data?.totalShipments.toString() ?? "0"}",
                                         maxLines: 1,
                                         style: getSemiBoldStyle(
                                           fontSize: 18.sp,
@@ -183,7 +183,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                           Row(
                             children: [
                               Text(
-                                "new_shipments".tr(),
+                                "new_trips".tr(),
                                 style: getSemiBoldStyle(
                                   fontSize: 16.sp,
                                 ),
@@ -228,7 +228,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                       ? Padding(
                                           padding: EdgeInsets.only(top: 100.h),
                                           child: CustomNoDataWidget(
-                                            message: 'no_shipments'.tr(),
+                                            message: 'no_trips'.tr(),
                                             onTap: () {
                                               cubit.getHome(context);
                                             },

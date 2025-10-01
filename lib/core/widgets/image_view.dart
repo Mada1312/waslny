@@ -62,8 +62,7 @@ class ImageViewScreen extends StatelessWidget {
                       )
                     : (image == null || (isAsset == true))
                         ? PhotoView(
-                            imageProvider:
-                                const AssetImage(ImageAssets.appIcon),
+                            imageProvider: const AssetImage(ImageAssets.logo),
                             backgroundDecoration: const BoxDecoration(),
                             // enableRotation: true,
                             minScale: PhotoViewComputedScale.contained * 0.8,

@@ -29,10 +29,10 @@ class OnBoardingWidget extends StatelessWidget {
             width: double.infinity,
           ),
           Container(
-            color: AppColors.background.withOpacity(0.8),
+            color: AppColors.secondPrimary.withOpacity(0.8),
           ),
           Image.asset(
-             ImageAssets.onBoardingOverlay,
+            ImageAssets.onBoardingOverlay,
             fit: BoxFit.cover,
             height: getHeightSize(context),
             width: double.infinity,

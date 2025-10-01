@@ -60,7 +60,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                             },
                             child: ListView.separated(
                               separatorBuilder: (context, index) =>
-                                  const Divider(),
+                                  10.h.verticalSpace,
                               itemCount: cubit.notificationsModel!.data!.length,
                               itemBuilder: (context, index) {
                                 return CustomNotificationCard(

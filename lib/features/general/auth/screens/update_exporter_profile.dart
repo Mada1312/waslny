@@ -59,8 +59,8 @@ class _UpdateUserProfileState extends State<UpdateUserProfile> {
                                   ),
                                   Container(
                                     decoration: BoxDecoration(
-                                      color:
-                                          AppColors.background.withOpacity(0.8),
+                                      color: AppColors.secondPrimary
+                                          .withOpacity(0.8),
                                       borderRadius: BorderRadius.only(
                                         bottomLeft: Radius.circular(20.sp),
                                         bottomRight: Radius.circular(20.sp),
@@ -238,9 +238,9 @@ class _UpdateUserProfileState extends State<UpdateUserProfile> {
                                                               EdgeInsets.all(
                                                                   20.sp),
                                                           child: Image.asset(
-                                                            ImageAssets.appIcon,
-                                                            color: AppColors
-                                                                .primary,
+                                                            ImageAssets.logo,
+                                                            // color: AppColors
+                                                            //     .primary,
                                                             width: 40.w,
                                                             height: 40.h,
                                                           ),
@@ -300,7 +300,7 @@ class _UpdateUserProfileState extends State<UpdateUserProfile> {
                                                               child:
                                                                   Image.asset(
                                                                 ImageAssets
-                                                                    .appIcon,
+                                                                    .logo,
                                                                 color: AppColors
                                                                     .primary,
                                                                 width: 40.w,

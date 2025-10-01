@@ -111,7 +111,7 @@ class _AddNewShipmentScreenState extends State<AddNewShipmentScreen> {
       return Scaffold(
         appBar: customAppBar(context,
             title: widget.args?.shipment != null
-                ? 'edit_shipment'.tr()
+                ? 'edit_trip'.tr()
                 : 'add_shipment'.tr()),
         body: SingleChildScrollView(
           padding: EdgeInsets.all(12.w),
@@ -276,12 +276,12 @@ class _AddNewShipmentScreenState extends State<AddNewShipmentScreen> {
                 5.h.verticalSpace,
                 CustomTextField(
                   controller: cubit.descriptionController,
-                  title: "shipment_desc".tr(),
+                  title: "trip_desc".tr(),
                   isMessage: true,
                   isRequired: true,
                   keyboardType: TextInputType.multiline,
-                  validationMessage: 'enter_shipment_desc'.tr(),
-                  hintText: 'enter_shipment_desc'.tr(),
+                  validationMessage: 'enter_trip_desc'.tr(),
+                  hintText: 'enter_trip_desc'.tr(),
                 ),
                 10.h.verticalSpace,
                 CustomButton(

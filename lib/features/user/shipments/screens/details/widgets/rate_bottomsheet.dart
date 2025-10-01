@@ -50,7 +50,7 @@ void showAddRateBottomSheet(BuildContext context,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    !isDriver ? "rate_driver".tr() : "rate_exporter".tr(),
+                    !isDriver ? "rate_driver".tr() : "rate_user".tr(),
                     style: getSemiBoldStyle(
                       fontSize: 24.sp,
                     ),

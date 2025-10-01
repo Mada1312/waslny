@@ -70,7 +70,7 @@ class _UpdateDeliveryProfileState extends State<UpdateDeliveryProfile> {
                                       ),
                                       Container(
                                         decoration: BoxDecoration(
-                                          color: AppColors.background
+                                          color: AppColors.secondPrimary
                                               .withOpacity(0.8),
                                           borderRadius: BorderRadius.only(
                                             bottomLeft: Radius.circular(20.sp),
@@ -335,9 +335,9 @@ class _UpdateDeliveryProfileState extends State<UpdateDeliveryProfile> {
                                                                     child: Image
                                                                         .asset(
                                                                       ImageAssets
-                                                                          .appIcon,
-                                                                      color: AppColors
-                                                                          .primary,
+                                                                          .logo,
+                                                                      // color: AppColors
+                                                                      //     .primary,
                                                                       width:
                                                                           40.w,
                                                                       height:
@@ -406,9 +406,9 @@ class _UpdateDeliveryProfileState extends State<UpdateDeliveryProfile> {
                                                                         child: Image
                                                                             .asset(
                                                                           ImageAssets
-                                                                              .appIcon,
-                                                                          color:
-                                                                              AppColors.primary,
+                                                                              .logo,
+                                                                          // color:
+                                                                          //     AppColors.primary,
                                                                           width:
                                                                               40.w,
                                                                           height:
@@ -519,9 +519,9 @@ class _UpdateDeliveryProfileState extends State<UpdateDeliveryProfile> {
                                                                     child: Image
                                                                         .asset(
                                                                       ImageAssets
-                                                                          .appIcon,
-                                                                      color: AppColors
-                                                                          .primary,
+                                                                          .logo,
+                                                                      // color: AppColors
+                                                                      //     .primary,
                                                                       width:
                                                                           40.w,
                                                                       height:
@@ -590,9 +590,9 @@ class _UpdateDeliveryProfileState extends State<UpdateDeliveryProfile> {
                                                                         child: Image
                                                                             .asset(
                                                                           ImageAssets
-                                                                              .appIcon,
-                                                                          color:
-                                                                              AppColors.primary,
+                                                                              .logo,
+                                                                          // color:
+                                                                          //     AppColors.primary,
                                                                           width:
                                                                               40.w,
                                                                           height:

@@ -33,7 +33,7 @@ class CustomLoginAppbar extends StatelessWidget {
             ),
             Container(
               decoration: BoxDecoration(
-                color: AppColors.background.withOpacity(0.8),
+                color: AppColors.secondPrimary.withOpacity(0.8),
                 borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(20.sp),
                   bottomRight: Radius.circular(20.sp),

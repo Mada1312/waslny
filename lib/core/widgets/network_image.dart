@@ -41,7 +41,7 @@ class CustomNetworkImage extends StatelessWidget {
           errorWidget: (context, url, error) => Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Image.asset(
-                  isUser ? ImageAssets.userIcon : ImageAssets.appIcon,
+                  isUser ? ImageAssets.userIcon : ImageAssets.logo,
                   height: height,
                   width: width,
                   fit: BoxFit.cover,

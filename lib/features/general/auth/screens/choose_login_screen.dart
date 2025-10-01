@@ -15,8 +15,8 @@ class ChooseLoginScreen extends StatelessWidget {
           //   width: getWidthSize(context),
           // ),
           Container(
-            color: AppColors.background,
-            // color: AppColors.background.withOpacity(0.8),
+            color: AppColors.secondPrimary,
+            // color: AppColors.secondPrimary.withOpacity(0.8),
           ),
           Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,

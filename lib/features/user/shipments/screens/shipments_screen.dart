@@ -17,7 +17,7 @@ class UserShipmentsScreen extends StatelessWidget {
       var cubit = context.read<UserShipmentsCubit>();
 
       return Scaffold(
-        appBar: customAppBar(context, title: 'shipments'.tr()),
+        appBar: customAppBar(context, title: 'trips'.tr()),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -37,7 +37,7 @@ class UserShipmentsScreen extends StatelessWidget {
                         ? const Center(child: CustomLoadingIndicator())
                         : cubit.shipmentsModel?.data?.isEmpty == true
                             ? CustomNoDataWidget(
-                                message: 'no_shipments'.tr(),
+                                message: 'no_trips'.tr(),
                                 onTap: () {
                                   cubit.getShipments();
                                 },

@@ -56,7 +56,7 @@ class ProfileScreen extends StatelessWidget {
                           ),
                           Container(
                             decoration: BoxDecoration(
-                              color: AppColors.background.withOpacity(0.8),
+                              color: AppColors.secondPrimary.withOpacity(0.8),
                               borderRadius: BorderRadius.only(
                                 bottomLeft: Radius.circular(20.sp),
                                 bottomRight: Radius.circular(20.sp),
@@ -88,7 +88,7 @@ class ProfileScreen extends StatelessWidget {
                                   return Container(
                                     padding: EdgeInsets.all(5.w),
                                     decoration: BoxDecoration(
-                                      color: Colors.white,
+                                      color: AppColors.secondPrimary,
                                       borderRadius: BorderRadius.circular(1000),
                                       boxShadow: [
                                         BoxShadow(
@@ -182,7 +182,7 @@ class ProfileScreen extends StatelessWidget {
 
                                     //!
                                   },
-                                  title: 'shipment_history',
+                                  title: 'trip_history',
                                   path: AppIcons.shipmentLog,
                                 ),
 
@@ -344,7 +344,7 @@ class CustomProfileRow extends StatelessWidget {
           vertical: 4.h,
         ),
         decoration: BoxDecoration(
-          color: Color(0xffE7EBEC),
+          color: AppColors.menuContainer,
           borderRadius: BorderRadius.circular(6.r),
         ),
         child: Padding(
@@ -372,8 +372,8 @@ class CustomProfileRow extends StatelessWidget {
                     )
                   : Icon(
                       Icons.arrow_forward_ios_sharp,
-                      size: 16.w,
-                      color: AppColors.primary,
+                      size: 22.w,
+                      color: AppColors.secondPrimary,
                     ),
             ],
           ),
