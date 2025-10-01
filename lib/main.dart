@@ -6,7 +6,6 @@ import 'core/init_config/initalization_config.dart';
 import 'core/utils/restart_app_class.dart';
 import 'features/driver/background_services.dart';
 
-
 void main() async {
   await initializationClass();
   // تهيئة الـ Background Service
