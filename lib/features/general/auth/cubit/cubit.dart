@@ -29,42 +29,51 @@ class LoginCubit extends Cubit<LoginState> {
   Future<void> login(BuildContext context, bool isDriver) async {
     AppWidget.createProgressDialog(context, msg: 'loading'.tr());
     emit(LoadingLoginState());
-    final res = await api.login(fullPhoneNumber ?? '', passwordController.text,
-        isDriver: isDriver);
-    res.fold((l) {
-      errorGetBar(l.toString());
-      emit(ErrorLoginState());
-      Navigator.pop(context);
+    final res = await api.login(
+      fullPhoneNumber ?? '',
+      passwordController.text,
+      isDriver: isDriver,
+    );
+    res.fold(
+      (l) {
+        errorGetBar(l.toString());
+        emit(ErrorLoginState());
+        Navigator.pop(context);
 
-      //!
-    }, (r) async {
-      try {
-        //! Nav to Main Screen
-        emit(LoadedLoginState());
-        if (r.status == 200) {
-          await Preferences.instance.setUser(r);
-          successGetBar(r.msg);
-          Navigator.pop(context);
+        //!
+      },
+      (r) async {
+        try {
+          //! Nav to Main Screen
+          emit(LoadedLoginState());
+          if (r.status == 200) {
+            await Preferences.instance.setUser(r);
+            successGetBar(r.msg);
+            Navigator.pop(context);
 
-          Navigator.pushNamedAndRemoveUntil(
-              context, Routes.mainRoute, (route) => false,
-              arguments: r.data?.userType == 0 ? false : true);
-          clearData();
-        } else {
-          errorGetBar(r.msg ?? '');
+            Navigator.pushNamedAndRemoveUntil(
+              context,
+              Routes.mainRoute,
+              (route) => false,
+              arguments: r.data?.userType == 0 ? false : true,
+            );
+            clearData();
+          } else {
+            errorGetBar(r.msg ?? '');
+            Navigator.pop(context);
+
+            emit(ErrorLoginState());
+          }
+        } catch (e) {
+          errorGetBar(e.toString());
           Navigator.pop(context);
 
           emit(ErrorLoginState());
         }
-      } catch (e) {
-        errorGetBar(e.toString());
-        Navigator.pop(context);
 
-        emit(ErrorLoginState());
-      }
-
-      //!
-    });
+        //!
+      },
+    );
   }
 
   clearData() {
@@ -84,32 +93,39 @@ class LoginCubit extends Cubit<LoginState> {
       AppWidget.createProgressDialog(context, msg: 'loading'.tr());
       emit(LoadingValidateDataState());
       final res = await api.validateData(
-          isDriver: isDriver,
-          name: nameController.text,
-          phone: fullPhoneNumber ?? '',
-          password: passwordController.text);
-      res.fold((l) {
-        emit(ErrorValidateDataState());
-        Navigator.pop(context);
-        errorGetBar(l.toString()); //!
-      }, (r) async {
-        //! Nav to Main Screen
-        emit(LoadedValidateDataState());
-        if (r.status == 200) {
-          successGetBar(r.msg);
-          Navigator.pop(context);
-
-          Navigator.pushReplacementNamed(context, Routes.verifyCodeScreen,
-              arguments: [isDriver, false]);
-        } else {
-          Navigator.pop(context);
-
-          errorGetBar(r.msg ?? '');
+        isDriver: isDriver,
+        name: nameController.text,
+        phone: fullPhoneNumber ?? '',
+        password: passwordController.text,
+      );
+      res.fold(
+        (l) {
           emit(ErrorValidateDataState());
-        }
+          Navigator.pop(context);
+          errorGetBar(l.toString()); //!
+        },
+        (r) async {
+          //! Nav to Main Screen
+          emit(LoadedValidateDataState());
+          if (r.status == 200) {
+            successGetBar(r.msg);
+            Navigator.pop(context);
 
-        //!
-      });
+            Navigator.pushReplacementNamed(
+              context,
+              Routes.verifyCodeScreen,
+              arguments: [isDriver, false],
+            );
+          } else {
+            Navigator.pop(context);
+
+            errorGetBar(r.msg ?? '');
+            emit(ErrorValidateDataState());
+          }
+
+          //!
+        },
+      );
     } catch (e) {
       Navigator.pop(context);
       errorGetBar(e.toString()); //!
@@ -121,63 +137,78 @@ class LoginCubit extends Cubit<LoginState> {
     AppWidget.createProgressDialog(context, msg: 'loading'.tr());
     emit(LoadingLoginState());
     final res = await api.register(
-        isDriver: isDriver,
-        name: nameController.text,
-        otp: pinController.text,
-        phone: fullPhoneNumber ?? '',
-        password: passwordController.text);
-    res.fold((l) {
-      emit(ErrorLoginState());
-      Navigator.pop(context);
-
-      //!
-    }, (r) async {
-      //! Nav to Main Screen
-      emit(LoadedLoginState());
-      if (r.status == 200) {
-        await Preferences.instance.setUser(r);
-
-        successGetBar(r.msg);
-        Navigator.pushNamedAndRemoveUntil(
-            context, Routes.mainRoute, (route) => false,
-            arguments: isDriver);
-        clearData();
-      } else {
-        Navigator.pop(context);
-        errorGetBar(r.msg ?? '');
+      isDriver: isDriver,
+      name: nameController.text,
+      otp: pinController.text,
+      phone: fullPhoneNumber ?? '',
+      password: passwordController.text,
+    );
+    res.fold(
+      (l) {
         emit(ErrorLoginState());
-      }
+        Navigator.pop(context);
 
-      //!
-    });
+        //!
+      },
+      (r) async {
+        //! Nav to Main Screen
+        emit(LoadedLoginState());
+        if (r.status == 200) {
+          await Preferences.instance.setUser(r);
+
+          successGetBar(r.msg);
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            Routes.mainRoute,
+            (route) => false,
+            arguments: isDriver,
+          );
+          clearData();
+        } else {
+          Navigator.pop(context);
+          errorGetBar(r.msg ?? '');
+          emit(ErrorLoginState());
+        }
+
+        //!
+      },
+    );
   }
 
   //! Login Method
 
   Future<void> forgetPasswordRequest(
-      BuildContext context, bool isDriver) async {
+    BuildContext context,
+    bool isDriver,
+  ) async {
     try {
       AppWidget.createProgressDialog(context, msg: 'loading'.tr());
       emit(LoadingsendCodeState());
       final res = await api.forgetPassword(fullPhoneNumber ?? '');
-      res.fold((l) {
-        errorGetBar(l.toString());
-        Navigator.pop(context);
-        emit(ErrorsendCodeState());
-      }, (r) async {
-        if (r.status == 200) {
+      res.fold(
+        (l) {
+          errorGetBar(l.toString());
           Navigator.pop(context);
-          successGetBar(r.msg);
-          Navigator.pushReplacementNamed(context, Routes.verifyCodeScreen,
-              arguments: [isDriver, true]);
-          emit(LoadedsendCodeState());
-        } else {
-          errorGetBar(r.msg ?? '');
-          Navigator.pop(context);
-
           emit(ErrorsendCodeState());
-        }
-      });
+        },
+        (r) async {
+          if (r.status == 200) {
+            Navigator.pop(context);
+            successGetBar(r.msg);
+            Navigator.pushReplacementNamed(
+              context,
+              Routes.verifyCodeScreen,
+              arguments: [isDriver, true],
+            );
+            emit(LoadedsendCodeState());
+          } else {
+            errorGetBar(r.msg ?? '');
+            Navigator.pop(context);
+
+            emit(ErrorsendCodeState());
+          }
+        },
+      );
     } catch (e) {
       errorGetBar(e.toString());
       Navigator.pop(context);
@@ -185,7 +216,7 @@ class LoginCubit extends Cubit<LoginState> {
     }
   }
 
-//!
+  //!
 
   TextEditingController newPasswordController = TextEditingController();
   TextEditingController confirmNewPasswordController = TextEditingController();
@@ -195,35 +226,42 @@ class LoginCubit extends Cubit<LoginState> {
       AppWidget.createProgressDialog(context, msg: 'loading'.tr());
       emit(LoadingNewPasswordState());
       final res = await api.resetPassword(
-          fullPhoneNumber ?? '2${phoneNumberForgetController.text}',
-          newPasswordController.text,
-          pinController.text);
+        fullPhoneNumber ?? '2${phoneNumberForgetController.text}',
+        newPasswordController.text,
+        pinController.text,
+      );
 
-      res.fold((l) {
-        Navigator.pop(context);
-        errorGetBar(l.toString());
-
-        emit(ErrorNewPasswordState());
-      }, (r) async {
-        if (r.status == 200) {
-          successGetBar(r.msg);
+      res.fold(
+        (l) {
           Navigator.pop(context);
-
-          Navigator.pushNamedAndRemoveUntil(
-              context, Routes.mainRoute, (route) => false,
-              arguments: r.data?.userType == 0 ? false : true);
-
-          await Preferences.instance.setUser(r);
-
-          emit(LoadedNewPasswordState());
-          clearData();
-        } else {
-          errorGetBar(r.msg ?? '');
-          Navigator.pop(context);
+          errorGetBar(l.toString());
 
           emit(ErrorNewPasswordState());
-        }
-      });
+        },
+        (r) async {
+          if (r.status == 200) {
+            successGetBar(r.msg);
+            Navigator.pop(context);
+
+            Navigator.pushNamedAndRemoveUntil(
+              context,
+              Routes.mainRoute,
+              (route) => false,
+              arguments: r.data?.userType == 0 ? false : true,
+            );
+
+            await Preferences.instance.setUser(r);
+
+            emit(LoadedNewPasswordState());
+            clearData();
+          } else {
+            errorGetBar(r.msg ?? '');
+            Navigator.pop(context);
+
+            emit(ErrorNewPasswordState());
+          }
+        },
+      );
     } catch (e) {
       errorGetBar(e.toString());
       Navigator.pop(context);
@@ -251,13 +289,16 @@ class LoginCubit extends Cubit<LoginState> {
   File? pickedDeliveryFrontImage;
   File? pickedDeliveryBackImage;
 
-  Future<void> pickUserCardImageFromGallery(
-      {bool isBackImage = false, bool isDeliveryBackImage = false}) async {
+  Future<void> pickUserCardImageFromGallery({
+    bool isBackImage = false,
+    bool isDeliveryBackImage = false,
+  }) async {
     if (isDeliveryBackImage) {
       if (isBackImage) {
         final ImagePicker picker = ImagePicker();
-        final XFile? image =
-            await picker.pickImage(source: ImageSource.gallery);
+        final XFile? image = await picker.pickImage(
+          source: ImageSource.gallery,
+        );
 
         if (image != null) {
           pickedDeliveryBackImage = File(image.path);
@@ -268,8 +309,9 @@ class LoginCubit extends Cubit<LoginState> {
         }
       } else {
         final ImagePicker picker = ImagePicker();
-        final XFile? image =
-            await picker.pickImage(source: ImageSource.gallery);
+        final XFile? image = await picker.pickImage(
+          source: ImageSource.gallery,
+        );
 
         if (image != null) {
           pickedDeliveryFrontImage = File(image.path);
@@ -304,20 +346,23 @@ class LoginCubit extends Cubit<LoginState> {
       emit(GetAuthDataLoading());
       final res = await api.authData();
 
-      res.fold((l) {
-        emit(GetAuthDataError());
-      }, (r) {
-        authData = r;
+      res.fold(
+        (l) {
+          emit(GetAuthDataError());
+        },
+        (r) {
+          authData = r;
 
-        updateNameController.text = r.data?.name ?? '';
-        updateAddressController.text = r.data?.address ?? '';
-        updatePhoneNumberController.text = r.data?.phone.toString() ?? '';
-        updateNationalIdController.text = r.data?.nationalId ?? '';
+          updateNameController.text = r.data?.name ?? '';
+          updateAddressController.text = r.data?.address ?? '';
+          updatePhoneNumberController.text = r.data?.phone.toString() ?? '';
+          updateNationalIdController.text = r.data?.nationalId ?? '';
 
-        if (isDeriver) {
-          context.read<AddNewShipmentCubit>().selectedCountriesAtEditProfile =
-              r.data?.countries ?? [];
-          for (int i = 0;
+          if (isDeriver) {
+            context.read<AddNewShipmentCubit>().selectedCountriesAtEditProfile =
+                r.data?.countries ?? [];
+            for (
+              int i = 0;
               i <
                   (context
                           .read<AddNewShipmentCubit>()
@@ -325,16 +370,24 @@ class LoginCubit extends Cubit<LoginState> {
                           ?.data
                           ?.length ??
                       0);
-              i++) {
-            if (context.read<AddNewShipmentCubit>().allTruckType?.data?[i].id ==
-                r.data?.truckType?.id) {
-              context.read<AddNewShipmentCubit>().shipmentType =
-                  context.read<AddNewShipmentCubit>().allTruckType?.data?[i];
+              i++
+            ) {
+              if (context
+                      .read<AddNewShipmentCubit>()
+                      .allTruckType
+                      ?.data?[i]
+                      .id ==
+                  r.data?.truckType?.id) {
+                context.read<AddNewShipmentCubit>().shipmentType = context
+                    .read<AddNewShipmentCubit>()
+                    .allTruckType
+                    ?.data?[i];
+              }
             }
           }
-        }
-        emit(GetAuthDataLoaded());
-      });
+          emit(GetAuthDataLoaded());
+        },
+      );
     } catch (e) {
       emit(GetAuthDataError());
     }
@@ -346,44 +399,61 @@ class LoginCubit extends Cubit<LoginState> {
       emit(GetAuthDataLoading());
       final res = await api.authData();
 
-      res.fold((l) {
-        emit(GetAuthDataError());
-      }, (r) {
-        authData = r;
+      res.fold(
+        (l) {
+          emit(GetAuthDataError());
+        },
+        (r) {
+          authData = r;
 
-        if (isFirstTime) {
-          if (authData?.data?.userType == 0) {
-            if (authData?.data?.exportCard == null) {
-              warningDialog(context,
+          if (isFirstTime) {
+            if (authData?.data?.userType == 0) {
+              if (authData?.data?.exportCard == null) {
+                warningDialog(
+                  context,
                   title: 'you_are_didnt_upload_export_card_please_upload_it'
-                      .tr(), onPressedOk: () {
-                Navigator.pushNamed(context, Routes.editUserProfileRoute);
-              });
-            }
-          } else {
-            if (authData?.data?.frontDriverCard == null &&
-                authData?.data?.backDriverCard == null) {
-              warningDialog(context,
+                      .tr(),
+                  onPressedOk: () {
+                    Navigator.pushNamed(context, Routes.editUserProfileRoute);
+                  },
+                );
+              }
+            } else {
+              if (authData?.data?.frontDriverCard == null &&
+                  authData?.data?.backDriverCard == null) {
+                warningDialog(
+                  context,
                   title: 'you_are_didnt_upload_driver_card_please_upload_it'
-                      .tr(), onPressedOk: () {
-                Navigator.pushNamed(context, Routes.editDeliveryProfileRoute);
-              });
-            }
-            if (authData?.data?.countries == null ||
-                (authData?.data?.countries?.isEmpty ?? true)) {
-              warningDialog(context,
+                      .tr(),
+                  onPressedOk: () {
+                    Navigator.pushNamed(
+                      context,
+                      Routes.editDeliveryProfileRoute,
+                    );
+                  },
+                );
+              }
+              if (authData?.data?.countries == null ||
+                  (authData?.data?.countries?.isEmpty ?? true)) {
+                warningDialog(
+                  context,
                   title: 'you_are_didnt_upload_countries'.tr(),
                   onPressedOk: () {
-                Navigator.pushNamed(context, Routes.editDeliveryProfileRoute);
-              });
+                    Navigator.pushNamed(
+                      context,
+                      Routes.editDeliveryProfileRoute,
+                    );
+                  },
+                );
+              }
             }
+            changeLanguage();
           }
-          changeLanguage();
-        }
-        isFirstTime = false;
+          isFirstTime = false;
 
-        emit(GetAuthDataLoaded());
-      });
+          emit(GetAuthDataLoaded());
+        },
+      );
     } catch (e) {
       emit(GetAuthDataError());
     }
@@ -392,11 +462,14 @@ class LoginCubit extends Cubit<LoginState> {
   changeLanguage() async {
     emit(GetAuthDataLoading());
     final response = await api.changeLanguage();
-    response.fold((l) {
-      emit(GetAuthDataError());
-    }, (r) {
-      emit(GetAuthDataLoaded());
-    });
+    response.fold(
+      (l) {
+        emit(GetAuthDataError());
+      },
+      (r) {
+        emit(GetAuthDataLoaded());
+      },
+    );
   }
 
   updateUserProfile(BuildContext context) async {
@@ -404,27 +477,31 @@ class LoginCubit extends Cubit<LoginState> {
       AppWidget.createProgressDialog(context);
       emit(LoadingUpadteProfileState());
       final res = await api.updateUserProfile(
-          name: updateNameController.text,
-          address: updateAddressController.text,
-          image: pickedProfileImage,
-          exportCard: pickedUserCardProfileImage);
+        name: updateNameController.text,
+        address: updateAddressController.text,
+        image: pickedProfileImage,
+        exportCard: pickedUserCardProfileImage,
+      );
 
-      res.fold((l) {
-        errorGetBar(l.toString());
-        emit(ErrorUpadteProfileState());
-        Navigator.pop(context);
-      }, (r) {
-        if (r.status == 200) {
-          successGetBar(r.msg.toString());
-          Navigator.pop(context);
-          getAuthData(context);
-          emit(LoadedUpadteProfileState());
-        } else {
-          errorGetBar(r.msg.toString());
+      res.fold(
+        (l) {
+          errorGetBar(l.toString());
           emit(ErrorUpadteProfileState());
-        }
-        Navigator.pop(context);
-      });
+          Navigator.pop(context);
+        },
+        (r) {
+          if (r.status == 200) {
+            successGetBar(r.msg.toString());
+            Navigator.pop(context);
+            getAuthData(context);
+            emit(LoadedUpadteProfileState());
+          } else {
+            errorGetBar(r.msg.toString());
+            emit(ErrorUpadteProfileState());
+          }
+          Navigator.pop(context);
+        },
+      );
     } catch (e) {
       errorGetBar(e.toString());
       Navigator.pop(context);
@@ -438,32 +515,37 @@ class LoginCubit extends Cubit<LoginState> {
       AppWidget.createProgressDialog(context);
       emit(LoadingUpadteProfileState());
       final res = await api.updateDeliveryProfile(
-          name: updateNameController.text,
-          image: pickedProfileImage,
-          backDriverCard: pickedDeliveryBackImage,
-          frontDriverCard: pickedDeliveryFrontImage,
-          countries: context
-                  .read<AddNewShipmentCubit>()
-                  .selectedCountriesAtEditProfile ??
-              [],
-          truckTypeId: context.read<AddNewShipmentCubit>().shipmentType);
+        name: updateNameController.text,
+        image: pickedProfileImage,
+        backDriverCard: pickedDeliveryBackImage,
+        frontDriverCard: pickedDeliveryFrontImage,
+        countries:
+            context
+                .read<AddNewShipmentCubit>()
+                .selectedCountriesAtEditProfile ??
+            [],
+        truckTypeId: context.read<AddNewShipmentCubit>().shipmentType,
+      );
 
-      res.fold((l) {
-        errorGetBar(l.toString());
-        emit(ErrorUpadteProfileState());
-        Navigator.pop(context);
-      }, (r) {
-        if (r.status == 200) {
-          successGetBar(r.msg.toString());
-          Navigator.pop(context);
-          getAuthData(context);
-          emit(LoadedUpadteProfileState());
-        } else {
-          errorGetBar(r.msg.toString());
+      res.fold(
+        (l) {
+          errorGetBar(l.toString());
           emit(ErrorUpadteProfileState());
-        }
-        Navigator.pop(context);
-      });
+          Navigator.pop(context);
+        },
+        (r) {
+          if (r.status == 200) {
+            successGetBar(r.msg.toString());
+            Navigator.pop(context);
+            getAuthData(context);
+            emit(LoadedUpadteProfileState());
+          } else {
+            errorGetBar(r.msg.toString());
+            emit(ErrorUpadteProfileState());
+          }
+          Navigator.pop(context);
+        },
+      );
     } catch (e) {
       errorGetBar(e.toString());
       Navigator.pop(context);
