@@ -6,18 +6,20 @@ import 'core/init_config/initalization_config.dart';
 import 'core/utils/restart_app_class.dart';
 import 'features/driver/background_services.dart';
 
-
 void main() async {
   await initializationClass();
   // تهيئة الـ Background Service
   // await initializeService();
-  runApp(EasyLocalization(
+  runApp(
+    EasyLocalization(
       supportedLocales: const [Locale('ar', ''), Locale('en', '')],
       path: 'assets/lang',
       saveLocale: true,
       startLocale: const Locale('ar', ''),
       fallbackLocale: const Locale('ar', ''),
-      child: MyAppWithScreenUtil()));
+      child: MyAppWithScreenUtil(),
+    ),
+  );
 }
 
 class MyAppWithScreenUtil extends StatelessWidget {
@@ -26,8 +28,10 @@ class MyAppWithScreenUtil extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
-      designSize: Size(MediaQuery.of(context).size.width,
-          MediaQuery.of(context).size.height),
+      designSize: Size(
+        MediaQuery.of(context).size.width,
+        MediaQuery.of(context).size.height,
+      ),
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) {
