@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'hex_color.dart';
 
 class AppColors {
-
   static Color primary = HexColor('#DFDD00');
 
   static Color secondPrimary = HexColor('#003D2E');
@@ -45,8 +44,9 @@ class AppColors {
     assert(amount >= 0 && amount <= 1);
 
     final hsl = HSLColor.fromColor(HexColor(color));
-    final hslLight =
-        hsl.withLightness((hsl.lightness + amount).clamp(0.0, 1.0));
+    final hslLight = hsl.withLightness(
+      (hsl.lightness + amount).clamp(0.0, 1.0),
+    );
 
     return hslLight.toColor();
   }
