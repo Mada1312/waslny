@@ -22,127 +22,133 @@ class _LoginScreenState extends State<LoginScreen> {
       builder: (context, state) {
         var cubit = context.read<LoginCubit>();
         return Scaffold(
-            backgroundColor: AppColors.white,
-            body: SingleChildScrollView(
-              child: Column(
-                children: [
-                  CustomLoginAppbar(
-                    isWithBack: true,
-                    title: 'welcome'.tr(),
-                    imagePath: widget.isDriver
-                        ? ImageAssets.driverBar
-                        : ImageAssets.userCover,
-                    description: 'fill_data_to_enter'.tr(),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.all(16.0.w),
-                    child: Form(
-                      key: key,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          50.h.verticalSpace,
-                          CustomPhoneFormField(
-                            title: 'phone_number'.tr(),
-                            isRequired: true,
-                            controller: cubit.phoneNumberController,
-                            onChanged: (p0) {
-                              setState(() {
-                                cubit.fullPhoneNumber =
-                                    p0.completeNumber.replaceAll('+', '');
-                              });
-                            },
-                          ),
-                          // 80.h.verticalSpace,
-                          // CustomTextField(
-                          //   title: 'phone_number'.tr(),
-                          //   keyboardType: TextInputType.phone,
-                          //   controller: cubit.phoneNumberController,
-                          //   hintText: 'enter_your_number'.tr(),
-                          //   validationMessage: 'enter_your_number'.tr(),
-                          // ),
-                          10.h.verticalSpace,
-                          CustomTextField(
-                            title: 'password'.tr(),
-                            isPassword: true,
-                            isRequired: true,
-                            controller: cubit.passwordController,
-                            hintText: 'enter_password'.tr(),
-                            validationMessage: 'enter_password'.tr(),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(top: 5.0.h),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                InkWell(
-                                  onTap: () {
-                                    //!
-                                    Navigator.pushNamed(
-                                      context,
-                                      Routes.forgetPasswordScreen,
-                                      arguments: widget.isDriver,
-                                    );
-                                  },
-                                  child: Text(
-                                    'forget_password'.tr(),
-                                    style: TextStyle(
-                                        color: AppColors.primary,
-                                        fontSize: 16.sp),
+          backgroundColor: AppColors.white,
+          body: SingleChildScrollView(
+            child: Column(
+              children: [
+                CustomLoginAppbar(
+                  isWithBack: true,
+                  title: 'welcome'.tr(),
+                  imagePath: widget.isDriver
+                      ? ImageAssets.driverLogin
+                      : ImageAssets.userCover,
+                  description: 'fill_data_to_enter'.tr(),
+                ),
+                Padding(
+                  padding: EdgeInsets.all(16.0.w),
+                  child: Form(
+                    key: key,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        50.h.verticalSpace,
+                        CustomPhoneFormField(
+                          title: 'phone_number'.tr(),
+                          isRequired: true,
+                          controller: cubit.phoneNumberController,
+                          onChanged: (p0) {
+                            setState(() {
+                              cubit.fullPhoneNumber = p0.completeNumber
+                                  .replaceAll('+', '');
+                            });
+                          },
+                        ),
+                        // 80.h.verticalSpace,
+                        // CustomTextField(
+                        //   title: 'phone_number'.tr(),
+                        //   keyboardType: TextInputType.phone,
+                        //   controller: cubit.phoneNumberController,
+                        //   hintText: 'enter_your_number'.tr(),
+                        //   validationMessage: 'enter_your_number'.tr(),
+                        // ),
+                        10.h.verticalSpace,
+                        CustomTextField(
+                          title: 'password'.tr(),
+                          isPassword: true,
+                          isRequired: true,
+                          controller: cubit.passwordController,
+                          hintText: 'enter_password'.tr(),
+                          validationMessage: 'enter_password'.tr(),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(top: 5.0.h),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              InkWell(
+                                onTap: () {
+                                  //!
+                                  Navigator.pushNamed(
+                                    context,
+                                    Routes.forgetPasswordScreen,
+                                    arguments: widget.isDriver,
+                                  );
+                                },
+                                child: Text(
+                                  'forget_password'.tr(),
+                                  style: TextStyle(
+                                    color: AppColors.primary,
+                                    fontSize: 16.sp,
                                   ),
-                                )
-                              ],
-                            ),
+                                ),
+                              ),
+                            ],
                           ),
-                          32.h.verticalSpace,
-
-                          CustomButton(
-                            title: 'login'.tr(),
-                            onPressed: () {
-                              if (key.currentState!.validate()) {
-                                cubit.login(context, widget.isDriver);
-                              }
-                            },
-                          ),
-                          80.h.verticalSpace,
-                          Padding(
-                            padding: EdgeInsets.only(top: 5.0.h),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                InkWell(
-                                  onTap: () {
-                                    //!
-                                    Navigator.pushNamed(
-                                      context,
-                                      Routes.signUpRoute,
-                                      arguments: widget.isDriver,
-                                    );
-                                  },
-                                  child: RichText(
-                                      text: TextSpan(children: [
-                                    TextSpan(
+                        ),
+                        32.h.verticalSpace,
+                        CustomButton(
+                          title: 'login'.tr(),
+                          onPressed: () {
+                            if (key.currentState!.validate()) {
+                              cubit.login(context, widget.isDriver);
+                            }
+                          },
+                        ),
+                        80.h.verticalSpace,
+                        Padding(
+                          padding: EdgeInsets.only(top: 5.0.h),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              InkWell(
+                                onTap: () {
+                                  //!
+                                  Navigator.pushNamed(
+                                    context,
+                                    Routes.signUpRoute,
+                                    arguments: widget.isDriver,
+                                  );
+                                },
+                                child: RichText(
+                                  text: TextSpan(
+                                    children: [
+                                      TextSpan(
                                         text: 'dont_have_account'.tr(),
-                                        style:
-                                            getRegularStyle(fontSize: 16.sp)),
-                                    TextSpan(
+                                        style: getRegularStyle(fontSize: 16.sp),
+                                      ),
+                                      TextSpan(
                                         text: ' ${'sign_up'.tr()}',
                                         style: getMediumStyle(
-                                            fontSize: 16.sp,
-                                            color: AppColors.primary)),
-                                  ])),
-                                )
-                              ],
-                            ),
+                                          fontSize: 16.sp,
+                                          color: AppColors.primary,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                          // Center(child: ShowLoadingIndicator()),
-                        ],
-                      ),
+                        ),
+                        // Center(child: ShowLoadingIndicator()),
+                      ],
                     ),
                   ),
-                ],
-              ),
-            ));
+                ),
+              ],
+            ),
+          ),
+        );
       },
     );
   }

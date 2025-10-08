@@ -1,4 +1,4 @@
-import 'package:awesome_dialog/awesome_dialog.dart';
+// import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:waslny/core/exports.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get_core/get_core.dart';
@@ -75,89 +75,177 @@ messageGetBar(String message) {
     snackPosition: SnackPosition.TOP,
   ));
 }
-
-warningDialog(
-  BuildContext context, {
-  void Function()? onPressedOk,
-  String? title,
-  String? btnOkText,
-  String? desc,
-}) async {
-  await AwesomeDialog(
+//
+// warningDialog(
+//   BuildContext context, {
+//   void Function()? onPressedOk,
+//   String? title,
+//   String? btnOkText,
+//   String? desc,
+// }) async {
+//   await AwesomeDialog(
+//     context: context,
+//     customHeader: Padding(
+//       padding: const EdgeInsets.all(20),
+//       child: Image.asset(
+//         ImageAssets.dialogLogo,
+//         width: 80,
+//         height: 80,
+//       ),
+//     ),
+//     animType: AnimType.topSlide,
+//     showCloseIcon: false, // لأنك هتعمل زرار Cancel بنفسك
+//     body: Column(
+//       mainAxisSize: MainAxisSize.min,
+//       children: [
+//         Text(
+//           title ?? "warning".tr(),
+//           textAlign: TextAlign.center,
+//           style: getRegularStyle(fontSize: 16.sp),
+//         ),
+//         const SizedBox(height: 10),
+//         if (desc != null)
+//           Text(
+//             desc,
+//             textAlign: TextAlign.center,
+//             style: getMediumStyle(fontSize: 14.sp),
+//           ),
+//         const SizedBox(height: 20),
+//         Padding(
+//           padding: const EdgeInsets.all(8.0),
+//           child: Row(
+//             mainAxisAlignment: MainAxisAlignment.center,
+//             children: [
+//               Expanded(
+//                 child: ElevatedButton(
+//                   onPressed: () {
+//                     if (onPressedOk != null) onPressedOk();
+//                     Navigator.of(context).pop();
+//                   },
+//                   style: ElevatedButton.styleFrom(
+//                     backgroundColor: AppColors.secondPrimary,
+//                     shape: RoundedRectangleBorder(
+//                       borderRadius: BorderRadius.circular(8),
+//                     ),
+//                   ),
+//                   child: Text(
+//                     btnOkText ?? "confirm".tr(),
+//                     style: getRegularStyle(color: AppColors.primary),
+//                   ),
+//                 ),
+//               ),
+//               const SizedBox(width: 10),
+//               Expanded(
+//                 child: ElevatedButton(
+//                   onPressed: () {
+//                     Navigator.of(context).pop();
+//                   },
+//                   style: ElevatedButton.styleFrom(
+//                     backgroundColor: AppColors.secondPrimary,
+//                     shape: RoundedRectangleBorder(
+//                       borderRadius: BorderRadius.circular(8),
+//                     ),
+//                   ),
+//                   child: Text(
+//                     "cancel".tr(),
+//                     style: getRegularStyle(color: AppColors.primary),
+//                   ),
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ),
+//       ],
+//     ),
+//   ).show();
+// }
+Future<void> warningDialog(
+    BuildContext context, {
+      void Function()? onPressedOk,
+      String? title,
+      String? btnOkText,
+      String? desc,
+    }) async {
+  await showDialog(
     context: context,
-    customHeader: Padding(
-      padding: const EdgeInsets.all(20),
-      child: Image.asset(
-        ImageAssets.dialogLogo,
-        width: 80,
-        height: 80,
-      ),
-    ),
-    animType: AnimType.topSlide,
-    showCloseIcon: false, // لأنك هتعمل زرار Cancel بنفسك
-    body: Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          title ?? "warning".tr(),
-          textAlign: TextAlign.center,
-          style: getRegularStyle(fontSize: 16.sp),
-        ),
-        const SizedBox(height: 10),
-        if (desc != null)
-          Text(
-            desc,
-            textAlign: TextAlign.center,
-            style: getMediumStyle(fontSize: 14.sp),
-          ),
-        const SizedBox(height: 20),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+    barrierDismissible: false,
+    builder: (BuildContext dialogContext) {
+      return Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () {
-                    if (onPressedOk != null) onPressedOk();
-                    Navigator.of(context).pop();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.secondPrimary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: Text(
-                    btnOkText ?? "confirm".tr(),
-                    style: getRegularStyle(color: AppColors.primary),
-                  ),
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Image.asset(
+                  ImageAssets.dialogLogo,
+                  width: 80,
+                  height: 80,
                 ),
               ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.secondPrimary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+              Text(
+                title ?? "warning".tr(),
+                textAlign: TextAlign.center,
+                style: getRegularStyle(fontSize: 16.sp),
+              ),
+              const SizedBox(height: 10),
+              if (desc != null)
+                Text(
+                  desc,
+                  textAlign: TextAlign.center,
+                  style: getMediumStyle(fontSize: 14.sp),
+                ),
+              const SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          if (onPressedOk != null) onPressedOk();
+                          Navigator.of(dialogContext).pop();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.secondPrimary,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: Text(
+                          btnOkText ?? "confirm".tr(),
+                          style: getRegularStyle(color: AppColors.primary),
+                        ),
+                      ),
                     ),
-                  ),
-                  child: Text(
-                    "cancel".tr(),
-                    style: getRegularStyle(color: AppColors.primary),
-                  ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(dialogContext).pop();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.secondPrimary,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: Text(
+                          "cancel".tr(),
+                          style: getRegularStyle(color: AppColors.primary),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
         ),
-      ],
-    ),
-  ).show();
+      );
+    },
+  );
 }
-
 // test
