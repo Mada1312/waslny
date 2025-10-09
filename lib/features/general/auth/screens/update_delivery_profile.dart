@@ -50,135 +50,125 @@ class _UpdateDeliveryProfileState extends State<UpdateDeliveryProfile> {
                           Stack(
                             children: [
                               SizedBox(
-                                height: getHeightSize(context) / 4,
-                                width: double.infinity,
-                                child: Stack(
-                                  clipBehavior: Clip.none,
-                                  alignment: Alignment.bottomCenter,
-                                  children: [
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.only(
-                                        bottomLeft: Radius.circular(20.sp),
-                                        bottomRight: Radius.circular(20.sp),
-                                      ),
-                                      child: Image.asset(
-                                        ImageAssets.driverLogin,
-                                        fit: BoxFit.cover,
-                                        height: getHeightSize(context) / 4,
-                                        width: double.infinity,
-                                      ),
-                                    ),
-                                    Container(
-                                      decoration: BoxDecoration(
-                                        color: AppColors.secondPrimary
-                                            .withOpacity(0.8),
+                                  height: getHeightSize(context) / 4,
+                                  width: double.infinity,
+                                  child: Stack(
+                                    clipBehavior: Clip.none,
+                                    alignment: Alignment.bottomCenter,
+                                    children: [
+                                      ClipRRect(
                                         borderRadius: BorderRadius.only(
                                           bottomLeft: Radius.circular(20.sp),
                                           bottomRight: Radius.circular(20.sp),
                                         ),
-                                      ),
-                                    ),
-                                    PositionedDirectional(
-                                      start: 16.w,
-                                      top: 20.h,
-                                      child: Padding(
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: 16.w,
-                                          vertical: 20.h,
+                                        child: Image.asset(
+                                          ImageAssets.driverLogin,
+                                          fit: BoxFit.cover,
+                                          height: getHeightSize(context) / 4,
+                                          width: double.infinity,
                                         ),
-                                        child: Row(
+                                      ),
+                                      Container(
+                                        decoration: BoxDecoration(
+                                          color: AppColors.secondPrimary
+                                              .withOpacity(0.8),
+                                          borderRadius: BorderRadius.only(
+                                            bottomLeft: Radius.circular(20.sp),
+                                            bottomRight: Radius.circular(20.sp),
+                                          ),
+                                        ),
+                                      ),
+                                      PositionedDirectional(
+                                        start: 16.w,
+                                        top: 20.h,
+                                        child: Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 16.w, vertical: 20.h),
+                                          child: Row(
+                                            children: [
+                                              InkWell(
+                                                onTap: () =>
+                                                    Navigator.of(context).pop(),
+                                                child: Icon(
+                                                  Icons.arrow_back,
+                                                  color: AppColors.white,
+                                                ),
+                                              ),
+                                              10.w.horizontalSpace,
+                                              AutoSizeText(
+                                                'edit_account'.tr(),
+                                                maxLines: 1,
+                                                style: getRegularStyle(
+                                                  color: AppColors.white,
+                                                  fontSize: 16.sp,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      Positioned(
+                                        bottom: -50.h,
+                                        child: Stack(
+                                          alignment: Alignment.topLeft,
                                           children: [
+                                            Container(
+                                              margin: EdgeInsets.all(8.w),
+                                              decoration: BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                      color: Colors.black12,
+                                                      blurRadius: 10,
+                                                      spreadRadius: 2,
+                                                      offset:
+                                                          const Offset(0, 2),
+                                                    ),
+                                                  ]),
+                                              child: CircleAvatar(
+                                                radius: 60.r,
+                                                backgroundColor: Colors.white,
+                                                child: CircleAvatar(
+                                                    radius: 50.r,
+                                                    backgroundImage: cubit
+                                                                .pickedProfileImage !=
+                                                            null
+                                                        ? FileImage(cubit
+                                                            .pickedProfileImage!)
+                                                        : cubit.authData?.data
+                                                                    ?.image !=
+                                                                null
+                                                            ? NetworkImage(cubit
+                                                                .authData!
+                                                                .data!
+                                                                .image!)
+                                                            : const AssetImage(
+                                                                ImageAssets
+                                                                    .userIcon)),
+                                              ),
+                                            ),
                                             InkWell(
-                                              onTap: () =>
-                                                  Navigator.of(context).pop(),
-                                              child: Icon(
-                                                Icons.arrow_back,
-                                                color: AppColors.white,
+                                              onTap: () async {
+                                                await cubit
+                                                    .pickImageFromGallery();
+                                                setState(() {});
+                                              },
+                                              child: CircleAvatar(
+                                                radius: 20.r,
+                                                backgroundColor:
+                                                    AppColors.primary,
+                                                child: Icon(
+                                                  Icons.camera_alt_outlined,
+                                                  color: AppColors.white,
+                                                  size: 20.sp,
+                                                ),
                                               ),
-                                            ),
-                                            10.w.horizontalSpace,
-                                            AutoSizeText(
-                                              'edit_account'.tr(),
-                                              maxLines: 1,
-                                              style: getRegularStyle(
-                                                color: AppColors.white,
-                                                fontSize: 16.sp,
-                                              ),
-                                            ),
+                                            )
                                           ],
                                         ),
                                       ),
-                                    ),
-                                    Positioned(
-                                      bottom: -50.h,
-                                      child: Stack(
-                                        alignment: Alignment.topLeft,
-                                        children: [
-                                          Container(
-                                            margin: EdgeInsets.all(8.w),
-                                            decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              boxShadow: [
-                                                BoxShadow(
-                                                  color: Colors.black12,
-                                                  blurRadius: 10,
-                                                  spreadRadius: 2,
-                                                  offset: const Offset(0, 2),
-                                                ),
-                                              ],
-                                            ),
-                                            child: CircleAvatar(
-                                              radius: 60.r,
-                                              backgroundColor: Colors.white,
-                                              child: CircleAvatar(
-                                                radius: 50.r,
-                                                backgroundImage:
-                                                    cubit.pickedProfileImage !=
-                                                        null
-                                                    ? FileImage(
-                                                        cubit
-                                                            .pickedProfileImage!,
-                                                      )
-                                                    : cubit
-                                                              .authData
-                                                              ?.data
-                                                              ?.image !=
-                                                          null
-                                                    ? NetworkImage(
-                                                        cubit
-                                                            .authData!
-                                                            .data!
-                                                            .image!,
-                                                      )
-                                                    : const AssetImage(
-                                                        ImageAssets.userIcon,
-                                                      ),
-                                              ),
-                                            ),
-                                          ),
-                                          InkWell(
-                                            onTap: () async {
-                                              await cubit
-                                                  .pickImageFromGallery();
-                                              setState(() {});
-                                            },
-                                            child: CircleAvatar(
-                                              radius: 20.r,
-                                              backgroundColor:
-                                                  AppColors.primary,
-                                              child: Icon(
-                                                Icons.camera_alt_outlined,
-                                                color: AppColors.white,
-                                                size: 20.sp,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
+                                    ],
+                                  )),
                             ],
                           ),
                           60.h.verticalSpace,
@@ -199,25 +189,20 @@ class _UpdateDeliveryProfileState extends State<UpdateDeliveryProfile> {
                                     ),
                                     //! Country
                                     countryAndTypeCubit
-                                                .allCountries
-                                                ?.data
-                                                ?.length ==
+                                                .allCountries?.data?.length ==
                                             0
                                         ? Container()
                                         : MultiSelectDropdownWithChips<
-                                            GetCountriesAndTruckTypeModelData
-                                          >(
+                                            GetCountriesAndTruckTypeModelData>(
                                             title: 'to'.tr(),
                                             hintText: 'select_location'.tr(),
                                             selectedValues: countryAndTypeCubit
                                                 .selectedCountriesAtEditProfile,
-                                            validationMessage: 'select_location'
-                                                .tr(),
+                                            validationMessage:
+                                                'select_location'.tr(),
                                             isRequired: true,
-                                            items:
-                                                countryAndTypeCubit
-                                                    .allCountries
-                                                    ?.data ??
+                                            items: countryAndTypeCubit
+                                                    .allCountries?.data ??
                                                 [],
                                             itemBuilder: (item) {
                                               return item.name ?? '';
@@ -234,19 +219,16 @@ class _UpdateDeliveryProfileState extends State<UpdateDeliveryProfile> {
 
                                     //! Type
                                     countryAndTypeCubit
-                                                .allTruckType
-                                                ?.data
-                                                ?.length ==
+                                                .allTruckType?.data?.length ==
                                             0
                                         ? Container()
                                         : CustomDropdownButtonFormField<
-                                            GetCountriesAndTruckTypeModelData
-                                          >(
+                                            GetCountriesAndTruckTypeModelData>(
                                             title: 'shipment_type'.tr(),
                                             value: countryAndTypeCubit
                                                 .shipmentType,
-                                            validationMessage: 'shipment_type'
-                                                .tr(),
+                                            validationMessage:
+                                                'shipment_type'.tr(),
                                             validator: (value) {
                                               if (value == null) {
                                                 return 'shipment_type'.tr();
@@ -254,10 +236,8 @@ class _UpdateDeliveryProfileState extends State<UpdateDeliveryProfile> {
                                               return null;
                                             },
                                             isRequired: true,
-                                            items:
-                                                countryAndTypeCubit
-                                                    .allTruckType
-                                                    ?.data ??
+                                            items: countryAndTypeCubit
+                                                    .allTruckType?.data ??
                                                 [],
                                             itemBuilder: (item) {
                                               return item.name ?? '';
@@ -279,9 +259,7 @@ class _UpdateDeliveryProfileState extends State<UpdateDeliveryProfile> {
                                       isRequired: true,
                                     ),
                                     10.h.verticalSpace,
-                                    if (cubit
-                                        .updateNationalIdController
-                                        .text
+                                    if (cubit.updateNationalIdController.text
                                         .isNotEmpty)
                                       CustomTextField(
                                         title: 'national_id'.tr(),
@@ -294,10 +272,8 @@ class _UpdateDeliveryProfileState extends State<UpdateDeliveryProfile> {
                                     //!
                                     10.h.verticalSpace,
 
-                                    Text(
-                                      'driver_card'.tr(),
-                                      style: getMediumStyle(),
-                                    ),
+                                    Text('driver_card'.tr(),
+                                        style: getMediumStyle()),
                                     10.h.verticalSpace,
                                     Row(
                                       children: [
@@ -306,9 +282,8 @@ class _UpdateDeliveryProfileState extends State<UpdateDeliveryProfile> {
                                             onTap: () async {
                                               await cubit
                                                   .pickUserCardImageFromGallery(
-                                                    isDeliveryBackImage: true,
-                                                    isBackImage: false,
-                                                  );
+                                                      isDeliveryBackImage: true,
+                                                      isBackImage: false);
                                               setState(() {});
                                             },
                                             child: Padding(
@@ -324,19 +299,19 @@ class _UpdateDeliveryProfileState extends State<UpdateDeliveryProfile> {
                                                   child: Stack(
                                                     children: [
                                                       // Display either the placeholder or the uploaded image
-                                                      (cubit
-                                                                      .authData
-                                                                      ?.data
+
+                                                      (cubit.authData?.data
                                                                       ?.frontDriverCard !=
                                                                   null &&
                                                               cubit.pickedDeliveryFrontImage ==
                                                                   null)
                                                           ? ClipRRect(
                                                               borderRadius:
-                                                                  BorderRadius.circular(
-                                                                    12.r,
-                                                                  ),
-                                                              child: Image.network(
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          12.r),
+                                                              child:
+                                                                  Image.network(
                                                                 cubit
                                                                         .authData
                                                                         ?.data
@@ -348,90 +323,88 @@ class _UpdateDeliveryProfileState extends State<UpdateDeliveryProfile> {
                                                                     .infinity,
                                                                 height: 150.h,
                                                                 errorBuilder:
-                                                                    (
-                                                                      context,
-                                                                      error,
-                                                                      stackTrace,
-                                                                    ) => Center(
-                                                                      child: Padding(
-                                                                        padding:
-                                                                            EdgeInsets.all(
-                                                                              20.sp,
-                                                                            ),
-                                                                        child: Image.asset(
-                                                                          ImageAssets
-                                                                              .logo,
-                                                                          // color: AppColors
-                                                                          //     .primary,
-                                                                          width:
-                                                                              40.w,
-                                                                          height:
-                                                                              40.h,
-                                                                        ),
-                                                                      ),
+                                                                    (context,
+                                                                            error,
+                                                                            stackTrace) =>
+                                                                        Center(
+                                                                  child:
+                                                                      Padding(
+                                                                    padding: EdgeInsets
+                                                                        .all(20
+                                                                            .sp),
+                                                                    child: Image
+                                                                        .asset(
+                                                                      ImageAssets
+                                                                          .logo,
+                                                                      // color: AppColors
+                                                                      //     .primary,
+                                                                      width:
+                                                                          40.w,
+                                                                      height:
+                                                                          40.h,
                                                                     ),
+                                                                  ),
+                                                                ),
                                                               ),
                                                             )
                                                           : cubit.pickedDeliveryFrontImage ==
-                                                                null
-                                                          ? Center(
-                                                              child: Column(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .center,
-                                                                children: [
-                                                                  Icon(
-                                                                    Icons
-                                                                        .cloud_upload_outlined,
-                                                                    size: 40.sp,
-                                                                    color: AppColors
-                                                                        .primary,
+                                                                  null
+                                                              ? Center(
+                                                                  child: Column(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .center,
+                                                                    children: [
+                                                                      Icon(
+                                                                          Icons
+                                                                              .cloud_upload_outlined,
+                                                                          size: 40
+                                                                              .sp,
+                                                                          color:
+                                                                              AppColors.primary),
+                                                                      SizedBox(
+                                                                          height:
+                                                                              10.h),
+                                                                      Text(
+                                                                        'upload_front'
+                                                                            .tr(),
+                                                                        style:
+                                                                            TextStyle(
+                                                                          color:
+                                                                              Colors.grey[600],
+                                                                          fontSize:
+                                                                              14.sp,
+                                                                        ),
+                                                                      ),
+                                                                    ],
                                                                   ),
-                                                                  SizedBox(
+                                                                )
+                                                              : ClipRRect(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              12.r),
+                                                                  child: Image
+                                                                      .file(
+                                                                    File(cubit
+                                                                        .pickedDeliveryFrontImage!
+                                                                        .path),
+                                                                    fit: BoxFit
+                                                                        .cover,
+                                                                    width: double
+                                                                        .infinity,
                                                                     height:
-                                                                        10.h,
-                                                                  ),
-                                                                  Text(
-                                                                    'upload_front'
-                                                                        .tr(),
-                                                                    style: TextStyle(
-                                                                      color: Colors
-                                                                          .grey[600],
-                                                                      fontSize:
-                                                                          14.sp,
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            )
-                                                          : ClipRRect(
-                                                              borderRadius:
-                                                                  BorderRadius.circular(
-                                                                    12.r,
-                                                                  ),
-                                                              child: Image.file(
-                                                                File(
-                                                                  cubit
-                                                                      .pickedDeliveryFrontImage!
-                                                                      .path,
-                                                                ),
-                                                                fit: BoxFit
-                                                                    .cover,
-                                                                width: double
-                                                                    .infinity,
-                                                                height: 150.h,
-                                                                errorBuilder:
-                                                                    (
-                                                                      context,
-                                                                      error,
-                                                                      stackTrace,
-                                                                    ) => Center(
-                                                                      child: Padding(
+                                                                        150.h,
+                                                                    errorBuilder: (context,
+                                                                            error,
+                                                                            stackTrace) =>
+                                                                        Center(
+                                                                      child:
+                                                                          Padding(
                                                                         padding:
-                                                                            EdgeInsets.all(
-                                                                              20.sp,
-                                                                            ),
-                                                                        child: Image.asset(
+                                                                            EdgeInsets.all(20.sp),
+                                                                        child: Image
+                                                                            .asset(
                                                                           ImageAssets
                                                                               .logo,
                                                                           // color:
@@ -443,20 +416,19 @@ class _UpdateDeliveryProfileState extends State<UpdateDeliveryProfile> {
                                                                         ),
                                                                       ),
                                                                     ),
-                                                              ),
-                                                            ),
+                                                                  ),
+                                                                ),
                                                       // Show remove button only if an image is uploaded
                                                       if (cubit.pickedDeliveryFrontImage !=
                                                               null ||
-                                                          cubit
-                                                                  .authData
-                                                                  ?.data
+                                                          cubit.authData?.data
                                                                   ?.frontDriverCard !=
                                                               null)
                                                         Positioned(
                                                           top: 10.h,
                                                           right: 10.w,
-                                                          child: GestureDetector(
+                                                          child:
+                                                              GestureDetector(
                                                             onTap: () {
                                                               cubit.pickedDeliveryFrontImage =
                                                                   null;
@@ -494,9 +466,8 @@ class _UpdateDeliveryProfileState extends State<UpdateDeliveryProfile> {
                                             onTap: () async {
                                               await cubit
                                                   .pickUserCardImageFromGallery(
-                                                    isDeliveryBackImage: true,
-                                                    isBackImage: true,
-                                                  );
+                                                      isDeliveryBackImage: true,
+                                                      isBackImage: true);
                                               setState(() {});
                                             },
                                             child: Padding(
@@ -512,19 +483,19 @@ class _UpdateDeliveryProfileState extends State<UpdateDeliveryProfile> {
                                                   child: Stack(
                                                     children: [
                                                       // Display either the placeholder or the uploaded image
-                                                      (cubit
-                                                                      .authData
-                                                                      ?.data
+
+                                                      (cubit.authData?.data
                                                                       ?.backDriverCard !=
                                                                   null &&
                                                               cubit.pickedDeliveryBackImage ==
                                                                   null)
                                                           ? ClipRRect(
                                                               borderRadius:
-                                                                  BorderRadius.circular(
-                                                                    12.r,
-                                                                  ),
-                                                              child: Image.network(
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          12.r),
+                                                              child:
+                                                                  Image.network(
                                                                 cubit
                                                                         .authData
                                                                         ?.data
@@ -536,90 +507,88 @@ class _UpdateDeliveryProfileState extends State<UpdateDeliveryProfile> {
                                                                     .infinity,
                                                                 height: 150.h,
                                                                 errorBuilder:
-                                                                    (
-                                                                      context,
-                                                                      error,
-                                                                      stackTrace,
-                                                                    ) => Center(
-                                                                      child: Padding(
-                                                                        padding:
-                                                                            EdgeInsets.all(
-                                                                              20.sp,
-                                                                            ),
-                                                                        child: Image.asset(
-                                                                          ImageAssets
-                                                                              .logo,
-                                                                          // color: AppColors
-                                                                          //     .primary,
-                                                                          width:
-                                                                              40.w,
-                                                                          height:
-                                                                              40.h,
-                                                                        ),
-                                                                      ),
+                                                                    (context,
+                                                                            error,
+                                                                            stackTrace) =>
+                                                                        Center(
+                                                                  child:
+                                                                      Padding(
+                                                                    padding: EdgeInsets
+                                                                        .all(20
+                                                                            .sp),
+                                                                    child: Image
+                                                                        .asset(
+                                                                      ImageAssets
+                                                                          .logo,
+                                                                      // color: AppColors
+                                                                      //     .primary,
+                                                                      width:
+                                                                          40.w,
+                                                                      height:
+                                                                          40.h,
                                                                     ),
+                                                                  ),
+                                                                ),
                                                               ),
                                                             )
                                                           : cubit.pickedDeliveryBackImage ==
-                                                                null
-                                                          ? Center(
-                                                              child: Column(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .center,
-                                                                children: [
-                                                                  Icon(
-                                                                    Icons
-                                                                        .cloud_upload_outlined,
-                                                                    size: 40.sp,
-                                                                    color: AppColors
-                                                                        .primary,
+                                                                  null
+                                                              ? Center(
+                                                                  child: Column(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .center,
+                                                                    children: [
+                                                                      Icon(
+                                                                          Icons
+                                                                              .cloud_upload_outlined,
+                                                                          size: 40
+                                                                              .sp,
+                                                                          color:
+                                                                              AppColors.primary),
+                                                                      SizedBox(
+                                                                          height:
+                                                                              10.h),
+                                                                      Text(
+                                                                        'upload_back'
+                                                                            .tr(),
+                                                                        style:
+                                                                            TextStyle(
+                                                                          color:
+                                                                              Colors.grey[600],
+                                                                          fontSize:
+                                                                              14.sp,
+                                                                        ),
+                                                                      ),
+                                                                    ],
                                                                   ),
-                                                                  SizedBox(
+                                                                )
+                                                              : ClipRRect(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              12.r),
+                                                                  child: Image
+                                                                      .file(
+                                                                    File(cubit
+                                                                        .pickedDeliveryBackImage!
+                                                                        .path),
+                                                                    fit: BoxFit
+                                                                        .cover,
+                                                                    width: double
+                                                                        .infinity,
                                                                     height:
-                                                                        10.h,
-                                                                  ),
-                                                                  Text(
-                                                                    'upload_back'
-                                                                        .tr(),
-                                                                    style: TextStyle(
-                                                                      color: Colors
-                                                                          .grey[600],
-                                                                      fontSize:
-                                                                          14.sp,
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            )
-                                                          : ClipRRect(
-                                                              borderRadius:
-                                                                  BorderRadius.circular(
-                                                                    12.r,
-                                                                  ),
-                                                              child: Image.file(
-                                                                File(
-                                                                  cubit
-                                                                      .pickedDeliveryBackImage!
-                                                                      .path,
-                                                                ),
-                                                                fit: BoxFit
-                                                                    .cover,
-                                                                width: double
-                                                                    .infinity,
-                                                                height: 150.h,
-                                                                errorBuilder:
-                                                                    (
-                                                                      context,
-                                                                      error,
-                                                                      stackTrace,
-                                                                    ) => Center(
-                                                                      child: Padding(
+                                                                        150.h,
+                                                                    errorBuilder: (context,
+                                                                            error,
+                                                                            stackTrace) =>
+                                                                        Center(
+                                                                      child:
+                                                                          Padding(
                                                                         padding:
-                                                                            EdgeInsets.all(
-                                                                              20.sp,
-                                                                            ),
-                                                                        child: Image.asset(
+                                                                            EdgeInsets.all(20.sp),
+                                                                        child: Image
+                                                                            .asset(
                                                                           ImageAssets
                                                                               .logo,
                                                                           // color:
@@ -631,20 +600,19 @@ class _UpdateDeliveryProfileState extends State<UpdateDeliveryProfile> {
                                                                         ),
                                                                       ),
                                                                     ),
-                                                              ),
-                                                            ),
+                                                                  ),
+                                                                ),
                                                       // Show remove button only if an image is uploaded
                                                       if (cubit.pickedDeliveryBackImage !=
                                                               null ||
-                                                          cubit
-                                                                  .authData
-                                                                  ?.data
+                                                          cubit.authData?.data
                                                                   ?.backDriverCard !=
                                                               null)
                                                         Positioned(
                                                           top: 10.h,
                                                           right: 10.w,
-                                                          child: GestureDetector(
+                                                          child:
+                                                              GestureDetector(
                                                             onTap: () {
                                                               cubit.pickedDeliveryBackImage =
                                                                   null;
@@ -675,7 +643,7 @@ class _UpdateDeliveryProfileState extends State<UpdateDeliveryProfile> {
                                               ),
                                             ),
                                           ),
-                                        ),
+                                        )
                                       ],
                                     ),
                                     20.h.verticalSpace,

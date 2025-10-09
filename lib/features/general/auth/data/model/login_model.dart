@@ -5,11 +5,7 @@ class LoginModel {
   String? msg;
   int? status;
 
-  LoginModel({
-    this.data,
-    this.msg,
-    this.status,
-  });
+  LoginModel({this.data, this.msg, this.status});
 
   factory LoginModel.fromJson(Map<String, dynamic> json) {
     return LoginModel(
@@ -22,19 +18,11 @@ class LoginModel {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'data': data?.toJson(),
-      'msg': msg,
-      'status': status,
-    };
+    return {'data': data?.toJson(), 'msg': msg, 'status': status};
   }
 
   // CopyWith method for LoginModel
-  LoginModel copyWith({
-    LoginModelData? data,
-    String? msg,
-    int? status,
-  }) {
+  LoginModel copyWith({LoginModelData? data, String? msg, int? status}) {
     return LoginModel(
       data: data ?? this.data,
       msg: msg ?? this.msg,
@@ -83,20 +71,25 @@ class LoginModelData {
       token: json['token'] as String?,
       image: json['image'],
       nationalId: json['user_type'] == 0 ? null : json['national_id'],
-      frontDriverCard:
-          json['user_type'] == 0 ? null : json['front_driver_card'],
+      frontDriverCard: json['user_type'] == 0
+          ? null
+          : json['front_driver_card'],
       backDriverCard: json['user_type'] == 0 ? null : json['back_driver_card'],
       exportCard: json['user_type'] == 1 ? null : json['export_card'],
       address: json['address'],
       countries: json['countries'] != null
           ? (json['countries'] as List<dynamic>)
-              .map((x) => GetCountriesAndTruckTypeModelData.fromJson(
-                  x as Map<String, dynamic>))
-              .toList()
+                .map(
+                  (x) => GetCountriesAndTruckTypeModelData.fromJson(
+                    x as Map<String, dynamic>,
+                  ),
+                )
+                .toList()
           : [],
       truckType: json['truck_type'] != null
           ? GetCountriesAndTruckTypeModelData.fromJson(
-              json['truck_type'] as Map<String, dynamic>)
+              json['truck_type'] as Map<String, dynamic>,
+            )
           : null,
     );
   }
