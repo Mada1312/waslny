@@ -34,7 +34,7 @@ class ImageAssets {
   static const String editIcon = '$imagePath/edit_icon.png';
   static const String verifyIcon = '$imagePath/verify.png';
   static const String userCover = '$imagePath/user_cover.png';
-  static const String driverBar = '$imagePath/driver_bar.png';
+
   static const String loaderIcon = '$imagePath/dialog_logo.png';
   // static const String loaderIcon = '$imagePath/loader.png';
   static const String noData = '$imagePath/no_data.png';

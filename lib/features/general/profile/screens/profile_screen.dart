@@ -13,27 +13,25 @@ import 'exporter_fav_driver.dart';
 import 'privacy_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({
-    super.key,
-    required this.isDriver,
-  });
+  const ProfileScreen({super.key, required this.isDriver});
   final bool isDriver;
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ProfileCubit, ProfileState>(builder: (context, state) {
-      var cubit = context.read<ProfileCubit>();
+    return BlocBuilder<ProfileCubit, ProfileState>(
+      builder: (context, state) {
+        var cubit = context.read<ProfileCubit>();
 
-      return SafeArea(
-        top: false,
-        child: Scaffold(
-          // appBar: customAppBar(context,
-          //     title: 'my_account'.tr(), leading: SizedBox()),
-          body: Column(
-            children: [
-              Stack(
-                children: [
-                  SizedBox(
+        return SafeArea(
+          top: false,
+          child: Scaffold(
+            // appBar: customAppBar(context,
+            //     title: 'my_account'.tr(), leading: SizedBox()),
+            body: Column(
+              children: [
+                Stack(
+                  children: [
+                    SizedBox(
                       height: getHeightSize(context) / 4,
                       width: double.infinity,
                       child: Stack(
@@ -47,7 +45,7 @@ class ProfileScreen extends StatelessWidget {
                             ),
                             child: Image.asset(
                               isDriver
-                                  ? ImageAssets.driverBar
+                                  ? ImageAssets.driverLogin
                                   : ImageAssets.userCover,
                               fit: BoxFit.cover,
                               height: getHeightSize(context) / 4,
@@ -68,7 +66,9 @@ class ProfileScreen extends StatelessWidget {
                             top: 20.h,
                             child: Padding(
                               padding: EdgeInsets.symmetric(
-                                  horizontal: 16.w, vertical: 20.h),
+                                horizontal: 16.w,
+                                vertical: 20.h,
+                              ),
                               child: AutoSizeText(
                                 'my_account'.tr(),
                                 maxLines: 1,
@@ -80,10 +80,10 @@ class ProfileScreen extends StatelessWidget {
                             ),
                           ),
                           Positioned(
-                              bottom: -50.h,
-                              child: Center(
-                                child: BlocBuilder<LoginCubit, LoginState>(
-                                    builder: (context, state) {
+                            bottom: -50.h,
+                            child: Center(
+                              child: BlocBuilder<LoginCubit, LoginState>(
+                                builder: (context, state) {
                                   var loginCubit = context.read<LoginCubit>();
                                   return Container(
                                     padding: EdgeInsets.all(5.w),
@@ -95,13 +95,16 @@ class ProfileScreen extends StatelessWidget {
                                           color: Colors.grey.withOpacity(0.2),
                                           spreadRadius: 1,
                                           blurRadius: 5,
-                                          offset: Offset(0,
-                                              3), // changes position of shadow
+                                          offset: Offset(
+                                            0,
+                                            3,
+                                          ), // changes position of shadow
                                         ),
                                       ],
                                     ),
                                     child: CustomNetworkImage(
-                                      image: loginCubit.authData?.data?.image ??
+                                      image:
+                                          loginCubit.authData?.data?.image ??
                                           "",
                                       isUser: true,
                                       height: 100.h,
@@ -109,215 +112,240 @@ class ProfileScreen extends StatelessWidget {
                                       borderRadius: 1000,
                                     ),
                                   );
-                                }),
-                              )),
-                        ],
-                      )),
-                ],
-              ),
-              Expanded(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: getHorizontalPadding(context),
-                  ),
-                  child: Column(
-                    children: [
-                      60.h.verticalSpace,
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          BlocBuilder<LoginCubit, LoginState>(
-                              builder: (context, state) {
-                            var loginCubit = context.read<LoginCubit>();
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Text(
-                                  loginCubit.authData?.data?.name ?? '',
-                                  textAlign: TextAlign.center,
-                                  style: getMediumStyle(fontSize: 18.sp),
-                                ),
-                                5.h.verticalSpace,
-                                Text(
-                                  loginCubit.authData?.data?.phone.toString() ??
-                                      '',
-                                  style: getRegularStyle(
-                                      fontSize: 16.sp,
-                                      color: AppColors.darkGrey),
-                                ),
-                                5.h.verticalSpace,
-                              ],
-                            );
-                          })
+                                },
+                              ),
+                            ),
+                          ),
                         ],
                       ),
-                      Expanded(
-                        child: SingleChildScrollView(
-                          child: Column(
-                            children: [
-                              //TODO
-                              CustomProfileRow(
-                                title: 'tutorial_video',
-                                path: AppIcons.video,
-                                onTap: () {
-                                  Navigator.pushNamed(
-                                    context,
-                                    Routes.tutorialVideoScreenRoute,
-                                  );
-                                  log('video screen');
-                                },
-                              ),
-                              //! Done
-
-                              if (!isDriver)
+                    ),
+                  ],
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: getHorizontalPadding(context),
+                    ),
+                    child: Column(
+                      children: [
+                        60.h.verticalSpace,
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            BlocBuilder<LoginCubit, LoginState>(
+                              builder: (context, state) {
+                                var loginCubit = context.read<LoginCubit>();
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      loginCubit.authData?.data?.name ?? '',
+                                      textAlign: TextAlign.center,
+                                      style: getMediumStyle(fontSize: 18.sp),
+                                    ),
+                                    5.h.verticalSpace,
+                                    Text(
+                                      loginCubit.authData?.data?.phone
+                                              .toString() ??
+                                          '',
+                                      style: getRegularStyle(
+                                        fontSize: 16.sp,
+                                        color: AppColors.darkGrey,
+                                      ),
+                                    ),
+                                    5.h.verticalSpace,
+                                  ],
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                        Expanded(
+                          child: SingleChildScrollView(
+                            child: Column(
+                              children: [
+                                //TODO
                                 CustomProfileRow(
+                                  title: 'tutorial_video',
+                                  path: AppIcons.video,
                                   onTap: () {
-                                    context
-                                        .read<UserShipmentsCubit>()
-                                        .changeSelectedStatus(
-                                            ShipmentsStatusEnum.delivered);
-
                                     Navigator.pushNamed(
-                                        context, Routes.userShipmentsRoute);
-
-                                    //!
+                                      context,
+                                      Routes.tutorialVideoScreenRoute,
+                                    );
+                                    log('video screen');
                                   },
-                                  title: 'trip_history',
-                                  path: AppIcons.shipmentLog,
                                 ),
 
-                              if (!isDriver)
-                                CustomProfileRow(
-                                  title: 'favorites',
-                                  path: AppIcons.myFavorites,
-                                  onTap: () {
-                                    Navigator.push(
+                                //! Done
+                                if (!isDriver)
+                                  CustomProfileRow(
+                                    onTap: () {
+                                      context
+                                          .read<UserShipmentsCubit>()
+                                          .changeSelectedStatus(
+                                            ShipmentsStatusEnum.delivered,
+                                          );
+
+                                      Navigator.pushNamed(
+                                        context,
+                                        Routes.userShipmentsRoute,
+                                      );
+
+                                      //!
+                                    },
+                                    title: 'trip_history',
+                                    path: AppIcons.shipmentLog,
+                                  ),
+
+                                if (!isDriver)
+                                  CustomProfileRow(
+                                    title: 'favorites',
+                                    path: AppIcons.myFavorites,
+                                    onTap: () {
+                                      Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                            builder: (context) =>
-                                                UserFavDriver()));
+                                          builder: (context) => UserFavDriver(),
+                                        ),
+                                      );
+                                    },
+                                  ),
+
+                                //TODO
+                                CustomProfileRow(
+                                  title: 'edit_account',
+                                  path: AppIcons.editProfile,
+                                  onTap: () {
+                                    if (isDriver) {
+                                      Navigator.pushNamed(
+                                        context,
+                                        Routes.editDeliveryProfileRoute,
+                                      );
+                                    } else {
+                                      Navigator.pushNamed(
+                                        context,
+                                        Routes.editUserProfileRoute,
+                                      );
+                                    }
                                   },
                                 ),
-                              //TODO
+                                CustomProfileRow(
+                                  title: 'change_langauge'.tr(),
+                                  path: AppIcons.lang,
+                                  islang: true,
+                                  onTap: () {
+                                    if (EasyLocalization.of(
+                                          context,
+                                        )!.locale.languageCode ==
+                                        'ar') {
+                                      EasyLocalization.of(
+                                        context,
+                                      )!.setLocale(const Locale('en', ''));
+                                      Preferences.instance.savedLang('en');
+                                      Preferences.instance.getSavedLang();
+                                      // HotRestartController.performHotRestart(context);
+                                    } else {
+                                      EasyLocalization.of(
+                                        context,
+                                      )!.setLocale(const Locale('ar', ''));
+                                      Preferences.instance.savedLang('ar');
+                                      Preferences.instance.getSavedLang();
+                                    }
+                                    HotRestartController.performHotRestart(
+                                      context,
+                                    );
+                                  },
+                                ),
 
-                              CustomProfileRow(
-                                title: 'edit_account',
-                                path: AppIcons.editProfile,
-                                onTap: () {
-                                  if (isDriver) {
-                                    Navigator.pushNamed(context,
-                                        Routes.editDeliveryProfileRoute);
-                                  } else {
+                                //! Done
+                                CustomProfileRow(
+                                  title: 'contact_us',
+                                  path: AppIcons.contactUs,
+                                  onTap: () {
                                     Navigator.pushNamed(
-                                        context, Routes.editUserProfileRoute);
-                                  }
-                                },
-                              ),
-                              CustomProfileRow(
-                                title: 'change_langauge'.tr(),
-                                path: AppIcons.lang,
-                                islang: true,
-                                onTap: () {
-                                  if (EasyLocalization.of(context)!
-                                          .locale
-                                          .languageCode ==
-                                      'ar') {
-                                    EasyLocalization.of(context)!
-                                        .setLocale(const Locale('en', ''));
-                                    Preferences.instance.savedLang('en');
-                                    Preferences.instance.getSavedLang();
-                                    // HotRestartController.performHotRestart(context);
-                                  } else {
-                                    EasyLocalization.of(context)!
-                                        .setLocale(const Locale('ar', ''));
-                                    Preferences.instance.savedLang('ar');
-                                    Preferences.instance.getSavedLang();
-                                  }
-                                  HotRestartController.performHotRestart(
-                                      context);
-                                },
-                              ),
+                                      context,
+                                      Routes.contactUsScreen,
+                                    );
+                                  },
+                                ),
 
-                              //! Done
-
-                              CustomProfileRow(
-                                title: 'contact_us',
-                                path: AppIcons.contactUs,
-                                onTap: () {
-                                  Navigator.pushNamed(
-                                      context, Routes.contactUsScreen);
-                                },
-                              ),
-                              //TODO
-
-                              CustomProfileRow(
-                                title: 'terms_and_conditions',
-                                path: AppIcons.terms,
-                                onTap: () {
-                                  Navigator.push(
+                                //TODO
+                                CustomProfileRow(
+                                  title: 'terms_and_conditions',
+                                  path: AppIcons.terms,
+                                  onTap: () {
+                                    Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) =>
-                                              PrivacyAndTermsScreen()));
-                                },
-                              ),
-                              //! Done
+                                        builder: (context) =>
+                                            PrivacyAndTermsScreen(),
+                                      ),
+                                    );
+                                  },
+                                ),
 
-                              CustomProfileRow(
-                                title: 'share_app',
-                                path: AppIcons.share,
-                                onTap: () async {
-                                  await cubit.shareApp();
-                                },
-                              ),
-                              //! Done
+                                //! Done
+                                CustomProfileRow(
+                                  title: 'share_app',
+                                  path: AppIcons.share,
+                                  onTap: () async {
+                                    await cubit.shareApp();
+                                  },
+                                ),
 
-                              CustomProfileRow(
-                                title: 'rate_app',
-                                path: AppIcons.rateApp,
-                                onTap: () async {
-                                  await cubit.rateApp();
-                                },
-                              ),
-                              //! Done
+                                //! Done
+                                CustomProfileRow(
+                                  title: 'rate_app',
+                                  path: AppIcons.rateApp,
+                                  onTap: () async {
+                                    await cubit.rateApp();
+                                  },
+                                ),
 
-                              CustomProfileRow(
-                                title: 'delete_account',
-                                path: AppIcons.deleteAccount,
-                                onTap: () {
-                                  warningDialog(context,
+                                //! Done
+                                CustomProfileRow(
+                                  title: 'delete_account',
+                                  path: AppIcons.deleteAccount,
+                                  onTap: () {
+                                    warningDialog(
+                                      context,
                                       title: 'confirm_delete_account'.tr(),
                                       btnOkText: 'delete'.tr(),
                                       onPressedOk: () {
-                                    cubit.deleteAccount(context);
-                                  });
-                                },
-                              ),
-                              //! Done
-                              CustomProfileRow(
-                                title: 'logout',
-                                path: AppIcons.logout,
-                                onTap: () {
-                                  warningDialog(context,
+                                        cubit.deleteAccount(context);
+                                      },
+                                    );
+                                  },
+                                ),
+                                //! Done
+                                CustomProfileRow(
+                                  title: 'logout',
+                                  path: AppIcons.logout,
+                                  onTap: () {
+                                    warningDialog(
+                                      context,
                                       title: 'confirm_logout'.tr(),
                                       onPressedOk: () {
-                                    cubit.logout(context);
-                                  });
-                                },
-                              ),
-                            ],
+                                        cubit.logout(context);
+                                      },
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      );
-    });
+        );
+      },
+    );
   }
 }
 
@@ -340,9 +368,7 @@ class CustomProfileRow extends StatelessWidget {
       highlightColor: Colors.transparent,
       splashColor: Colors.transparent,
       child: Container(
-        margin: EdgeInsets.symmetric(
-          vertical: 4.h,
-        ),
+        margin: EdgeInsets.symmetric(vertical: 4.h),
         decoration: BoxDecoration(
           color: AppColors.menuContainer,
           borderRadius: BorderRadius.circular(6.r),
@@ -352,10 +378,11 @@ class CustomProfileRow extends StatelessWidget {
           child: Row(
             children: [
               MySvgWidget(
-                  path: path,
-                  // imageColor: AppColors.secondPrimary,
-                  height: 24.w,
-                  width: 24.w),
+                path: path,
+                // imageColor: AppColors.secondPrimary,
+                height: 24.w,
+                width: 24.w,
+              ),
               10.w.horizontalSpace,
               Expanded(
                 child: Text(

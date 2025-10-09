@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:waslny/features/general/auth/screens/widget/enum_gender.dart';
 import 'package:waslny/features/user/add_new_shipment/cubit/cubit.dart';
 
 import '../../../../core/exports.dart';
@@ -20,6 +21,8 @@ class LoginCubit extends Cubit<LoginState> {
   TextEditingController phoneNumberForgetController = TextEditingController();
   String? fullPhoneNumber;
   bool acceptTermsAndConditions = false;
+  Gender? gender;
+  Gender? vehicleType;
   onChangeStatus() {
     acceptTermsAndConditions = !acceptTermsAndConditions;
     emit(OnChangeStatusOfLogin());
