@@ -43,7 +43,9 @@ class _MainScreenState extends State<MainScreen> {
           child: SafeArea(
             top: false,
             child: Scaffold(
-              body: cubit.screens[cubit.currentIndex],
+              body: widget.isDriver
+                  ? cubit.driverScreens[cubit.currentIndex]
+                  : cubit.userScreens[cubit.currentIndex],
               bottomNavigationBar: Container(
                 margin: EdgeInsets.only(bottom: 10.w, left: 20.h, right: 20.h),
                 padding: EdgeInsets.all(3.r),
