@@ -38,53 +38,76 @@ class CustomDropdownButtonFormField<T> extends StatelessWidget {
           Padding(
             padding: EdgeInsets.only(bottom: 8.h),
             child: RichText(
-                text: TextSpan(children: [
-              TextSpan(text: title ?? '', style: getMediumStyle()),
-              TextSpan(
-                  text: isRequired ? ' *' : '',
-                  style: getMediumStyle(
-                    color: AppColors.red,
-                  )),
-            ])),
+              text: TextSpan(
+                children: [
+                  TextSpan(
+                    text: title ?? '',
+                    style: getMediumStyle(color: AppColors.secondPrimary),
+                  ),
+                  TextSpan(
+                    text: isRequired ? ' *' : '',
+                    style: getMediumStyle(color: AppColors.red),
+                  ),
+                ],
+              ),
+            ),
           ),
         DropdownButtonFormField<T>(
           icon: Container(),
           value: value,
           validator: isRequired
               ? validator ??
-                  (value) {
-                    if (value == null || value == '') {
-                      return validationMessage ?? '';
+                    (value) {
+                      if (value == null || value == '') {
+                        return validationMessage ?? '';
+                      }
+                      return null;
                     }
-                    return null;
-                  }
               : null,
           hint: Text(
             hintText ?? "choose".tr(),
-            style: getRegularStyle(fontSize: 14.sp, color: AppColors.darkGrey),
+            style: getRegularStyle(
+              fontSize: 14.sp,
+              color: AppColors.secondPrimary,
+            ),
           ),
           decoration: InputDecoration(
             hintText: hintText ?? "choose",
             contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 12.h),
-            hintStyle:
-                getRegularStyle(fontSize: 10.sp, color: AppColors.darkGrey),
+            hintStyle: getRegularStyle(
+              fontSize: 10.sp,
+              color: AppColors.secondPrimary,
+            ),
             filled: true,
-            fillColor: AppColors.lightGrey,
+            fillColor: AppColors.secondPrimary.withAlpha(25),
             border: OutlineInputBorder(
-                borderSide: BorderSide(color: AppColors.lightGrey, width: 1.5),
-                borderRadius: BorderRadius.all(Radius.circular(10.r))),
+              borderSide: BorderSide(
+                color: AppColors.secondPrimary.withAlpha(25),
+                width: 0,
+              ),
+              borderRadius: BorderRadius.all(Radius.circular(10.r)),
+            ),
             focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: AppColors.lightGrey, width: 1.5.w),
+              borderSide: BorderSide(
+                color: AppColors.secondPrimary.withAlpha(25),
+                width: 0.w,
+              ),
               borderRadius: BorderRadius.all(Radius.circular(10.r)),
             ),
             enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: AppColors.lightGrey, width: 1.5.w),
+              borderSide: BorderSide(
+                color: AppColors.secondPrimary.withAlpha(25),
+                width: 0.w,
+              ),
               borderRadius: BorderRadius.all(Radius.circular(10.r)),
             ),
             alignLabelWithHint: true,
             suffixIcon: Padding(
               padding: EdgeInsets.only(right: 8.w),
-              child: Icon(Icons.keyboard_arrow_down, color: AppColors.darkGrey),
+              child: Icon(
+                Icons.keyboard_arrow_down,
+                color: AppColors.secondPrimary,
+              ),
             ),
           ),
           style: getMediumStyle(),
@@ -95,9 +118,7 @@ class CustomDropdownButtonFormField<T> extends StatelessWidget {
                 itemBuilder(item),
                 maxLines: 1,
                 // Use the itemBuilder to display the item
-                style: TextStyle(
-                  color: AppColors.black,
-                ),
+                style: TextStyle(color: AppColors.black),
               ),
             );
           }).toList(),

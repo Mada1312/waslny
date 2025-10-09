@@ -22,14 +22,19 @@ class MainCubit extends Cubit<MainState> {
     emit(ChangeIndexState());
   }
 
-  List<Widget> screens = [
-    UserHomeScreen(),
-    NotificationsScreen(
-      isDriver: false,
-    ),
+  List<Widget> driverScreens = [
+    DriverHomeScreen(),
+    NotificationsScreen(isDriver: true),
     AllRoomScreen(),
-    ProfileScreen(
-      isDriver: false,
-    ),
+    ProfileScreen(isDriver: true),
+  ];
+
+  List<Widget> userScreens = [
+    UserHomeScreen(),
+
+    NotificationsScreen(isDriver: false),
+    AllRoomScreen(),
+
+    ProfileScreen(isDriver: false),
   ];
 }
