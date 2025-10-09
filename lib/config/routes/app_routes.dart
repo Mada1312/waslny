@@ -48,9 +48,7 @@ class AppRoutes {
   static Route onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
       case Routes.initialRoute:
-        return MaterialPageRoute(
-          builder: (context) => const SplashScreen(),
-        );
+        return MaterialPageRoute(builder: (context) => const SplashScreen());
 
       // case Routes.detailsRoute:
       //   final service = settings.arguments as ServicesModel;
@@ -88,9 +86,7 @@ class AppRoutes {
       case Routes.mainRoute:
         bool isDriver = settings.arguments as bool;
         return PageTransition(
-          child: MainScreen(
-            isDriver: isDriver,
-          ),
+          child: MainScreen(isDriver: isDriver),
           type: PageTransitionType.fade,
           alignment: Alignment.center,
           duration: const Duration(milliseconds: 800),
@@ -98,9 +94,7 @@ class AppRoutes {
       case Routes.forgetPasswordScreen:
         bool isDriver = settings.arguments as bool;
         return PageTransition(
-          child: ForgetPasswordScreen(
-            isDriver: isDriver,
-          ),
+          child: ForgetPasswordScreen(isDriver: isDriver),
           type: PageTransitionType.fade,
           alignment: Alignment.center,
           duration: const Duration(milliseconds: 800),
@@ -108,10 +102,7 @@ class AppRoutes {
       case Routes.verifyCodeScreen:
         List<dynamic> data = settings.arguments as List<dynamic>;
         return PageTransition(
-          child: VerifyCodeScreen(
-            isDriver: data[0],
-            isForgetPassword: data[1],
-          ),
+          child: VerifyCodeScreen(isDriver: data[0], isForgetPassword: data[1]),
           type: PageTransitionType.fade,
           alignment: Alignment.center,
           duration: const Duration(milliseconds: 800),
@@ -142,9 +133,7 @@ class AppRoutes {
         UserShipmentDetailsArgs args =
             settings.arguments as UserShipmentDetailsArgs;
         return PageTransition(
-          child: UserShipmentDetailsScreen(
-            args: args,
-          ),
+          child: UserShipmentDetailsScreen(args: args),
           type: PageTransitionType.fade,
           alignment: Alignment.center,
           duration: const Duration(milliseconds: 800),
@@ -152,9 +141,7 @@ class AppRoutes {
       case Routes.driverShipmentDetailsRoute:
         DriverSHipmentsArgs args = settings.arguments as DriverSHipmentsArgs;
         return PageTransition(
-          child: DriverShipmentDetailsScreen(
-            args: args,
-          ),
+          child: DriverShipmentDetailsScreen(args: args),
           type: PageTransitionType.fade,
           alignment: Alignment.center,
           duration: const Duration(milliseconds: 800),
@@ -207,18 +194,14 @@ class AppRoutes {
         );
 
       default:
-        return undefinedRoute(
-          routeName: settings.name,
-        );
+        return undefinedRoute(routeName: settings.name);
     }
   }
 
   static Route<dynamic> undefinedRoute({String? routeName}) {
     return MaterialPageRoute(
       builder: (context) => Scaffold(
-        body: Center(
-          child: Text(routeName ?? AppStrings.noRouteFound),
-        ),
+        body: Center(child: Text(routeName ?? AppStrings.noRouteFound)),
       ),
     );
   }

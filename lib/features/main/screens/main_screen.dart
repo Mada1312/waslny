@@ -55,13 +55,29 @@ class _MainScreenState extends State<MainScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     _buildNavItem(
-                        ImageAssets.home, 0, cubit.currentIndex, cubit),
-                    _buildNavItem(ImageAssets.notifications, 1,
-                        cubit.currentIndex, cubit),
+                      ImageAssets.home,
+                      0,
+                      cubit.currentIndex,
+                      cubit,
+                    ),
                     _buildNavItem(
-                        ImageAssets.messages, 2, cubit.currentIndex, cubit),
+                      ImageAssets.notifications,
+                      1,
+                      cubit.currentIndex,
+                      cubit,
+                    ),
                     _buildNavItem(
-                        ImageAssets.myProfile, 3, cubit.currentIndex, cubit),
+                      ImageAssets.messages,
+                      2,
+                      cubit.currentIndex,
+                      cubit,
+                    ),
+                    _buildNavItem(
+                      ImageAssets.myProfile,
+                      3,
+                      cubit.currentIndex,
+                      cubit,
+                    ),
                   ],
                 ),
               ),
@@ -74,7 +90,11 @@ class _MainScreenState extends State<MainScreen> {
 
   /// ✅ Custom nav item (using GestureDetector instead of BottomNavigationBarItem)
   Widget _buildNavItem(
-      String asset, int index, int currentIndex, MainCubit cubit) {
+    String asset,
+    int index,
+    int currentIndex,
+    MainCubit cubit,
+  ) {
     final bool isSelected = currentIndex == index;
     return GestureDetector(
       onTap: () => cubit.changeIndex(index),
@@ -95,7 +115,8 @@ class _MainScreenState extends State<MainScreen> {
           height: 25,
           width: 25,
           color: isSelected
-              ? AppColors.secondPrimary // Dark green icon
+              ? AppColors
+                    .secondPrimary // Dark green icon
               : Colors.white, // Unselected white
         ),
       ),
@@ -145,10 +166,13 @@ class _MainScreenState extends State<MainScreen> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.secondPrimary,
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8)),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                     ),
-                    child: Text("out".tr(),
-                        style: getRegularStyle(color: AppColors.primary)),
+                    child: Text(
+                      "out".tr(),
+                      style: getRegularStyle(color: AppColors.primary),
+                    ),
                   ),
                 ),
                 const SizedBox(width: 10),
@@ -161,10 +185,13 @@ class _MainScreenState extends State<MainScreen> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.secondPrimary,
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8)),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                     ),
-                    child: Text("cancel".tr(),
-                        style: getRegularStyle(color: AppColors.primary)),
+                    child: Text(
+                      "cancel".tr(),
+                      style: getRegularStyle(color: AppColors.primary),
+                    ),
                   ),
                 ),
               ],
