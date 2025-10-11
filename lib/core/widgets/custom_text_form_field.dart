@@ -87,19 +87,24 @@ class _CustomTextFieldState extends State<CustomTextField> {
               Padding(
                 padding: EdgeInsets.only(bottom: 8.h),
                 child: RichText(
-                    text: TextSpan(children: [
-                  TextSpan(text: widget.title ?? '', style: getMediumStyle()),
-                  TextSpan(
-                      text: widget.isRequired ? ' *' : '',
-                      style: getMediumStyle(
-                        color: AppColors.red,
-                      )),
-                ])),
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: widget.title ?? '',
+                        style: getMediumStyle(color: AppColors.secondPrimary),
+                      ),
+                      TextSpan(
+                        text: widget.isRequired ? ' *' : '',
+                        style: getMediumStyle(color: AppColors.red),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             MediaQuery(
-              data: MediaQuery.of(context).copyWith(
-                textScaler: TextScaler.linear(1.0),
-              ),
+              data: MediaQuery.of(
+                context,
+              ).copyWith(textScaler: TextScaler.linear(1.0)),
               child: TextFormField(
                 enabled: widget.enabled,
                 readOnly: widget.isReadOnly,
@@ -110,16 +115,16 @@ class _CustomTextFieldState extends State<CustomTextField> {
                   FocusManager.instance.primaryFocus?.unfocus();
                 },
                 focusNode: myFocusNode,
-                style: getRegularStyle(),
+                style: getRegularStyle(color: AppColors.secondPrimary),
                 onChanged: widget.onChanged,
                 validator: widget.isRequired
                     ? widget.validator ??
-                        (value) {
-                          if (value == null || value.isEmpty) {
-                            return widget.validationMessage ?? '';
+                          (value) {
+                            if (value == null || value.isEmpty) {
+                              return widget.validationMessage ?? '';
+                            }
+                            return null;
                           }
-                          return null;
-                        }
                     : null,
                 keyboardType: widget.keyboardType ?? TextInputType.text,
                 maxLines: widget.isMessage ? 5 : 1,
@@ -131,9 +136,9 @@ class _CustomTextFieldState extends State<CustomTextField> {
                 obscuringCharacter: '*',
                 decoration: InputDecoration(
                   filled: true,
-                  fillColor: widget.enabled
-                      ? widget.backgroundColor ?? AppColors.lightGrey
-                      : AppColors.darkGrey,
+                  fillColor:
+                      widget.backgroundColor ??
+                      AppColors.secondPrimary.withAlpha(25),
                   hintText: widget.hintText,
                   prefixIcon: widget.prefixIcon,
                   prefixIconColor: myFocusNode.hasFocus
@@ -144,63 +149,77 @@ class _CustomTextFieldState extends State<CustomTextField> {
                       : AppColors.darkGrey,
                   suffixIcon: widget.isPassword
                       ? showPassword
-                          ? IconButton(
-                              icon: Icon(
-                                widget.isPassword
-                                    ? Icons.visibility_off
-                                    : Icons.visibility,
-                                color: AppColors.secondPrimary,
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  showPassword = !showPassword;
-                                });
-                              },
-                            )
-                          : IconButton(
-                              icon: Icon(
-                                !widget.isPassword
-                                    ? Icons.visibility_off
-                                    : Icons.visibility,
-                                color: AppColors.secondPrimary,
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  showPassword = !showPassword;
-                                });
-                              })
+                            ? IconButton(
+                                icon: Icon(
+                                  widget.isPassword
+                                      ? Icons.visibility_off
+                                      : Icons.visibility,
+                                  color: AppColors.secondPrimary,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    showPassword = !showPassword;
+                                  });
+                                },
+                              )
+                            : IconButton(
+                                icon: Icon(
+                                  !widget.isPassword
+                                      ? Icons.visibility_off
+                                      : Icons.visibility,
+                                  color: AppColors.secondPrimary,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    showPassword = !showPassword;
+                                  });
+                                },
+                              )
                       : widget.suffixIcon,
-                  contentPadding:
-                      EdgeInsets.symmetric(horizontal: 8, vertical: 12.h),
-                  hintStyle: getRegularStyle(
-                    fontSize: 14.sp,
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 12.h,
                   ),
+                  hintStyle: getRegularStyle(fontSize: 14.sp),
                   errorStyle: getRegularStyle(color: AppColors.red),
                   enabledBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: AppColors.lightGrey, width: 1.5),
-                      borderRadius: BorderRadius.all(
-                          Radius.circular(widget.borderRadius ?? 10.r))),
+                    borderSide: BorderSide(
+                      color: AppColors.lightGrey,
+                      width: 1.5,
+                    ),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(widget.borderRadius ?? 10.r),
+                    ),
+                  ),
                   disabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: AppColors.gray, width: 1.5),
-                      borderRadius: BorderRadius.all(
-                          Radius.circular(widget.borderRadius ?? 10.r))),
+                    borderSide: BorderSide(color: AppColors.gray, width: 1.5),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(widget.borderRadius ?? 10.r),
+                    ),
+                  ),
                   // focused border style
                   focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                          color: AppColors.secondPrimary, width: 1.5),
-                      borderRadius: BorderRadius.all(
-                          Radius.circular(widget.borderRadius ?? 10.r))),
+                    borderSide: BorderSide(
+                      color: AppColors.secondPrimary,
+                      width: 1.5,
+                    ),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(widget.borderRadius ?? 10.r),
+                    ),
+                  ),
 
                   // error border style
                   errorBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: AppColors.red, width: 1.5),
-                      borderRadius: BorderRadius.all(
-                          Radius.circular(widget.borderRadius ?? 10.r))),
+                    borderSide: BorderSide(color: AppColors.red, width: 1.5),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(widget.borderRadius ?? 10.r),
+                    ),
+                  ),
                   focusedErrorBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: AppColors.red, width: 1.5),
                     borderRadius: BorderRadius.all(
-                        Radius.circular(widget.borderRadius ?? 10.r)),
+                      Radius.circular(widget.borderRadius ?? 10.r),
+                    ),
                   ),
                 ),
               ),
@@ -242,30 +261,35 @@ class CustomPhoneFormField extends StatelessWidget {
           Padding(
             padding: EdgeInsets.only(bottom: 8.h),
             child: RichText(
-                text: TextSpan(children: [
-              TextSpan(text: title ?? '', style: getMediumStyle()),
-              TextSpan(
-                  text: isRequired ? ' *' : '',
-                  style: getMediumStyle(
-                    color: AppColors.red,
-                  )),
-            ])),
+              text: TextSpan(
+                children: [
+                  TextSpan(
+                    text: title ?? '',
+                    style: getMediumStyle(color: AppColors.secondPrimary),
+                  ),
+                  TextSpan(
+                    text: isRequired ? ' *' : '',
+                    style: getMediumStyle(color: AppColors.red),
+                  ),
+                ],
+              ),
+            ),
           ),
         Directionality(
           textDirection:
               EasyLocalization.of(context)?.locale.languageCode == 'ar'
-                  ? TextDirection.ltr
-                  : TextDirection.ltr,
+              ? TextDirection.ltr
+              : TextDirection.ltr,
           child: Padding(
             padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 3.0.w),
             child: MediaQuery(
-              data: MediaQuery.of(context).copyWith(
-                textScaler: TextScaler.linear(1.0),
-              ),
+              data: MediaQuery.of(
+                context,
+              ).copyWith(textScaler: TextScaler.linear(1.0)),
               child: IntlPhoneField(
                 controller: controller,
                 showCountryFlag: false,
-                style: getRegularStyle(),
+                style: getMediumStyle(color: AppColors.secondPrimary),
 
                 // invalidNumberMessage: "dasdas",
                 dropdownTextStyle: getBoldStyle(fontSize: 13.sp),
@@ -276,7 +300,6 @@ class CustomPhoneFormField extends StatelessWidget {
                 //   }
                 //   return null;
                 // },
-
                 keyboardType: TextInputType.number,
                 disableLengthCheck: false,
 
@@ -290,34 +313,43 @@ class CustomPhoneFormField extends StatelessWidget {
                 showDropdownIcon: false,
                 decoration: InputDecoration(
                   filled: true,
-                  fillColor:
-                      enabled! ? AppColors.lightGrey : AppColors.darkGrey,
+                  fillColor: enabled!
+                      ? AppColors.secondPrimary.withAlpha(25)
+                      : AppColors.secondPrimary.withAlpha(25),
                   counterText: '',
                   hintText: 'enter_your_number'.tr(),
 
-                  contentPadding:
-                      EdgeInsets.symmetric(horizontal: 8, vertical: 12.h),
-                  hintStyle: getRegularStyle(
-                    fontSize: 14.sp,
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 12.h,
                   ),
+                  hintStyle: getRegularStyle(fontSize: 14.sp),
                   errorStyle: getRegularStyle(color: AppColors.red),
                   enabledBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: AppColors.lightGrey, width: 1.5),
-                      borderRadius: BorderRadius.all(Radius.circular(10.r))),
+                    borderSide: BorderSide(
+                      color: AppColors.secondPrimary.withAlpha(25),
+                      width: 1.5,
+                    ),
+                    borderRadius: BorderRadius.all(Radius.circular(10.r)),
+                  ),
                   disabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: AppColors.gray, width: 1.5),
-                      borderRadius: BorderRadius.all(Radius.circular(10.r))),
+                    borderSide: BorderSide(color: AppColors.gray, width: 1.5),
+                    borderRadius: BorderRadius.all(Radius.circular(10.r)),
+                  ),
                   // focused border style
                   focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                          color: AppColors.secondPrimary, width: 1.5),
-                      borderRadius: BorderRadius.all(Radius.circular(10.r))),
+                    borderSide: BorderSide(
+                      color: AppColors.secondPrimary,
+                      width: 1.5,
+                    ),
+                    borderRadius: BorderRadius.all(Radius.circular(10.r)),
+                  ),
 
                   // error border style
                   errorBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: AppColors.red, width: 1.5),
-                      borderRadius: BorderRadius.all(Radius.circular(10.r))),
+                    borderSide: BorderSide(color: AppColors.red, width: 1.5),
+                    borderRadius: BorderRadius.all(Radius.circular(10.r)),
+                  ),
                   focusedErrorBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: AppColors.red, width: 1.5),
                     borderRadius: BorderRadius.all(Radius.circular(10.r)),
@@ -329,8 +361,8 @@ class CustomPhoneFormField extends StatelessWidget {
                 onChanged: onChanged,
                 textAlign:
                     EasyLocalization.of(context)?.locale.languageCode == 'ar'
-                        ? TextAlign.start
-                        : TextAlign.start,
+                    ? TextAlign.start
+                    : TextAlign.start,
               ),
             ),
           ),

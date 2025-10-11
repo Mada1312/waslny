@@ -125,5 +125,10 @@
     "driver_details": "Driver Details",
     "contact_us_using": "Or contact us via",
     "enter_valid_number": "Please enter a valid phone number",
-    "change_langauge": "Change Language"
+    "change_langauge": "Change Language",
+    "------------------------------------": "-------------------Waslny----------------------",
+    "Male": "Male",
+    "Female": "Female",
+    "type": "Gender",
+    "vehicle_type": "Vehicle Type"
 }

@@ -62,7 +62,7 @@ class _UpdateDeliveryProfileState extends State<UpdateDeliveryProfile> {
                                           bottomRight: Radius.circular(20.sp),
                                         ),
                                         child: Image.asset(
-                                          ImageAssets.driverBar,
+                                          ImageAssets.driverLogin,
                                           fit: BoxFit.cover,
                                           height: getHeightSize(context) / 4,
                                           width: double.infinity,

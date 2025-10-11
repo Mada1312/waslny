@@ -1,5 +1,5 @@
 class EndPoints {
-  static const String baseUrl = 'https://asom.octopusteam.net/api/v1/';
+  static const String baseUrl = 'https://waslny.octopusteam.net/api/v1/';
   static const String loginUrl = '${baseUrl}login';
   static const String validateDataUrl = '${baseUrl}validate-data';
   static const String registerUrl = '${baseUrl}register';

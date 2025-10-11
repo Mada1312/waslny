@@ -43,7 +43,9 @@ class _MainScreenState extends State<MainScreen> {
           child: SafeArea(
             top: false,
             child: Scaffold(
-              body: cubit.screens[cubit.currentIndex],
+              body: widget.isDriver
+                  ? cubit.driverScreens[cubit.currentIndex]
+                  : cubit.userScreens[cubit.currentIndex],
               bottomNavigationBar: Container(
                 margin: EdgeInsets.only(bottom: 10.w, left: 20.h, right: 20.h),
                 padding: EdgeInsets.all(3.r),
@@ -55,13 +57,29 @@ class _MainScreenState extends State<MainScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     _buildNavItem(
-                        ImageAssets.home, 0, cubit.currentIndex, cubit),
-                    _buildNavItem(ImageAssets.notifications, 1,
-                        cubit.currentIndex, cubit),
+                      ImageAssets.home,
+                      0,
+                      cubit.currentIndex,
+                      cubit,
+                    ),
                     _buildNavItem(
-                        ImageAssets.messages, 2, cubit.currentIndex, cubit),
+                      ImageAssets.notifications,
+                      1,
+                      cubit.currentIndex,
+                      cubit,
+                    ),
                     _buildNavItem(
-                        ImageAssets.myProfile, 3, cubit.currentIndex, cubit),
+                      ImageAssets.messages,
+                      2,
+                      cubit.currentIndex,
+                      cubit,
+                    ),
+                    _buildNavItem(
+                      ImageAssets.myProfile,
+                      3,
+                      cubit.currentIndex,
+                      cubit,
+                    ),
                   ],
                 ),
               ),
@@ -74,7 +92,11 @@ class _MainScreenState extends State<MainScreen> {
 
   /// ✅ Custom nav item (using GestureDetector instead of BottomNavigationBarItem)
   Widget _buildNavItem(
-      String asset, int index, int currentIndex, MainCubit cubit) {
+    String asset,
+    int index,
+    int currentIndex,
+    MainCubit cubit,
+  ) {
     final bool isSelected = currentIndex == index;
     return GestureDetector(
       onTap: () => cubit.changeIndex(index),
@@ -95,7 +117,8 @@ class _MainScreenState extends State<MainScreen> {
           height: 25,
           width: 25,
           color: isSelected
-              ? AppColors.secondPrimary // Dark green icon
+              ? AppColors
+                    .secondPrimary // Dark green icon
               : Colors.white, // Unselected white
         ),
       ),

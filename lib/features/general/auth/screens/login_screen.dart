@@ -96,6 +96,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                         32.h.verticalSpace,
+
                         CustomButton(
                           title: 'login'.tr(),
                           onPressed: () {
