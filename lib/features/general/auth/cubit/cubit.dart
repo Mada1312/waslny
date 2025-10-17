@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:waslny/features/general/auth/screens/widget/enum_gender.dart';
+import 'package:waslny/core/utils/general_enum.dart';
 import 'package:waslny/features/user/add_new_shipment/cubit/cubit.dart';
 
 import '../../../../core/exports.dart';
@@ -22,7 +22,7 @@ class LoginCubit extends Cubit<LoginState> {
   String? fullPhoneNumber;
   bool acceptTermsAndConditions = false;
   Gender? gender;
-  Gender? vehicleType;
+  VehicleType? vehicleType;
   onChangeStatus() {
     acceptTermsAndConditions = !acceptTermsAndConditions;
     emit(OnChangeStatusOfLogin());
@@ -99,9 +99,9 @@ class LoginCubit extends Cubit<LoginState> {
         isDriver: isDriver,
         name: nameController.text,
         gender: gender?.name == Gender.male.name ? '0' : '1',
-        vehicleType: vehicleType?.name == Gender.male.name
+        vehicleType: vehicleType?.name == VehicleType.car.name
             ? 'car'
-            : 'Moto', //TODO get it from List
+            : 'scooter', //TODO get it from List
         phone: fullPhoneNumber ?? '',
         password: passwordController.text,
       );

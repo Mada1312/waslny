@@ -1,13 +1,10 @@
 import 'package:waslny/core/exports.dart';
 import 'package:waslny/core/widgets/my_svg_widget.dart';
-import 'package:waslny/features/driver/shipments/data/models/shipment_details_model.dart';
+import 'package:waslny/features/driver/shipments/screens/data/models/shipment_details_model.dart';
 import 'package:waslny/features/user/shipments/screens/widgets/custom_from_to.dart';
 
 class ShipmentDetailsDriverBody extends StatelessWidget {
-  const ShipmentDetailsDriverBody({
-    super.key,
-    this.shipmentDetails,
-  });
+  const ShipmentDetailsDriverBody({super.key, this.shipmentDetails});
   final ShipmentDetailsDriverData? shipmentDetails;
 
   @override
@@ -17,22 +14,19 @@ class ShipmentDetailsDriverBody extends StatelessWidget {
       children: [
         Text(
           '${"code".tr()} ${shipmentDetails?.code ?? ""}',
-          style: getMediumStyle(
-            fontSize: 16.sp,
-            color: AppColors.primary,
-          ),
+          style: getMediumStyle(fontSize: 16.sp, color: AppColors.primary),
         ),
         20.h.verticalSpace,
         CustomFromToWidget(
-            from: shipmentDetails?.from,
-            to: shipmentDetails?.toCountry?.name,
-            fromLat: shipmentDetails?.lat,
-            fromLng: shipmentDetails?.long),
-        10.h.verticalSpace,
-        Divider(
-          color: AppColors.grey.withOpacity(0.3),
-          height: 1,
+          from: shipmentDetails?.from,
+          to: shipmentDetails?.toCountry?.name,
+          fromLat: shipmentDetails?.lat,
+          toLat: null,
+          toLng: null,
+          fromLng: shipmentDetails?.long,
         ),
+        10.h.verticalSpace,
+        Divider(color: AppColors.grey.withOpacity(0.3), height: 1),
         30.h.verticalSpace,
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -72,39 +66,20 @@ class ShipmentDetailsDriverBody extends StatelessWidget {
           ],
         ),
         20.h.verticalSpace,
-        Divider(
-          color: AppColors.grey.withOpacity(0.3),
-          height: 1,
-        ),
+        Divider(color: AppColors.grey.withOpacity(0.3), height: 1),
         30.h.verticalSpace,
-        Text(
-          "goods_type".tr(),
-          style: getMediumStyle(
-            fontSize: 16.sp,
-          ),
-        ),
+        Text("goods_type".tr(), style: getMediumStyle(fontSize: 16.sp)),
         10.h.verticalSpace,
         Text(
           "    ${shipmentDetails?.goodsType ?? " "}",
-          style: getRegularStyle(
-            fontSize: 16.sp,
-            color: AppColors.darkGrey,
-          ),
+          style: getRegularStyle(fontSize: 16.sp, color: AppColors.darkGrey),
         ),
         20.h.verticalSpace,
-        Text(
-          "trip_details".tr(),
-          style: getMediumStyle(
-            fontSize: 16.sp,
-          ),
-        ),
+        Text("trip_details".tr(), style: getMediumStyle(fontSize: 16.sp)),
         10.h.verticalSpace,
         Text(
           "    ${shipmentDetails?.description ?? " "}",
-          style: getRegularStyle(
-            fontSize: 16.sp,
-            color: AppColors.darkGrey,
-          ),
+          style: getRegularStyle(fontSize: 16.sp, color: AppColors.darkGrey),
         ),
       ],
     );
@@ -132,11 +107,7 @@ class ShipmentInfo extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           imageColor == null
-              ? MySvgWidget(
-                  path: icon,
-                  height: 25.h,
-                  width: 25.h,
-                )
+              ? MySvgWidget(path: icon, height: 25.h, width: 25.h)
               : MySvgWidget(
                   path: icon,
                   height: 25.h,
@@ -148,12 +119,7 @@ class ShipmentInfo extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  title,
-                  style: getMediumStyle(
-                    fontSize: 14.sp,
-                  ),
-                ),
+                Text(title, style: getMediumStyle(fontSize: 14.sp)),
                 5.h.verticalSpace,
                 Text(
                   value,
@@ -164,7 +130,7 @@ class ShipmentInfo extends StatelessWidget {
                 ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );

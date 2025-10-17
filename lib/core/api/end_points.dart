@@ -3,7 +3,7 @@ class EndPoints {
   static const String loginUrl = '${baseUrl}login';
   static const String validateDataUrl = '${baseUrl}validate-data';
   static const String registerUrl = '${baseUrl}register';
-  static const String homeUrl = '${baseUrl}get-home';
+  static const String homeUrl = '${baseUrl}get-home?filter_by=';
   static const String shipmentDetailsUrl = '${baseUrl}get-shipment-detail/';
   static const String userCompleteShipmentUrl =
       '${baseUrl}mark-shipment-complete/';

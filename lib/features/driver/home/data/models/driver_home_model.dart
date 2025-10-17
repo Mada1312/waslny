@@ -4,7 +4,7 @@
 
 import 'dart:convert';
 
-import 'package:waslny/features/driver/shipments/data/models/shipment_details_model.dart';
+import 'package:waslny/features/driver/shipments/screens/data/models/shipment_details_model.dart';
 import 'package:waslny/features/user/home/data/models/get_home_model.dart';
 
 GetDriverHomeModel getDriverHomeModelFromJson(String str) =>
@@ -18,11 +18,7 @@ class GetDriverHomeModel {
   String? msg;
   int? status;
 
-  GetDriverHomeModel({
-    this.data,
-    this.msg,
-    this.status,
-  });
+  GetDriverHomeModel({this.data, this.msg, this.status});
 
   factory GetDriverHomeModel.fromJson(Map<String, dynamic> json) =>
       GetDriverHomeModel(
@@ -32,10 +28,10 @@ class GetDriverHomeModel {
       );
 
   Map<String, dynamic> toJson() => {
-        "data": data?.toJson(),
-        "msg": msg,
-        "status": status,
-      };
+    "data": data?.toJson(),
+    "msg": msg,
+    "status": status,
+  };
 }
 
 class Data {
@@ -58,31 +54,32 @@ class Data {
   });
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
-        hasShipment: json["hasShipment"],
-        notifications: json["notifications"],
-        totalDrivers: json["total_drivers"],
-        totalShipments: json["total_shipments"],
-        driverDocumentsUploaded: json["driver_documents_uploaded"],
-        currentDriverShipment: json["currentDriverShipment"] == null
-            ? null
-            : ShipmentDetailsDriverData.fromJson(json["currentDriverShipment"]),
-        shipments: json["shipments"] == null
-            ? []
-            : List<ShipmentDriverModel>.from(
-                json["shipments"]!.map((x) => ShipmentDriverModel.fromJson(x))),
-      );
+    hasShipment: json["hasShipment"],
+    notifications: json["notifications"],
+    totalDrivers: json["total_drivers"],
+    totalShipments: json["total_shipments"],
+    driverDocumentsUploaded: json["driver_documents_uploaded"],
+    currentDriverShipment: json["currentDriverShipment"] == null
+        ? null
+        : ShipmentDetailsDriverData.fromJson(json["currentDriverShipment"]),
+    shipments: json["shipments"] == null
+        ? []
+        : List<ShipmentDriverModel>.from(
+            json["shipments"]!.map((x) => ShipmentDriverModel.fromJson(x)),
+          ),
+  );
 
   Map<String, dynamic> toJson() => {
-        "hasShipment": hasShipment,
-        "notifications": notifications,
-        "total_drivers": totalDrivers,
-        "total_shipments": totalShipments,
-        "driver_documents_uploaded": driverDocumentsUploaded,
-        "currentDriverShipment": currentDriverShipment?.toJson(),
-        "shipments": shipments == null
-            ? []
-            : List<dynamic>.from(shipments!.map((x) => x.toJson())),
-      };
+    "hasShipment": hasShipment,
+    "notifications": notifications,
+    "total_drivers": totalDrivers,
+    "total_shipments": totalShipments,
+    "driver_documents_uploaded": driverDocumentsUploaded,
+    "currentDriverShipment": currentDriverShipment?.toJson(),
+    "shipments": shipments == null
+        ? []
+        : List<dynamic>.from(shipments!.map((x) => x.toJson())),
+  };
 }
 
 class ShipmentDriverModel {
@@ -93,7 +90,7 @@ class ShipmentDriverModel {
   String? lat;
   String? long;
 
-  DriverOrUserModel? user;
+  Driver? user;
 
   dynamic roomToken;
 
@@ -132,9 +129,7 @@ class ShipmentDriverModel {
         toCountry: json["to_country"] == null
             ? null
             : ToCountry.fromJson(json["to_country"]),
-        user: json["user"] == null
-            ? null
-            : DriverOrUserModel.fromJson(json["user"]),
+        user: json["user"] == null ? null : Driver.fromJson(json["user"]),
         roomToken: json["room_token"],
         shipmentDateTime: json["shipment_date_time"],
         status: json["status"],
@@ -148,20 +143,20 @@ class ShipmentDriverModel {
       );
 
   Map<String, dynamic> toJson() => {
-        "id": id,
-        "from": from,
-        "code": code,
-        "to_country": toCountry?.toJson(),
-        "user": user?.toJson(),
-        "room_token": roomToken,
-        "shipment_date_time": shipmentDateTime,
-        "status": status,
-        "status_name": statusName,
-        "driver_status": driverStatus,
-        "driver_status_name": driverStatusName,
-        // "truck_type": truckType,
-        "goods_type": goodsType,
-        "lat": lat,
-        "long": long,
-      };
+    "id": id,
+    "from": from,
+    "code": code,
+    "to_country": toCountry?.toJson(),
+    "user": user?.toJson(),
+    "room_token": roomToken,
+    "shipment_date_time": shipmentDateTime,
+    "status": status,
+    "status_name": statusName,
+    "driver_status": driverStatus,
+    "driver_status_name": driverStatusName,
+    // "truck_type": truckType,
+    "goods_type": goodsType,
+    "lat": lat,
+    "long": long,
+  };
 }

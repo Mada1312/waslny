@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 class MySvgWidget extends StatelessWidget {
-  const MySvgWidget(
-      {super.key,
-      required this.path,
-      this.imageColor,
-      this.height,
-      this.width});
+  const MySvgWidget({
+    super.key,
+    required this.path,
+    this.imageColor,
+    this.height,
+    this.width,
+  });
 
   final String path;
   final Color? imageColor;

@@ -4,10 +4,7 @@ import 'package:waslny/features/user/shipments/data/models/shipment_details.dart
 import 'package:waslny/features/user/shipments/screens/widgets/custom_from_to.dart';
 
 class ShipmentDetailsUserBody extends StatelessWidget {
-  const ShipmentDetailsUserBody({
-    super.key,
-    this.shipmentData,
-  });
+  const ShipmentDetailsUserBody({super.key, this.shipmentData});
   final UserShipmentData? shipmentData;
   @override
   Widget build(BuildContext context) {
@@ -16,23 +13,19 @@ class ShipmentDetailsUserBody extends StatelessWidget {
       children: [
         Text(
           '${"code".tr()} ${shipmentData?.code ?? ""}',
-          style: getMediumStyle(
-            fontSize: 16.sp,
-            color: AppColors.primary,
-          ),
+          style: getMediumStyle(fontSize: 16.sp, color: AppColors.primary),
         ),
         20.h.verticalSpace,
         CustomFromToWidget(
           from: shipmentData?.from,
           to: shipmentData?.to?.name,
           fromLat: shipmentData?.lat,
+          toLat: null,
+          toLng: null,
           fromLng: shipmentData?.long,
         ),
         10.h.verticalSpace,
-        Divider(
-          color: AppColors.grey.withOpacity(0.3),
-          height: 1,
-        ),
+        Divider(color: AppColors.grey.withOpacity(0.3), height: 1),
         30.h.verticalSpace,
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -68,39 +61,20 @@ class ShipmentDetailsUserBody extends StatelessWidget {
           ],
         ),
         20.h.verticalSpace,
-        Divider(
-          color: AppColors.grey.withOpacity(0.3),
-          height: 1,
-        ),
+        Divider(color: AppColors.grey.withOpacity(0.3), height: 1),
         30.h.verticalSpace,
-        Text(
-          "goods_type".tr(),
-          style: getMediumStyle(
-            fontSize: 16.sp,
-          ),
-        ),
+        Text("goods_type".tr(), style: getMediumStyle(fontSize: 16.sp)),
         10.h.verticalSpace,
         Text(
           "    ${shipmentData?.goodsType ?? "نوع "}",
-          style: getRegularStyle(
-            fontSize: 16.sp,
-            color: AppColors.darkGrey,
-          ),
+          style: getRegularStyle(fontSize: 16.sp, color: AppColors.darkGrey),
         ),
         20.h.verticalSpace,
-        Text(
-          "trip_details".tr(),
-          style: getMediumStyle(
-            fontSize: 16.sp,
-          ),
-        ),
+        Text("trip_details".tr(), style: getMediumStyle(fontSize: 16.sp)),
         10.h.verticalSpace,
         Text(
           "    ${shipmentData?.description ?? "وصف الرحلة"}",
-          style: getRegularStyle(
-            fontSize: 16.sp,
-            color: AppColors.darkGrey,
-          ),
+          style: getRegularStyle(fontSize: 16.sp, color: AppColors.darkGrey),
         ),
       ],
     );
@@ -125,22 +99,13 @@ class ShipmentInfo extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          MySvgWidget(
-            path: icon,
-            height: 25.h,
-            width: 25.h,
-          ),
+          MySvgWidget(path: icon, height: 25.h, width: 25.h),
           10.w.horizontalSpace,
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  title,
-                  style: getMediumStyle(
-                    fontSize: 14.sp,
-                  ),
-                ),
+                Text(title, style: getMediumStyle(fontSize: 14.sp)),
                 5.h.verticalSpace,
                 Text(
                   value,
@@ -151,7 +116,7 @@ class ShipmentInfo extends StatelessWidget {
                 ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );

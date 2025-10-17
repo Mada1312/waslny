@@ -49,111 +49,92 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     NotificationService notificationService = NotificationService();
     return MultiBlocProvider(
-        providers: [
-          BlocProvider(
-            create: (_) => injector.serviceLocator<SplashCubit>(),
-          ),
-          BlocProvider(
-            create: (_) => injector.serviceLocator<OnBoardingCubit>(),
-          ),
-          BlocProvider(
-            create: (_) => injector.serviceLocator<LoginCubit>(),
-          ),
-          BlocProvider(
-            create: (_) => injector.serviceLocator<MainCubit>(),
-          ),
-          BlocProvider(
-            create: (_) => injector.serviceLocator<UserHomeCubit>(),
-          ),
-          BlocProvider(
-            create: (_) => injector.serviceLocator<UserShipmentsCubit>(),
-          ),
-          BlocProvider(
-            create: (_) => injector.serviceLocator<DriverHomeCubit>(),
-          ),
-          BlocProvider(
-            create: (_) => injector.serviceLocator<DriverShipmentsCubit>(),
-          ),
-          BlocProvider(
-            create: (_) => injector.serviceLocator<ProfileCubit>(),
-          ),
-          BlocProvider(
-            create: (_) => injector.serviceLocator<AddNewShipmentCubit>(),
-          ),
-          BlocProvider(
-            create: (_) => injector.serviceLocator<LocationCubit>(),
-          ),
-          BlocProvider(
-            create: (_) => injector.serviceLocator<TutorialVideoCubit>(),
-          ),
-          BlocProvider(
-            create: (_) => injector.serviceLocator<ChatCubit>(),
-          ),
-          BlocProvider(
-            create: (_) => injector.serviceLocator<NotificationsCubit>(),
-          ),
-          BlocProvider(
-            create: (_) => injector.serviceLocator<DriverDetailsCubit>(),
-          ),
-        ],
-        child: GetMaterialApp(
-            supportedLocales: context.supportedLocales,
-            navigatorKey: notificationService.navigatorKey,
-            locale: context.locale,
-            theme: appTheme(),
-            themeMode: ThemeMode.light,
-            darkTheme: ThemeData.light(),
-            // standard dark theme
-            localizationsDelegates: context.localizationDelegates,
-            debugShowCheckedModeBanner: false,
-            title: AppStrings.appName,
-            onGenerateRoute: AppRoutes.onGenerateRoute,
-            routes: {
-              '/': (context) => initialMessageRcieved != null
-                  ? initialMessageRcieved?.data['reference_table'] ==
-                          "shipments"
-                      ? initialMessageRcieved?.data['user_type'].toString() ==
-                              "0"
+      providers: [
+        BlocProvider(create: (_) => injector.serviceLocator<SplashCubit>()),
+        BlocProvider(create: (_) => injector.serviceLocator<OnBoardingCubit>()),
+        BlocProvider(create: (_) => injector.serviceLocator<LoginCubit>()),
+        BlocProvider(create: (_) => injector.serviceLocator<MainCubit>()),
+        BlocProvider(create: (_) => injector.serviceLocator<UserHomeCubit>()),
+        BlocProvider(
+          create: (_) => injector.serviceLocator<UserShipmentsCubit>(),
+        ),
+        BlocProvider(create: (_) => injector.serviceLocator<DriverHomeCubit>()),
+        BlocProvider(
+          create: (_) => injector.serviceLocator<DriverShipmentsCubit>(),
+        ),
+        BlocProvider(create: (_) => injector.serviceLocator<ProfileCubit>()),
+        BlocProvider(
+          create: (_) => injector.serviceLocator<AddNewShipmentCubit>(),
+        ),
+        BlocProvider(create: (_) => injector.serviceLocator<LocationCubit>()),
+        BlocProvider(
+          create: (_) => injector.serviceLocator<TutorialVideoCubit>(),
+        ),
+        BlocProvider(create: (_) => injector.serviceLocator<ChatCubit>()),
+        BlocProvider(
+          create: (_) => injector.serviceLocator<NotificationsCubit>(),
+        ),
+        BlocProvider(
+          create: (_) => injector.serviceLocator<DriverDetailsCubit>(),
+        ),
+      ],
+      child: GetMaterialApp(
+        supportedLocales: context.supportedLocales,
+        navigatorKey: notificationService.navigatorKey,
+        locale: context.locale,
+        theme: appTheme(),
+        themeMode: ThemeMode.light,
+        darkTheme: ThemeData.light(),
+        // standard dark theme
+        localizationsDelegates: context.localizationDelegates,
+        debugShowCheckedModeBanner: false,
+        title: AppStrings.appName,
+        onGenerateRoute: AppRoutes.onGenerateRoute,
+        routes: {
+          '/': (context) => initialMessageRcieved != null
+              ? initialMessageRcieved?.data['reference_table'] == "shipments"
+                    ? initialMessageRcieved?.data['user_type'].toString() == "0"
                           ? UserShipmentDetailsScreen(
                               args: UserShipmentDetailsArgs(
-                                shipmentId: initialMessageRcieved
-                                        ?.data['reference_id']
+                                shipmentId:
+                                    initialMessageRcieved?.data['reference_id']
                                         .toString() ??
                                     "",
                                 isFromNotification: true,
                               ),
                             )
                           : // is driver
-                          initialMessageRcieved?.data['is_current']
-                                      .toString() ==
-                                  "1"
-                              ? MainScreen(isDriver: true)
-                              : DriverShipmentDetailsScreen(
-                                  args: DriverSHipmentsArgs(
-                                    shipmentId: initialMessageRcieved
-                                            ?.data['reference_id']
-                                            .toString() ??
-                                        "",
-                                    isNotification: true,
-                                  ),
-                                )
-                      : (initialMessageRcieved?.data['reference_table'] ==
-                              "chat_rooms")
-                          ? MessageScreen(
-                              model: MainUserAndRoomChatModel(
-                                chatId: initialMessageRcieved
-                                    ?.data['reference_id']
-                                    .toString(),
-                                driverId: initialMessageRcieved?.data['user_id']
-                                    .toString(),
-                                isDriver: ['user_type'].toString() == "1",
+                            initialMessageRcieved?.data['is_current']
+                                    .toString() ==
+                                "1"
+                          ? MainScreen(isDriver: true)
+                          : DriverShipmentDetailsScreen(
+                              args: DriverSHipmentsArgs(
+                                shipmentId:
+                                    initialMessageRcieved?.data['reference_id']
+                                        .toString() ??
+                                    "",
                                 isNotification: true,
-                                title: initialMessageRcieved?.data['user_name']
-                                    .toString(),
                               ),
                             )
-                          : const SplashScreen()
-                  : const SplashScreen(),
-            }));
+                    : (initialMessageRcieved?.data['reference_table'] ==
+                          "chat_rooms")
+                    ? MessageScreen(
+                        model: MainUserAndRoomChatModel(
+                          chatId: initialMessageRcieved?.data['reference_id']
+                              .toString(),
+                          driverId: initialMessageRcieved?.data['user_id']
+                              .toString(),
+                          isDriver: ['user_type'].toString() == "1",
+                          isNotification: true,
+                          title: initialMessageRcieved?.data['user_name']
+                              .toString(),
+                        ),
+                      )
+                    : const SplashScreen()
+              : const SplashScreen(),
+        },
+      ),
+    );
   }
 }

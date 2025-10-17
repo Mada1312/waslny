@@ -13,31 +13,28 @@ String getShipmentsModelToJson(GetShipmentsModel data) =>
     json.encode(data.toJson());
 
 class GetShipmentsModel {
-  List<ShipmentModel>? data;
+  List<TripAndServiceModel>? data;
   String? msg;
   int? status;
 
-  GetShipmentsModel({
-    this.data,
-    this.msg,
-    this.status,
-  });
+  GetShipmentsModel({this.data, this.msg, this.status});
 
   factory GetShipmentsModel.fromJson(Map<String, dynamic> json) =>
       GetShipmentsModel(
         data: json["data"] == null
             ? []
-            : List<ShipmentModel>.from(
-                json["data"]!.map((x) => ShipmentModel.fromJson(x))),
+            : List<TripAndServiceModel>.from(
+                json["data"]!.map((x) => TripAndServiceModel.fromJson(x)),
+              ),
         msg: json["msg"],
         status: json["status"],
       );
 
   Map<String, dynamic> toJson() => {
-        "data": data == null
-            ? []
-            : List<dynamic>.from(data!.map((x) => x.toJson())),
-        "msg": msg,
-        "status": status,
-      };
+    "data": data == null
+        ? []
+        : List<dynamic>.from(data!.map((x) => x.toJson())),
+    "msg": msg,
+    "status": status,
+  };
 }

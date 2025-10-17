@@ -138,7 +138,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                   filled: true,
                   fillColor:
                       widget.backgroundColor ??
-                      AppColors.secondPrimary.withAlpha(25),
+                      AppColors.second2Primary,
                   hintText: widget.hintText,
                   prefixIcon: widget.prefixIcon,
                   prefixIconColor: myFocusNode.hasFocus
@@ -315,7 +315,7 @@ class CustomPhoneFormField extends StatelessWidget {
                   filled: true,
                   fillColor: enabled!
                       ? AppColors.secondPrimary.withAlpha(25)
-                      : AppColors.secondPrimary.withAlpha(25),
+                      : AppColors.second2Primary,
                   counterText: '',
                   hintText: 'enter_your_number'.tr(),
 
@@ -327,7 +327,7 @@ class CustomPhoneFormField extends StatelessWidget {
                   errorStyle: getRegularStyle(color: AppColors.red),
                   enabledBorder: OutlineInputBorder(
                     borderSide: BorderSide(
-                      color: AppColors.secondPrimary.withAlpha(25),
+                      color: AppColors.second2Primary,
                       width: 1.5,
                     ),
                     borderRadius: BorderRadius.all(Radius.circular(10.r)),

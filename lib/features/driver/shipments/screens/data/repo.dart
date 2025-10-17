@@ -1,5 +1,5 @@
 import 'package:waslny/core/exports.dart';
-import 'package:waslny/features/driver/shipments/data/models/get_shipments_model.dart';
+import 'package:waslny/features/driver/shipments/screens/data/models/get_shipments_model.dart';
 
 import 'models/shipment_details_model.dart';
 

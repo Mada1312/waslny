@@ -6,11 +6,9 @@ import 'models/get_home_model.dart';
 class UserHomeRepo {
   BaseApiConsumer api;
   UserHomeRepo(this.api);
-  Future<Either<Failure, GetUserHomeModel>> getHome() async {
+  Future<Either<Failure, GetUserHomeModel>> getHome({String type = "0"}) async {
     try {
-      final response = await api.get(
-        EndPoints.homeUrl,
-      );
+      final response = await api.get(EndPoints.homeUrl + type);
       return Right(GetUserHomeModel.fromJson(response));
     } on ServerException {
       return Left(ServerFailure());
