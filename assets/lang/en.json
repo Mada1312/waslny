@@ -14,8 +14,9 @@
     "on_board_desc3": "After each ride, rate the driver and help us maintain top service and build stronger trust between passengers and drivers.",
     "login_as_driver": "Login as Driver",
     "login_as_user": "Login as User",
-    "add_trip": "Request Trip",
+    "add_trip": "Create A Trip",
     "current_trips": "Current Trips",
+    "add_service": "Service request",
     "new_trips": "New Trips",
     "all": "All",
     "from": "From",
@@ -130,5 +131,9 @@
     "Male": "Male",
     "Female": "Female",
     "type": "Gender",
-    "vehicle_type": "Vehicle Type"
+    "vehicle_type": "Vehicle Type",
+    "car": "Car",
+    "scooter": "Scooter",
+    "services": "Services",
+    "no_serices": "No Services"
 }

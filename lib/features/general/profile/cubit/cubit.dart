@@ -38,8 +38,10 @@ class ProfileCubit extends Cubit<ProfileState> {
     try {
       final url = await _getStoreUrl();
       final uri = Uri.parse(url);
-      final success =
-          await launchUrl(uri, mode: LaunchMode.externalApplication);
+      final success = await launchUrl(
+        uri,
+        mode: LaunchMode.externalApplication,
+      );
       if (!success) throw Exception("Could not launch $url");
       emit(AppUtilsSuccess("App store opened"));
     } catch (e) {
@@ -63,29 +65,33 @@ class ProfileCubit extends Cubit<ProfileState> {
       emit(LoadingContactUsState());
 
       final res = await api.contactUs(
-          address: addressController.text,
-          subject: subjectController.text,
-          message: messageController.text);
+        address: addressController.text,
+        subject: subjectController.text,
+        message: messageController.text,
+      );
 
-      res.fold((l) {
-        errorGetBar(l.toString());
-        Navigator.pop(context);
-
-        emit(ErrorContactUsState());
-      }, (r) {
-        if (r.status == 200) {
-          successGetBar(r.msg);
-          addressController.clear();
-          subjectController.clear();
-          messageController.clear();
-          emit(LoadedContactUsState());
+      res.fold(
+        (l) {
+          errorGetBar(l.toString());
           Navigator.pop(context);
-        } else {
-          errorGetBar(r.msg ?? '');
+
           emit(ErrorContactUsState());
-        }
-        Navigator.pop(context);
-      });
+        },
+        (r) {
+          if (r.status == 200) {
+            successGetBar(r.msg);
+            addressController.clear();
+            subjectController.clear();
+            messageController.clear();
+            emit(LoadedContactUsState());
+            Navigator.pop(context);
+          } else {
+            errorGetBar(r.msg ?? '');
+            emit(ErrorContactUsState());
+          }
+          Navigator.pop(context);
+        },
+      );
     } catch (e) {
       errorGetBar(e.toString());
       Navigator.pop(context);
@@ -100,27 +106,33 @@ class ProfileCubit extends Cubit<ProfileState> {
 
       final res = await api.deleteAccount();
 
-      res.fold((l) {
-        errorGetBar(l.toString());
-        Navigator.pop(context);
-
-        emit(ErrorContactUsState());
-      }, (r) {
-        if (r.status == 200) {
-          successGetBar(r.msg);
-          Preferences.instance.clearUser();
-          Navigator.pop(context);
-          Navigator.pop(context);
-          Navigator.pushNamedAndRemoveUntil(
-              context, Routes.chooseLoginRoute, (route) => false);
-          emit(LoadedContactUsState());
-        } else {
-          errorGetBar(r.msg ?? '');
+      res.fold(
+        (l) {
+          errorGetBar(l.toString());
           Navigator.pop(context);
 
           emit(ErrorContactUsState());
-        }
-      });
+        },
+        (r) {
+          if (r.status == 200) {
+            successGetBar(r.msg);
+            Preferences.instance.clearUser();
+            Navigator.pop(context);
+            Navigator.pop(context);
+            Navigator.pushNamedAndRemoveUntil(
+              context,
+              Routes.chooseLoginRoute,
+              (route) => false,
+            );
+            emit(LoadedContactUsState());
+          } else {
+            errorGetBar(r.msg ?? '');
+            Navigator.pop(context);
+
+            emit(ErrorContactUsState());
+          }
+        },
+      );
     } catch (e) {
       errorGetBar(e.toString());
       Navigator.pop(context);
@@ -135,37 +147,55 @@ class ProfileCubit extends Cubit<ProfileState> {
 
       final res = await api.logout();
 
-      res.fold((l) {
-        errorGetBar(l.toString());
-        Navigator.pop(context);
-        Navigator.pushNamedAndRemoveUntil(
-            context, Routes.chooseLoginRoute, (route) => false);
-        emit(ErrorContactUsState());
-      }, (r) {
-        if (r.status == 200) {
-          successGetBar(r.msg);
-
+      res.fold(
+        (l) {
+          errorGetBar(l.toString());
+          Navigator.pop(context);
           Preferences.instance.clearUser();
-          Navigator.pop(context);
-
-          Navigator.pop(context);
           Navigator.pushNamedAndRemoveUntil(
-              context, Routes.chooseLoginRoute, (route) => false);
-          emit(LoadedContactUsState());
-        } else {
-          errorGetBar(r.msg ?? '');
-          Navigator.pop(context);
-          Navigator.pushNamedAndRemoveUntil(
-              context, Routes.chooseLoginRoute, (route) => false);
-
+            context,
+            Routes.chooseLoginRoute,
+            (route) => false,
+          );
           emit(ErrorContactUsState());
-        }
-      });
+        },
+        (r) {
+          if (r.status == 200) {
+            successGetBar(r.msg);
+            Preferences.instance.clearUser();
+            Navigator.pop(context);
+            Navigator.pop(context);
+            Navigator.pushNamedAndRemoveUntil(
+              context,
+              Routes.chooseLoginRoute,
+              (route) => false,
+            );
+            emit(LoadedContactUsState());
+          } else {
+            errorGetBar(r.msg ?? '');
+            Navigator.pop(context);
+            Preferences.instance.clearUser();
+
+            Navigator.pushNamedAndRemoveUntil(
+              context,
+              Routes.chooseLoginRoute,
+              (route) => false,
+            );
+
+            emit(ErrorContactUsState());
+          }
+        },
+      );
     } catch (e) {
       errorGetBar(e.toString());
       Navigator.pop(context);
+      Preferences.instance.clearUser();
+
       Navigator.pushNamedAndRemoveUntil(
-          context, Routes.chooseLoginRoute, (route) => false);
+        context,
+        Routes.chooseLoginRoute,
+        (route) => false,
+      );
       emit(ErrorContactUsState());
     }
   }
@@ -177,16 +207,19 @@ class ProfileCubit extends Cubit<ProfileState> {
 
       final res = await api.getMainFavUserDriver();
 
-      res.fold((l) {
-        emit(ErrorContactUsState());
-      }, (r) {
-        if (r.status == 200) {
-          mainFavModel = r;
-          emit(LoadedContactUsState());
-        } else {
+      res.fold(
+        (l) {
           emit(ErrorContactUsState());
-        }
-      });
+        },
+        (r) {
+          if (r.status == 200) {
+            mainFavModel = r;
+            emit(LoadedContactUsState());
+          } else {
+            emit(ErrorContactUsState());
+          }
+        },
+      );
     } catch (e) {
       emit(ErrorContactUsState());
     }
@@ -198,19 +231,23 @@ class ProfileCubit extends Cubit<ProfileState> {
 
       final res = await api.actionFav(driverId);
 
-      res.fold((l) {
-        emit(ErrorContactUsState());
-      }, (r) {
-        if (r.status == 200) {
-          if (isFavScreen) {
-            mainFavModel?.data!.removeWhere(
-                (element) => element.driverId.toString() == driverId);
-            emit(LoadedContactUsState());
-          } else {
-            emit(ErrorContactUsState());
+      res.fold(
+        (l) {
+          emit(ErrorContactUsState());
+        },
+        (r) {
+          if (r.status == 200) {
+            if (isFavScreen) {
+              mainFavModel?.data!.removeWhere(
+                (element) => element.driverId.toString() == driverId,
+              );
+              emit(LoadedContactUsState());
+            } else {
+              emit(ErrorContactUsState());
+            }
           }
-        }
-      });
+        },
+      );
     } catch (e) {
       emit(ErrorContactUsState());
     }
@@ -223,38 +260,46 @@ class ProfileCubit extends Cubit<ProfileState> {
 
       final res = await api.getSettings();
 
-      res.fold((l) {
-        emit(ErrorContactUsState());
-      }, (r) async {
-        if (r.status == 200) {
-          settings = r;
-          if (r.data?.appMaintenance == 'true') {
-            //!
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) => MaintenanceScreen()));
-          }
-          if (r.data?.liveLocationHours != null) {
-            await Preferences.instance
-                .setLocationHours(r.data?.liveLocationHours ?? '3');
-          }
-          await checkAndShowUpdateDialog(
-            context: context,
-            latestAndroidVersion: r.data?.androidAppVersion ?? "1.0.0",
-            latestIosVersion: r.data?.iosAppVersion ?? "1.0.0",
-          );
-          emit(LoadedContactUsState());
-        } else {
+      res.fold(
+        (l) {
           emit(ErrorContactUsState());
-        }
-      });
+        },
+        (r) async {
+          if (r.status == 200) {
+            settings = r;
+            if (r.data?.appMaintenance == 'true') {
+              //!
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => MaintenanceScreen()),
+              );
+            }
+            if (r.data?.liveLocationHours != null) {
+              await Preferences.instance.setLocationHours(
+                r.data?.liveLocationHours ?? '3',
+              );
+            }
+            await checkAndShowUpdateDialog(
+              context: context,
+              latestAndroidVersion: r.data?.androidAppVersion ?? "1.0.0",
+              latestIosVersion: r.data?.iosAppVersion ?? "1.0.0",
+            );
+            emit(LoadedContactUsState());
+          } else {
+            emit(ErrorContactUsState());
+          }
+        },
+      );
     } catch (e) {
       emit(ErrorContactUsState());
     }
   }
 
   Future<void> _launchUrl(url) async {
-    if (!await launchUrl(Uri.parse(url),
-        mode: LaunchMode.externalApplication)) {
+    if (!await launchUrl(
+      Uri.parse(url),
+      mode: LaunchMode.externalApplication,
+    )) {
       throw Exception('Could not launch $url');
     }
   }

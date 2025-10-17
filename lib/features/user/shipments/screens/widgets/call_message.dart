@@ -7,7 +7,7 @@ class CustomCallAndMessageWidget extends StatelessWidget {
   const CustomCallAndMessageWidget({
     super.key,
     this.phoneNumber,
-    this.shipmentId,
+    this.tripId,
     this.shipmentCode,
     this.driverId,
     this.roomToken,
@@ -16,7 +16,7 @@ class CustomCallAndMessageWidget extends StatelessWidget {
   final String? phoneNumber;
   final String? roomToken;
   final String? shipmentCode;
-  final String? shipmentId;
+  final String? tripId;
   final String? driverId;
   final String? name;
 
@@ -26,33 +26,28 @@ class CustomCallAndMessageWidget extends StatelessWidget {
       children: [
         GestureDetector(
           onTap: () {
-//!todo
-            // Navigator.pushNamed(
-            //   context,
-            //   Routes.messageRoute,
-            //   arguments: MainUserAndRoomChatModel(
-            //     driverId: driverId,
-            //     shipmentId: shipmentId,
-            //     chatId: roomToken,
-            //     title: "#${shipmentCode ?? ''}-$name",
-            //   ),
-            // );
+            //!todo
 
             Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => MessageScreen(
-                          model: MainUserAndRoomChatModel(
-                            driverId: driverId,
-                            shipmentId: shipmentId,
-                            chatId: roomToken,
-                            title: "#${shipmentCode ?? ''}-$name",
-                          ),
-                        )));
+              context,
+              MaterialPageRoute(
+                builder: (context) => MessageScreen(
+                  model: MainUserAndRoomChatModel(
+                    driverId: driverId,
+                    tripId: tripId,
+                    chatId: roomToken,
+                    title: "#${shipmentCode ?? ''}-$name",
+                  ),
+                ),
+              ),
+            );
           },
-          child: MySvgWidget(
-            path: AppIcons.message,
-            imageColor: AppColors.secondPrimary,
+          child: CircleAvatar(
+            backgroundColor: AppColors.primary,
+            child: MySvgWidget(
+              path: AppIcons.messageIcon,
+              imageColor: AppColors.secondPrimary,
+            ),
           ),
         ),
         10.w.horizontalSpace,
@@ -63,9 +58,12 @@ class CustomCallAndMessageWidget extends StatelessWidget {
             }
             phoneCallMethod(phoneNumber!);
           },
-          child: MySvgWidget(
-            path: AppIcons.call,
-            imageColor: AppColors.secondPrimary,
+          child: CircleAvatar(
+            backgroundColor: AppColors.primary,
+            child: MySvgWidget(
+              path: AppIcons.call,
+              imageColor: AppColors.secondPrimary,
+            ),
           ),
         ),
       ],

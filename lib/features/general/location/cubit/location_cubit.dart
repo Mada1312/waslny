@@ -86,7 +86,9 @@ class LocationCubit extends Cubit<LocationState> {
       isFirstTime = false;
 
       await _getAddressFromLatLng(
-          location.latitude ?? 0.0, location.longitude ?? 0.0);
+        location.latitude ?? 0.0,
+        location.longitude ?? 0.0,
+      );
       _setPositionMarker();
 
       emit(GetCurrentLocationState());
@@ -117,7 +119,7 @@ class LocationCubit extends Cubit<LocationState> {
           selectedLocation?.longitude ?? currentLocation?.longitude ?? 0.0,
         ),
         child: buildMarker(),
-      )
+      ),
     ];
     emit(SetPositionMarkerState());
   }
@@ -172,7 +174,9 @@ class LocationCubit extends Cubit<LocationState> {
       "longitude": currentLocation?.longitude ?? 0.0,
     });
     _getAddressFromLatLng(
-        selectedLocation!.latitude ?? 0.0, selectedLocation!.longitude ?? 0.0);
+      selectedLocation!.latitude ?? 0.0,
+      selectedLocation!.longitude ?? 0.0,
+    );
     _setPositionMarker();
     emit(SetSelectedLocationState());
   }
@@ -201,33 +205,35 @@ class LocationCubit extends Cubit<LocationState> {
 
   _getAddressFromLatLng(lat, long) async {
     emit(GetAddressMapLoadingState());
-    final response = await api.getAddressMap(
-      lat: lat,
-      long: long,
-    );
-    response.fold(
-      (failure) => emit(GetAddressMapErrorState()),
-      (data) {
-        address = data.displayName ?? "";
-        // address = "${data.address?.city??""}, ${data.address?.state??""}";
-        log("Address: $address");
-        emit(GetAddressMapSuccessState());
-      },
-    );
+    final response = await api.getAddressMap(lat: lat, long: long);
+    response.fold((failure) => emit(GetAddressMapErrorState()), (data) {
+      address = data.displayName ?? "";
+      // address = "${data.address?.city??""}, ${data.address?.state??""}";
+      log("Address: $address");
+      emit(GetAddressMapSuccessState());
+    });
   }
 
   List<GetAddressMapModel> placeSuggestions = [];
 
   Future<void> selectPlaceSuggestion(int placeId, BuildContext context) async {
     final latLng = LatLng(
-      double.parse(replaceToEnglishNumber(placeSuggestions
-          .firstWhere((element) => element.placeId == placeId)
-          .lat
-          .toString())),
-      double.parse(replaceToEnglishNumber(placeSuggestions
-          .firstWhere((element) => element.placeId == placeId)
-          .lon
-          .toString())),
+      double.parse(
+        replaceToEnglishNumber(
+          placeSuggestions
+              .firstWhere((element) => element.placeId == placeId)
+              .lat
+              .toString(),
+        ),
+      ),
+      double.parse(
+        replaceToEnglishNumber(
+          placeSuggestions
+              .firstWhere((element) => element.placeId == placeId)
+              .lon
+              .toString(),
+        ),
+      ),
     );
 
     if (latLng != null) {
@@ -253,17 +259,12 @@ class LocationCubit extends Cubit<LocationState> {
 
   searchOnMap(String lat) async {
     emit(GetAddressMapLoadingState());
-    final response = await api.searchOnMap(
-      searchKey: lat,
-    );
-    response.fold(
-      (failure) => emit(GetAddressMapErrorState()),
-      (data) {
-        placeSuggestions = data;
+    final response = await api.searchOnMap(searchKey: lat);
+    response.fold((failure) => emit(GetAddressMapErrorState()), (data) {
+      placeSuggestions = data;
 
-        emit(GetAddressMapSuccessState());
-      },
-    );
+      emit(GetAddressMapSuccessState());
+    });
   }
 
   void _showLocationPermissionDialog(BuildContext context) {

@@ -1,7 +1,7 @@
 import 'package:waslny/features/driver/home/cubit/cubit.dart';
 import 'package:waslny/features/driver/home/data/repo.dart';
 import 'package:waslny/features/driver/shipments/cubit/cubit.dart';
-import 'package:waslny/features/driver/shipments/data/repo.dart';
+import 'package:waslny/features/driver/shipments/screens/data/repo.dart';
 import 'package:waslny/features/user/home/cubit/cubit.dart';
 import 'package:waslny/features/user/home/data/repo.dart';
 import 'package:waslny/features/user/shipments/cubit/cubit.dart';

@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:waslny/core/exports.dart';
 import 'package:waslny/core/widgets/my_svg_widget.dart';
-import 'package:waslny/features/driver/shipments/data/models/shipment_details_model.dart';
+import 'package:waslny/features/driver/shipments/screens/data/models/shipment_details_model.dart';
 import 'package:waslny/features/general/location/cubit/location_cubit.dart';
 
 class FollowShipmentWidget extends StatelessWidget {

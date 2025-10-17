@@ -12,7 +12,7 @@ class CustomTheUserInfo extends StatelessWidget {
     this.withContactWidget = false,
     this.exporter,
     this.roomToken,
-    this.shipmentId,
+    this.tripId,
     this.shipmentCode,
     this.driverId,
   });
@@ -21,8 +21,8 @@ class CustomTheUserInfo extends StatelessWidget {
   final String? driverId;
   final bool inProgress;
   final bool withContactWidget;
-  final DriverOrUserModel? exporter;
-  final String? shipmentId;
+  final Driver? exporter;
+  final String? tripId;
   final String? roomToken;
   @override
   Widget build(BuildContext context) {
@@ -43,9 +43,7 @@ class CustomTheUserInfo extends StatelessWidget {
             children: [
               Text(
                 exporter?.name ?? "اسم العميل",
-                style: getMediumStyle(
-                  fontSize: 14.sp,
-                ),
+                style: getMediumStyle(fontSize: 14.sp),
               ),
               if (hint != null && hint!.isNotEmpty)
                 Text(
@@ -61,7 +59,7 @@ class CustomTheUserInfo extends StatelessWidget {
         10.w.horizontalSpace,
         if (withContactWidget)
           CustomCallAndMessageWidget(
-            shipmentId: shipmentId,
+            tripId: tripId,
             driverId: driverId,
             name: exporter?.name,
             roomToken: roomToken,
@@ -90,7 +88,7 @@ class CustomTheUserInfo extends StatelessWidget {
               : InkWell(
                   onTap: () {
                     cubit.requestShipment(
-                      shipmentId: shipmentId ?? "",
+                      shipmentId: tripId ?? "",
                       context: context,
                     );
                   },
@@ -108,13 +106,16 @@ class CustomTheUserInfo extends StatelessWidget {
           if (inProgress)
             InkWell(
               onTap: () {
-                warningDialog(context, title: "delete_shipment_sure".tr(),
-                    onPressedOk: () {
-                  cubit.cancelRequestShipment(
-                    shipmentId: shipmentId ?? "",
-                    context: context,
-                  );
-                });
+                warningDialog(
+                  context,
+                  title: "delete_shipment_sure".tr(),
+                  onPressedOk: () {
+                    cubit.cancelRequestShipment(
+                      shipmentId: tripId ?? "",
+                      context: context,
+                    );
+                  },
+                );
               },
               child: CircleAvatar(
                 radius: 20.r,
@@ -126,7 +127,7 @@ class CustomTheUserInfo extends StatelessWidget {
                 ),
               ),
             ),
-        ]
+        ],
       ],
     );
   }

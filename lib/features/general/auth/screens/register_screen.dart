@@ -1,8 +1,9 @@
 import 'dart:developer';
 
 import 'package:waslny/core/exports.dart';
+import 'package:waslny/core/utils/general_enum.dart';
 import 'package:waslny/core/widgets/custom_background_appbar.dart';
-import 'package:waslny/features/general/auth/screens/widget/enum_gender.dart';
+
 import 'package:waslny/features/general/profile/screens/privacy_screen.dart';
 
 import '../cubit/cubit.dart';
@@ -68,39 +69,41 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             log('Phone number ${p0.number}');
                           },
                         ),
-                        10.h.verticalSpace,
-                        Row(
-                          children: [
-                            Expanded(
-                              child: CustomDropdownButtonFormField<Gender>(
-                                value: cubit.gender,
-                                title: 'type'.tr(),
-                                onChanged: (value) {
-                                  setState(() {
-                                    cubit.gender = value;
-                                  });
-                                },
-                                items: Gender.values,
-                                itemBuilder: (item) => item.displayValue,
+                        if (widget.isDriver) 10.h.verticalSpace,
+                        if (widget.isDriver)
+                          Row(
+                            children: [
+                              Expanded(
+                                child: CustomDropdownButtonFormField<Gender>(
+                                  value: cubit.gender,
+                                  title: 'type'.tr(),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      cubit.gender = value;
+                                    });
+                                  },
+                                  items: Gender.values,
+                                  itemBuilder: (item) => item.displayValue,
+                                ),
                               ),
-                            ),
-                            10.w.horizontalSpace,
-                            Expanded(
-                              child: CustomDropdownButtonFormField<Gender>(
-                                value: cubit.vehicleType,
-                                title: 'vehicle_type'.tr(),
+                              10.w.horizontalSpace,
 
-                                onChanged: (value) {
-                                  setState(() {
-                                    cubit.vehicleType = value;
-                                  });
-                                },
-                                items: Gender.values,
-                                itemBuilder: (item) => item.displayValue,
+                              Expanded(
+                                child:
+                                    CustomDropdownButtonFormField<VehicleType>(
+                                      value: cubit.vehicleType,
+                                      title: 'vehicle_type'.tr(),
+                                      onChanged: (value) {
+                                        setState(() {
+                                          cubit.vehicleType = value;
+                                        });
+                                      },
+                                      items: VehicleType.values,
+                                      itemBuilder: (item) => item.displayValue,
+                                    ),
                               ),
-                            ),
-                          ],
-                        ),
+                            ],
+                          ),
                         10.h.verticalSpace,
                         CustomTextField(
                           title: 'password'.tr(),

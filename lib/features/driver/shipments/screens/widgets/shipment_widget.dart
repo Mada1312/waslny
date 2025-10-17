@@ -25,9 +25,7 @@ class DriverShipmentItemWidget extends StatelessWidget {
         Navigator.pushNamed(
           context,
           Routes.driverShipmentDetailsRoute,
-          arguments: DriverSHipmentsArgs(
-            shipmentId: shipment?.id.toString(),
-          ),
+          arguments: DriverSHipmentsArgs(shipmentId: shipment?.id.toString()),
         );
       },
       child: Container(
@@ -47,19 +45,13 @@ class DriverShipmentItemWidget extends StatelessWidget {
             ),
           ],
         ),
-        padding: EdgeInsets.symmetric(
-          vertical: 15.h,
-          horizontal: 15.w,
-        ),
+        padding: EdgeInsets.symmetric(vertical: 15.h, horizontal: 15.w),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               '${"code".tr()} ${shipment?.code ?? ""}',
-              style: getMediumStyle(
-                fontSize: 16.sp,
-                color: AppColors.primary,
-              ),
+              style: getMediumStyle(fontSize: 16.sp, color: AppColors.primary),
             ),
             Row(
               children: [
@@ -70,10 +62,10 @@ class DriverShipmentItemWidget extends StatelessWidget {
                   // imageColor: AppColors.dark2Grey,
                 ),
                 10.w.horizontalSpace,
-                Text("${"goods_type".tr()} : ",
-                    style: getMediumStyle(
-                      fontSize: 14.sp,
-                    )),
+                Text(
+                  "${"goods_type".tr()} : ",
+                  style: getMediumStyle(fontSize: 14.sp),
+                ),
                 Flexible(
                   child: Text(
                     shipment?.goodsType ?? " ",
@@ -108,6 +100,8 @@ class DriverShipmentItemWidget extends StatelessWidget {
               to: shipment?.toCountry?.name,
               fromLat: shipment?.lat,
               fromLng: shipment?.long,
+              toLat: null,
+              toLng: null,
             ),
             10.h.verticalSpace,
             CustomTheUserInfo(
@@ -117,7 +111,7 @@ class DriverShipmentItemWidget extends StatelessWidget {
               roomToken: shipment?.roomToken,
               driverId: null,
               shipmentCode: shipment?.code,
-              shipmentId: shipment?.id.toString(),
+              tripId: shipment?.id.toString(),
             ),
           ],
         ),

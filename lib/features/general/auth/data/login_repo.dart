@@ -44,8 +44,8 @@ class LoginRepo {
     required String phone,
     required String password,
     required String name,
-    required String gender,
-    required String vehicleType,
+    String? gender,
+    String? vehicleType,
     required bool isDriver,
   }) async {
     try {
@@ -58,9 +58,9 @@ class LoginRepo {
           'phone': phone,
           'name': name,
           'password': password,
-          'gender': gender,
-          'vehicle_type': vehicleType,
           'user_type': isDriver ? '1' : '0',
+          if (isDriver) 'vehicle_type': vehicleType,
+          if (isDriver) 'gender': gender,
         },
       );
       log('validateData Response: ${response.toString()}');
@@ -94,8 +94,9 @@ class LoginRepo {
           'password': password,
           'user_type': isDriver ? '1' : '0',
           "otp": otp,
-          'gender': gender,
-          'vehicle_type': vehicleType,
+
+          if (isDriver) 'vehicle_type': vehicleType,
+          if (isDriver) 'gender': gender,
         },
       );
 
