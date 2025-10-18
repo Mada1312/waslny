@@ -14,7 +14,7 @@ class _AlllatestLocationsScreenState extends State<AlllatestLocationsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(title: Text('saved_locations'.tr())),
       body: LatestLocationsWidgets(
         cubit: context.read<AddNewTripCubit>(),
         showAll: true,
