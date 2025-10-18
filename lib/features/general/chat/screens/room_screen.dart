@@ -41,6 +41,9 @@ class _AllRoomScreenState extends State<AllRoomScreen> {
                 : cubit.chatRoomModel?.data?.length == 0
                 ? Center(child: CustomNoDataWidget(message: 'no_rooms'.tr()))
                 : ListView.separated(
+                    padding: EdgeInsets.only(
+                      bottom: (kBottomNavigationBarHeight + 5).h,
+                    ),
                     itemCount: cubit.chatRoomModel?.data?.length ?? 0,
                     separatorBuilder: (context, index) => 10.h.verticalSpace,
                     itemBuilder: (context, index) {

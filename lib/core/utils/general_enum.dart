@@ -38,3 +38,46 @@ extension ServicesTypeExtension on ServicesType {
     }
   }
 }
+
+enum TimeType { now, later }
+
+extension TimeTypeExtension on TimeType {
+  String get displayValue {
+    switch (this) {
+      case TimeType.now:
+        return 'now'.tr();
+      case TimeType.later:
+        return 'later'.tr();
+    }
+  }
+}
+
+enum ServiceType { water, electric, gas, purchases }
+
+extension ServiceTypeExtension on ServiceType {
+  String get displayValue {
+    switch (this) {
+      case ServiceType.water:
+        return 'water'.tr();
+      case ServiceType.electric:
+        return 'electric'.tr();
+      case ServiceType.gas:
+        return 'gas'.tr();
+      case ServiceType.purchases:
+        return 'purchases'.tr();
+    }
+  }
+
+  int get id {
+    switch (this) {
+      case ServiceType.water:
+        return 1;
+      case ServiceType.electric:
+        return 2;
+      case ServiceType.gas:
+        return 3;
+      case ServiceType.purchases:
+        return 4;
+    }
+  }
+}

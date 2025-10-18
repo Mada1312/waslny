@@ -3,8 +3,8 @@ import 'package:waslny/features/driver/home/cubit/cubit.dart';
 import 'package:waslny/features/driver/shipments/cubit/cubit.dart';
 import 'package:waslny/features/driver/shipments/screens/details/shipment_details_screen.dart';
 import 'package:waslny/features/user/home/cubit/cubit.dart';
-import 'package:waslny/features/user/shipments/cubit/cubit.dart';
-import 'package:waslny/features/user/shipments/screens/details/shipment_details_screen.dart';
+import 'package:waslny/features/user/trip_and_services/cubit/cubit.dart';
+import 'package:waslny/features/user/trip_and_services/screens/details/shipment_details_screen.dart';
 import 'package:waslny/features/general/chat/screens/message_screen.dart';
 import 'package:waslny/features/general/location/cubit/location_cubit.dart';
 import 'package:waslny/features/general/notifications/cubit/cubit.dart';
@@ -21,7 +21,7 @@ import 'config/routes/app_routes.dart';
 import 'config/themes/app_theme.dart';
 import 'core/utils/app_strings.dart';
 import 'package:waslny/injector.dart' as injector;
-import 'features/user/add_new_shipment/cubit/cubit.dart';
+import 'features/user/add_new_trip/cubit/cubit.dart';
 import 'features/user/driver_details/cubit/cubit.dart';
 import 'features/general/auth/cubit/cubit.dart';
 import 'features/general/chat/cubit/chat_cubit.dart';
@@ -56,16 +56,14 @@ class _MyAppState extends State<MyApp> {
         BlocProvider(create: (_) => injector.serviceLocator<MainCubit>()),
         BlocProvider(create: (_) => injector.serviceLocator<UserHomeCubit>()),
         BlocProvider(
-          create: (_) => injector.serviceLocator<UserShipmentsCubit>(),
+          create: (_) => injector.serviceLocator<UserTripAndServicesCubit>(),
         ),
         BlocProvider(create: (_) => injector.serviceLocator<DriverHomeCubit>()),
         BlocProvider(
           create: (_) => injector.serviceLocator<DriverShipmentsCubit>(),
         ),
         BlocProvider(create: (_) => injector.serviceLocator<ProfileCubit>()),
-        BlocProvider(
-          create: (_) => injector.serviceLocator<AddNewShipmentCubit>(),
-        ),
+        BlocProvider(create: (_) => injector.serviceLocator<AddNewTripCubit>()),
         BlocProvider(create: (_) => injector.serviceLocator<LocationCubit>()),
         BlocProvider(
           create: (_) => injector.serviceLocator<TutorialVideoCubit>(),

@@ -1,7 +1,7 @@
 import 'package:waslny/core/exports.dart';
 import 'package:waslny/core/widgets/my_svg_widget.dart';
 import 'package:waslny/features/driver/shipments/screens/data/models/shipment_details_model.dart';
-import 'package:waslny/features/user/shipments/screens/widgets/custom_from_to.dart';
+import 'package:waslny/features/user/trip_and_services/screens/widgets/custom_from_to.dart';
 
 class ShipmentDetailsDriverBody extends StatelessWidget {
   const ShipmentDetailsDriverBody({super.key, this.shipmentDetails});

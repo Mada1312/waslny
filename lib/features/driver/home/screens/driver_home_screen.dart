@@ -6,8 +6,8 @@ import 'package:waslny/features/driver/shipments/cubit/cubit.dart';
 import 'package:waslny/features/driver/shipments/screens/widgets/custom_user_info.dart';
 import 'package:waslny/features/driver/shipments/screens/widgets/shipment_details_body.dart';
 import 'package:waslny/features/driver/shipments/screens/widgets/shipment_widget.dart';
-import 'package:waslny/features/user/shipments/screens/details/widgets/follow_shipment.dart';
-import 'package:waslny/features/user/shipments/screens/details/widgets/shipment_details_body.dart';
+import 'package:waslny/features/user/trip_and_services/screens/details/widgets/follow_shipment.dart';
+import 'package:waslny/features/user/trip_and_services/screens/details/widgets/shipment_details_body.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import '../cubit/cubit.dart';
 import '../cubit/state.dart';
@@ -421,6 +421,9 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                                           ),
                                   ),
                                 ],
+                                (kBottomNavigationBarHeight + 5)
+                                    .h
+                                    .verticalSpace,
                               ],
                             ),
                           ),

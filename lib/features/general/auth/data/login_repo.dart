@@ -2,7 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:waslny/core/preferences/preferences.dart';
-import 'package:waslny/features/user/add_new_shipment/data/models/countries_and_types_model.dart';
+import 'package:waslny/features/user/add_new_trip/data/models/countries_and_types_model.dart';
 
 import 'package:dio/dio.dart';
 

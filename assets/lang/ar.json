@@ -101,7 +101,7 @@
   "name": "الاسم",
   "enter_your_name": "ادخل اسمك",
   "trip_desc": "وصف الرحلة",
-  "enter_trip_desc": "تفاصيل الرحلة للمساعدة في فهم طلبك",
+  "enter_trip_desc": "تفاصيل اضافية.",
   "add": "اضافة",
   "select_location": "حدد الموقع",
   "subject": "الموضوع",
@@ -136,5 +136,13 @@
   "scooter": "سكوتر",
   "services": "الخدمات",
   "no_serices": "لا يوجد خدمات",
-  "cancel_trip": "الغاء الرحلة"
+  "cancel_trip": "الغاء الرحلة",
+  "now": "الآن",
+  "later": "لاحقا",
+  "water": "فاتورة مياه",
+  "electric": "فاتورة كهرباء",
+  "gas": "فاتورة غاز",
+  "purchases": "شراء",
+  "date_is_required": "ادخل تاريخ الرحلة",
+  "time_is_required": "ادخل وقت الرحلة"
 }
