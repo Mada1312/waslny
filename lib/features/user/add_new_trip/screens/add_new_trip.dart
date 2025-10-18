@@ -1,8 +1,11 @@
 import 'package:waslny/core/exports.dart';
 import 'package:waslny/core/utils/general_enum.dart';
+import 'package:waslny/core/widgets/custom_divider.dart';
 import 'package:waslny/extention.dart';
+import 'package:waslny/features/user/add_new_trip/screens/all_latest_locations_screen.dart';
 import 'package:waslny/features/user/add_new_trip/screens/widget/custom_location_widget.dart';
 import 'package:waslny/features/user/add_new_trip/screens/widget/custom_time_gender_vehicle.dart';
+import 'package:waslny/features/user/add_new_trip/screens/widget/latest_locations_widget.dart';
 import 'package:waslny/features/user/trip_and_services/data/models/shipment_details.dart';
 // import 'package:flutter_meta_sdk/flutter_meta_sdk.dart';
 
@@ -28,7 +31,8 @@ class _AddNewTripScreenState extends State<AddNewTripScreen> {
   void initState() {
     super.initState();
 
-    // final cubit = context.read<AddNewTripCubit>();
+    final cubit = context.read<AddNewTripCubit>();
+    cubit.gettMainLastestLocation((widget.args?.isService ?? false));
     // final shipment = widget.args?.shipment;
 
     // _initializeCountries(cubit, shipment);
@@ -111,10 +115,18 @@ class _AddNewTripScreenState extends State<AddNewTripScreen> {
         return Scaffold(
           appBar: customAppBar(
             context,
-            titleWidget: MySvgWidget(
-              path: AppIcons.waslnyArIcon,
-              imageColor: AppColors.secondPrimary,
-            ),
+            titleWidget: widget.args?.isService == true
+                ? Text(
+                    'add_service'.tr(),
+                    style: getSemiBoldStyle(
+                      color: AppColors.secondPrimary,
+                      fontweight: FontWeight.w700,
+                    ),
+                  )
+                : MySvgWidget(
+                    path: AppIcons.waslnyArIcon,
+                    imageColor: AppColors.secondPrimary,
+                  ),
             title: widget.args?.shipment != null
                 ? 'edit_trip'.tr()
                 : 'add_trip'.tr(),
@@ -128,6 +140,7 @@ class _AddNewTripScreenState extends State<AddNewTripScreen> {
                 children: [
                   ///!START FROM AND TO
                   LocationInputWidget(
+                    isService: widget.args?.isService ?? false,
                     fromController: cubit.fromAddressController,
                     toController: cubit.toAddressController,
                     onFromTap: () {
@@ -151,9 +164,11 @@ class _AddNewTripScreenState extends State<AddNewTripScreen> {
 
                   ///! Time - Gender - Vehicle
                   ResponsiveTimeGenderVehicleDropdowns(
+                    isService: widget.args?.isService ?? false,
                     selectedGenderType: cubit.selectedGenderType,
                     selectedTimeType: cubit.selectedTimeType,
                     selectedVehicleType: cubit.selectedVehicleType,
+
                     onTimeTypeChanged: (value) {
                       setState(() {
                         cubit.selectedTimeType = value;
@@ -170,6 +185,12 @@ class _AddNewTripScreenState extends State<AddNewTripScreen> {
                     },
                     onVehicleTypeChanged: (value) {
                       cubit.selectedVehicleType = value;
+                    },
+                    selectedServiceTo: cubit.selectedServiceTo,
+                    onServiceToChanged: (value) {
+                      setState(() {
+                        cubit.selectedServiceTo = value;
+                      });
                     },
                   ),
 
@@ -228,9 +249,101 @@ class _AddNewTripScreenState extends State<AddNewTripScreen> {
                     hintText: 'enter_trip_desc'.tr(),
                   ),
                   10.h.verticalSpace,
+
                   //! LIST OF LATEST LOCATIONS
+                  state is LoadingGetLatestLocation
+                      ? LinearProgressIndicator(
+                          color: AppColors.secondPrimary,
+                          backgroundColor: AppColors.primary,
+                        )
+                      : LatestLocationsWidgets(cubit: cubit),
+
                   //! SELECT FROM LOCATION
+                  CustomDivider(),
+
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => FullScreenMap(
+                            isTo: widget.args?.isService == false,
+                          ),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10.r),
+                        color: AppColors.second2Primary,
+                      ),
+                      padding: const EdgeInsets.all(8.0),
+                      margin: const EdgeInsets.symmetric(vertical: 2.0),
+                      child: Row(
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10.r),
+                              color: AppColors.second3Primary,
+                            ),
+                            padding: EdgeInsets.all(8),
+                            child: MySvgWidget(path: AppIcons.selectLocation),
+                          ),
+                          10.w.horizontalSpace,
+                          Flexible(
+                            child: Text(
+                              widget.args?.isService == true
+                                  ? 'from_map'.tr()
+                                  : 'select_location_from_map'.tr(),
+                              style: getSemiBoldStyle(fontSize: 14.sp),
+                              maxLines: 1,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
                   //! GET FROM SAVED LOCATIONS
+                  if ((cubit.latestLocation?.data?.length ?? 0) > 3)
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => AlllatestLocationsScreen(),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10.r),
+                          color: AppColors.second2Primary,
+                        ),
+                        padding: const EdgeInsets.all(8.0),
+                        margin: const EdgeInsets.symmetric(vertical: 2.0),
+                        child: Row(
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10.r),
+                                color: AppColors.second3Primary,
+                              ),
+                              padding: EdgeInsets.all(8),
+                              child: MySvgWidget(path: AppIcons.savedLocations),
+                            ),
+                            10.w.horizontalSpace,
+                            Flexible(
+                              child: Text(
+                                'saved_locations'.tr(),
+                                style: getSemiBoldStyle(fontSize: 14.sp),
+                                maxLines: 1,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ), //!
                   10.h.verticalSpace,
                   CustomButton(
                     title: widget.args?.shipment != null

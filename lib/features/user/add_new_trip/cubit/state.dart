@@ -20,3 +20,11 @@ class AddNewTripLoaded extends AddNewTripState {}
 class AddNewTripError extends AddNewTripState {}
 
 class ToCountryChanged extends AddNewTripState {}
+
+class LoadingGetLatestLocation extends AddNewTripState {}
+
+class LoadedGetLatestLocation extends AddNewTripState {}
+
+class ErrorGetLatestLocation extends AddNewTripState {}
+
+class SuccessSelectedLocationToFields extends AddNewTripState {}

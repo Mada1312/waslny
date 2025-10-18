@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:waslny/core/exports.dart';
 
 import 'package:waslny/features/general/location/cubit/location_cubit.dart';
@@ -10,6 +12,7 @@ class CustomFromToWidget extends StatelessWidget {
     this.fromLat,
     this.fromLng,
     this.toLat,
+    this.serviceTo,
     this.toLng,
   });
   final String? from;
@@ -18,6 +21,8 @@ class CustomFromToWidget extends StatelessWidget {
   final String? fromLng;
   final String? toLat;
   final String? toLng;
+  final String? serviceTo;
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -53,10 +58,11 @@ class CustomFromToWidget extends StatelessWidget {
               Flexible(
                 child: GestureDetector(
                   onTap: () {
+                    log('fromLat: $fromLat, fromLng: $fromLng');
                     if (fromLat != null && fromLng != null) {
                       context.read<LocationCubit>().openGoogleMapsRoute(
-                        double.tryParse(fromLat!) ?? 0,
-                        double.tryParse(fromLng!) ?? 0,
+                        double.tryParse(fromLat ?? '0') ?? 0,
+                        double.tryParse(fromLng ?? '0') ?? 0,
                       );
                     }
                   },
@@ -94,20 +100,23 @@ class CustomFromToWidget extends StatelessWidget {
             Flexible(
               child: GestureDetector(
                 onTap: () async {
-                  if (toLat != null && toLng != null) {
+                  if (toLat != null && toLng != null && serviceTo == null) {
                     context.read<LocationCubit>().openGoogleMapsRoute(
-                      double.tryParse(toLat!) ?? 0,
-                      double.tryParse(toLng!) ?? 0,
+                      double.tryParse(toLat ?? '0') ?? 0,
+                      double.tryParse(toLng ?? '0') ?? 0,
                     );
                   }
                 },
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("to".tr(), style: getMediumStyle(fontSize: 14.sp)),
+                    Text(
+                      serviceTo != null ? "service_to".tr() : "to".tr(),
+                      style: getMediumStyle(fontSize: 14.sp),
+                    ),
                     // 10.h.verticalSpace,
                     Text(
-                      to ?? " ",
+                      serviceTo != null ? (serviceTo ?? '') : (to ?? " "),
                       style: getRegularStyle(
                         fontSize: 13.sp,
                         color: AppColors.grey,

@@ -1,4 +1,5 @@
 import 'package:waslny/core/exports.dart';
+import 'package:waslny/core/widgets/custom_divider.dart';
 import 'package:waslny/extention.dart';
 
 import 'package:waslny/features/user/home/data/models/get_home_model.dart';
@@ -223,20 +224,32 @@ class _TripOrServiceItemWidgetState extends State<TripOrServiceItemWidget> {
                     10.h.verticalSpace,
                     CustomFromToWidget(
                       from: widget.tripOrService?.from,
+                      fromLat: widget.tripOrService?.fromLat,
+                      fromLng: widget.tripOrService?.fromLong,
                       to: widget.tripOrService?.to,
-                      fromLat: widget.tripOrService?.toLat,
-                      fromLng: widget.tripOrService?.toLong,
                       toLat: widget.tripOrService?.toLat,
                       toLng: widget.tripOrService?.toLong,
+                      serviceTo: widget.tripOrService?.serviceTo,
                     ),
-                    if (widget.tripOrService?.driver != null) ...[
-                      CustomDriverInfo(
-                        driver: widget.tripOrService?.driver,
-                        roomToken: null,
-                        shipmentCode: widget.tripOrService?.code,
-                        tripId: widget.tripOrService?.id?.toString() ?? '',
-                      ),
-                    ],
+                    (widget.tripOrService?.driver != null)
+                        ? CustomDriverInfo(
+                            driver: widget.tripOrService?.driver,
+                            roomToken: null,
+                            shipmentCode: widget.tripOrService?.code,
+                            tripId: widget.tripOrService?.id?.toString() ?? '',
+                          )
+                        : Center(
+                            child: Column(
+                              children: [
+                                CustomDivider(),
+
+                                Text(
+                                  'searching_for_driver'.tr(),
+                                  style: getRegularStyle(fontSize: 14.sp),
+                                ),
+                              ],
+                            ),
+                          ),
                   ],
                 ),
           ),

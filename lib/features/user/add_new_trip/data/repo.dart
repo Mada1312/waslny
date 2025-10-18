@@ -1,21 +1,21 @@
+import 'package:waslny/features/user/add_new_trip/data/models/latest_model.dart';
+
 import '../../../../core/exports.dart';
 import '../../../general/auth/data/model/validate_data.dart';
-import 'models/countries_and_types_model.dart';
 
 class AddNewTripRepo {
   BaseApiConsumer dio;
   AddNewTripRepo(this.dio);
 
-  Future<Either<Failure, GetCountriesAndTruckTypeModel>> mainGetData({
-    required String model,
-  }) async {
+  Future<Either<Failure, GetMainLastestLocation>> gettMainLastestLocation(
+    bool isService,
+  ) async {
     try {
       var response = await dio.get(
-        EndPoints.mainGetDataUrl,
-        queryParameters: {"model": model},
+        EndPoints.getLastAddressesUrl + (isService == true ? "1" : "0"),
       );
 
-      return Right(GetCountriesAndTruckTypeModel.fromJson(response));
+      return Right(GetMainLastestLocation.fromJson(response));
     } on ServerException {
       return Left(ServerFailure());
     }
@@ -47,9 +47,9 @@ class AddNewTripRepo {
           "from": from,
           if (fromLat != null) "from_lat": fromLat,
           if (fromLong != null) "from_long": fromLong,
-          "to": to,
-          if (toLat != null) "to_lat": toLat,
-          if (toLong != null) "to_long": toLong,
+          if (isService == false) "to": to,
+          if (toLat != null && isService == false) "to_lat": toLat,
+          if (toLong != null && isService == false) "to_long": toLong,
 
           "prefer_driver_gender": gender,
           "vehicle_type": vehicleType,

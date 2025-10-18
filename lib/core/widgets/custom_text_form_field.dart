@@ -188,7 +188,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                   errorStyle: getRegularStyle(color: AppColors.red),
                   enabledBorder: OutlineInputBorder(
                     borderSide: BorderSide(
-                      color: AppColors.lightGrey,
+                      color: AppColors.second2Primary,
                       width: 0,
                     ),
                     borderRadius: BorderRadius.all(
@@ -196,7 +196,10 @@ class _CustomTextFieldState extends State<CustomTextField> {
                     ),
                   ),
                   disabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: AppColors.gray, width: 0),
+                    borderSide: BorderSide(
+                      color: AppColors.second2Primary,
+                      width: 0,
+                    ),
                     borderRadius: BorderRadius.all(
                       Radius.circular(widget.borderRadius ?? 10.r),
                     ),
@@ -204,7 +207,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                   // focused border style
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(
-                      color: AppColors.secondPrimary,
+                      color: AppColors.second2Primary,
                       width: 0,
                     ),
                     borderRadius: BorderRadius.all(

@@ -52,31 +52,31 @@ extension TimeTypeExtension on TimeType {
   }
 }
 
-enum ServiceType { water, electric, gas, purchases }
+enum ServiceTo { water, electric, gas, purchases }
 
-extension ServiceTypeExtension on ServiceType {
+extension ServiceTypeExtension on ServiceTo {
   String get displayValue {
     switch (this) {
-      case ServiceType.water:
+      case ServiceTo.water:
         return 'water'.tr();
-      case ServiceType.electric:
+      case ServiceTo.electric:
         return 'electric'.tr();
-      case ServiceType.gas:
+      case ServiceTo.gas:
         return 'gas'.tr();
-      case ServiceType.purchases:
+      case ServiceTo.purchases:
         return 'purchases'.tr();
     }
   }
 
   int get id {
     switch (this) {
-      case ServiceType.water:
+      case ServiceTo.water:
         return 1;
-      case ServiceType.electric:
+      case ServiceTo.electric:
         return 2;
-      case ServiceType.gas:
+      case ServiceTo.gas:
         return 3;
-      case ServiceType.purchases:
+      case ServiceTo.purchases:
         return 4;
     }
   }

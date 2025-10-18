@@ -391,7 +391,7 @@ class LoginCubit extends Cubit<LoginState> {
           authData = r;
 
           if (isFirstTime) {
-            if (authData?.data?.userType == 0) {
+            /*if (authData?.data?.userType == 0) {
               if (authData?.data?.exportCard == null) {
                 warningDialog(
                   context,
@@ -430,7 +430,7 @@ class LoginCubit extends Cubit<LoginState> {
                   },
                 );
               }
-            }
+            }*/
             changeLanguage();
           }
           isFirstTime = false;
