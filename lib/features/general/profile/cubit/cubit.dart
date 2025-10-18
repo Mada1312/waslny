@@ -3,10 +3,13 @@ import 'dart:io';
 import 'package:waslny/core/exports.dart';
 import 'package:waslny/core/preferences/preferences.dart';
 import 'package:waslny/core/utils/appwidget.dart';
+import 'package:waslny/core/utils/general_enum.dart';
 import 'package:waslny/features/maintenance_screen.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:waslny/features/user/home/cubit/cubit.dart';
+import 'package:waslny/features/user/home/data/models/get_home_model.dart';
 import '../data/models/fav_ecporter_model.dart';
 import '../data/models/main_settings_model.dart';
 import '../data/repo.dart';
@@ -17,8 +20,7 @@ class ProfileCubit extends Cubit<ProfileState> {
 
   ProfileRepo api;
 
-  TextEditingController addressController = TextEditingController();
-  TextEditingController subjectController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
   TextEditingController messageController = TextEditingController();
 
   Future<String> _getStoreUrl() async {
@@ -65,8 +67,7 @@ class ProfileCubit extends Cubit<ProfileState> {
       emit(LoadingContactUsState());
 
       final res = await api.contactUs(
-        address: addressController.text,
-        subject: subjectController.text,
+        name: nameController.text,
         message: messageController.text,
       );
 
@@ -80,8 +81,8 @@ class ProfileCubit extends Cubit<ProfileState> {
         (r) {
           if (r.status == 200) {
             successGetBar(r.msg);
-            addressController.clear();
-            subjectController.clear();
+
+            nameController.clear();
             messageController.clear();
             emit(LoadedContactUsState());
             Navigator.pop(context);
@@ -200,12 +201,18 @@ class ProfileCubit extends Cubit<ProfileState> {
     }
   }
 
-  MainFavModel? mainFavModel;
-  getMainFavUserDriver() async {
+  GetUserHomeModel? mainFavModel;
+
+  getMainFavUserTripsAndServices(BuildContext context) async {
     try {
       emit(LoadingContactUsState());
-
-      final res = await api.getMainFavUserDriver();
+      mainFavModel = null;
+      final res = await api.getMainFavUserTripsAndServices(
+        context.read<UserHomeCubit>().serviceType?.name ==
+                ServicesType.services.name
+            ? '1'
+            : '0',
+      );
 
       res.fold(
         (l) {
@@ -225,12 +232,14 @@ class ProfileCubit extends Cubit<ProfileState> {
     }
   }
 
-  actionFav(String driverId, {bool isFavScreen = true}) async {
+  actionFav(
+    String id, {
+    bool isFavScreen = true,
+    required BuildContext context,
+  }) async {
     try {
       emit(LoadingContactUsState());
-
-      final res = await api.actionFav(driverId);
-
+      final res = await api.actionFav(id);
       res.fold(
         (l) {
           emit(ErrorContactUsState());
@@ -238,9 +247,17 @@ class ProfileCubit extends Cubit<ProfileState> {
         (r) {
           if (r.status == 200) {
             if (isFavScreen) {
-              mainFavModel?.data!.removeWhere(
-                (element) => element.driverId.toString() == driverId,
-              );
+              if (context.read<UserHomeCubit>().serviceType?.name ==
+                  ServicesType.services.name) {
+                mainFavModel?.data!.services!.removeWhere(
+                  (element) => element.id.toString() == id,
+                );
+              } else {
+                mainFavModel?.data!.trips!.removeWhere(
+                  (element) => element.id.toString() == id,
+                );
+              }
+
               emit(LoadedContactUsState());
             } else {
               emit(ErrorContactUsState());
@@ -250,6 +267,140 @@ class ProfileCubit extends Cubit<ProfileState> {
       );
     } catch (e) {
       emit(ErrorContactUsState());
+    }
+  }
+
+  DateTime? selectedDate;
+  TimeOfDay? selectedTime;
+  TextEditingController selectedDateTimeController = TextEditingController();
+  TextEditingController selectedTimeController = TextEditingController();
+  TextEditingController selectedDateController = TextEditingController();
+  Future<void> selectDate(BuildContext context) async {
+    DateTime initialDate;
+    try {
+      initialDate = DateFormat(
+        'yyyy-MM-dd',
+        'en',
+      ).parse(selectedDateController.text);
+    } catch (_) {
+      initialDate = DateTime.now();
+    }
+
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: initialDate,
+      locale: const Locale('ar'),
+      firstDate: DateTime.now(),
+      lastDate: DateTime(50100),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            textTheme: TextTheme(
+              bodyLarge: getRegularStyle(),
+              bodyMedium: getRegularStyle(),
+              bodySmall: getRegularStyle(),
+            ),
+            colorScheme: ColorScheme.light(
+              primary: AppColors.secondPrimary,
+              onSurface: Colors.black,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (pickedDate != null) {
+      selectedDate = pickedDate;
+      selectedDateController.text = DateFormat(
+        'yyyy-MM-dd',
+        'en',
+      ).format(pickedDate);
+    }
+  }
+
+  Future<void> selectTime(BuildContext context) async {
+    final TimeOfDay initialTime = TimeOfDay.now();
+    final TimeOfDay? pickedTime = await showTimePicker(
+      context: context,
+      initialTime: initialTime,
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            textTheme: TextTheme(
+              bodyLarge: getRegularStyle(),
+              bodyMedium: getRegularStyle(),
+              bodySmall: getRegularStyle(),
+            ),
+            colorScheme: ColorScheme.light(
+              primary: AppColors.secondPrimary,
+              onSurface: Colors.black,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (pickedTime != null) {
+      selectedTime = pickedTime;
+      selectedTimeController.text = pickedTime.format(context);
+    }
+  }
+
+  Future<void> selectDateTime(BuildContext context) async {
+    await selectDate(context);
+    if (selectedDate != null) {
+      await selectTime(context);
+      if (selectedTime != null) {
+        final DateTime finalDateTime = DateTime(
+          selectedDate!.year,
+          selectedDate!.month,
+          selectedDate!.day,
+          selectedTime!.hour,
+          selectedTime!.minute,
+        );
+
+        final String formattedDateTime = DateFormat(
+          'yyyy-MM-dd HH:mm:ss',
+          'en',
+        ).format(finalDateTime);
+
+        selectedDateTimeController.text = formattedDateTime;
+        emit(DateTimeSelected());
+      }
+    }
+  }
+
+  cloneTrip(
+    String id, {
+    required BuildContext context,
+    bool isSchedule = false,
+  }) async {
+    try {
+      emit(LoadingCloneTripState());
+      final res = await api.cloneTrip(
+        id,
+        scheduleTime: isSchedule ? selectedDateTimeController.text : null,
+      );
+      res.fold(
+        (l) {
+          emit(ErrorCloneTripState());
+        },
+        (r) {
+          if (r.status == 200) {
+            successGetBar(r.msg);
+            selectedDateTimeController.clear;
+            selectedDateController.clear;
+            selectedTimeController.clear;
+            emit(LoadedCloneTripState());
+          } else {
+            emit(ErrorCloneTripState());
+          }
+        },
+      );
+    } catch (e) {
+      emit(ErrorCloneTripState());
     }
   }
 

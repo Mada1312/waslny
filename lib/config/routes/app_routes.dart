@@ -18,7 +18,7 @@ import '../../features/general/auth/screens/update_exporter_profile.dart';
 import '../../features/general/auth/screens/verify_code.dart';
 import '../../features/general/chat/screens/message_screen.dart';
 import '../../features/general/profile/screens/contactus_screen.dart';
-import '../../features/general/tutorial_videos/screens/tutorial_video_screen.dart';
+
 
 class Routes {
   static const String initialRoute = '/';
@@ -155,13 +155,8 @@ class AppRoutes {
           alignment: Alignment.center,
           duration: const Duration(milliseconds: 800),
         );
-      case Routes.tutorialVideoScreenRoute:
-        return PageTransition(
-          child: const TutorialVideoScreen(),
-          type: PageTransitionType.fade,
-          alignment: Alignment.center,
-          duration: const Duration(milliseconds: 800),
-        );
+   
+   
       case Routes.contactUsScreen:
         return PageTransition(
           child: const ContactUsScreen(),

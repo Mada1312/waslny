@@ -177,7 +177,6 @@ class LoginRepo {
   Future<Either<Failure, LoginModel>> updateUserProfile({
     String? name,
     String? address,
-    File? exportCard,
     File? image,
   }) async {
     try {
@@ -187,7 +186,7 @@ class LoginRepo {
         body: {
           "key": "updateProfile",
           'name': name,
-
+          'address': address,
           if (image != null)
             'image': MultipartFile.fromFileSync(
               image.path,

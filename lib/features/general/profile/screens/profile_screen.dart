@@ -164,19 +164,6 @@ class ProfileScreen extends StatelessWidget {
                           child: SingleChildScrollView(
                             child: Column(
                               children: [
-                                //TODO
-                                CustomProfileRow(
-                                  title: 'tutorial_video',
-                                  path: AppIcons.video,
-                                  onTap: () {
-                                    Navigator.pushNamed(
-                                      context,
-                                      Routes.tutorialVideoScreenRoute,
-                                    );
-                                    log('video screen');
-                                  },
-                                ),
-
                                 //! Done
                                 if (!isDriver)
                                   CustomProfileRow(
@@ -206,7 +193,8 @@ class ProfileScreen extends StatelessWidget {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => UserFavDriver(),
+                                          builder: (context) =>
+                                              UserFavTripsAndServices(),
                                         ),
                                       );
                                     },

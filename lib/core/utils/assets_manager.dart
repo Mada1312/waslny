@@ -85,4 +85,5 @@ class AppIcons {
   static const String waslnyArIcon = '$iconsPath/waslny_ar.svg';
   static const String selectLocation = '$iconsPath/select_location.svg';
   static const String savedLocations = '$iconsPath/saved_locations.svg';
+  static const String noDataIcon = '$iconsPath/no_data.svg';
 }

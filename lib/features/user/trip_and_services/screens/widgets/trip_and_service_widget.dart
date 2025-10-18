@@ -229,7 +229,7 @@ class _TripOrServiceItemWidgetState extends State<TripOrServiceItemWidget> {
                       to: widget.tripOrService?.to,
                       toLat: widget.tripOrService?.toLat,
                       toLng: widget.tripOrService?.toLong,
-                      serviceTo: widget.tripOrService?.serviceTo,
+                      serviceTo: widget.tripOrService?.serviceToName,
                     ),
                     (widget.tripOrService?.driver != null)
                         ? CustomDriverInfo(

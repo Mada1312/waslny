@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:waslny/core/exports.dart';
@@ -39,122 +38,129 @@ class _UpdateUserProfileState extends State<UpdateUserProfile> {
                         clipBehavior: Clip.none,
                         children: [
                           SizedBox(
-                              height: getHeightSize(context) / 4,
-                              width: double.infinity,
-                              child: Stack(
-                                clipBehavior: Clip.none,
-                                alignment: Alignment.bottomCenter,
-                                children: [
-                                  ClipRRect(
+                            height: getHeightSize(context) / 4,
+                            width: double.infinity,
+                            child: Stack(
+                              clipBehavior: Clip.none,
+                              alignment: Alignment.bottomCenter,
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.only(
+                                    bottomLeft: Radius.circular(20.sp),
+                                    bottomRight: Radius.circular(20.sp),
+                                  ),
+                                  child: Image.asset(
+                                    ImageAssets.userCover,
+                                    fit: BoxFit.cover,
+                                    height: getHeightSize(context) / 4,
+                                    width: double.infinity,
+                                  ),
+                                ),
+                                Container(
+                                  decoration: BoxDecoration(
+                                    color: AppColors.secondPrimary.withOpacity(
+                                      0.8,
+                                    ),
                                     borderRadius: BorderRadius.only(
                                       bottomLeft: Radius.circular(20.sp),
                                       bottomRight: Radius.circular(20.sp),
                                     ),
-                                    child: Image.asset(
-                                      ImageAssets.userCover,
-                                      fit: BoxFit.cover,
-                                      height: getHeightSize(context) / 4,
-                                      width: double.infinity,
-                                    ),
                                   ),
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      color: AppColors.secondPrimary
-                                          .withOpacity(0.8),
-                                      borderRadius: BorderRadius.only(
-                                        bottomLeft: Radius.circular(20.sp),
-                                        bottomRight: Radius.circular(20.sp),
-                                      ),
+                                ),
+                                PositionedDirectional(
+                                  start: 16.w,
+                                  top: 20.h,
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 16.w,
+                                      vertical: 20.h,
                                     ),
-                                  ),
-                                  PositionedDirectional(
-                                    start: 16.w,
-                                    top: 20.h,
-                                    child: Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 16.w, vertical: 20.h),
-                                      child: Row(
-                                        children: [
-                                          InkWell(
-                                            onTap: () =>
-                                                Navigator.of(context).pop(),
-                                            child: Icon(
-                                              Icons.arrow_back,
-                                              color: AppColors.white,
-                                            ),
-                                          ),
-                                          10.w.horizontalSpace,
-                                          AutoSizeText(
-                                            'edit_account'.tr(),
-                                            maxLines: 1,
-                                            style: getRegularStyle(
-                                              color: AppColors.white,
-                                              fontSize: 16.sp,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  Positioned(
-                                    bottom: -50.h,
-                                    child: Stack(
-                                      alignment: Alignment.topLeft,
+                                    child: Row(
                                       children: [
-                                        Container(
-                                          margin: EdgeInsets.all(8.w),
-                                          decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              boxShadow: [
-                                                BoxShadow(
-                                                  color: Colors.black12,
-                                                  blurRadius: 10,
-                                                  spreadRadius: 2,
-                                                  offset: const Offset(0, 2),
-                                                ),
-                                              ]),
-                                          child: CircleAvatar(
-                                            radius: 60.r,
-                                            backgroundColor: Colors.white,
-                                            child: CircleAvatar(
-                                                radius: 50.r,
-                                                backgroundImage: cubit
-                                                            .pickedProfileImage !=
-                                                        null
-                                                    ? FileImage(cubit
-                                                        .pickedProfileImage!)
-                                                    : cubit.authData?.data
-                                                                ?.image !=
-                                                            null
-                                                        ? NetworkImage(cubit
-                                                            .authData!
-                                                            .data!
-                                                            .image!)
-                                                        : const AssetImage(
-                                                            ImageAssets
-                                                                .userIcon)),
+                                        InkWell(
+                                          onTap: () =>
+                                              Navigator.of(context).pop(),
+                                          child: Icon(
+                                            Icons.arrow_back,
+                                            color: AppColors.white,
                                           ),
                                         ),
-                                        InkWell(
-                                          onTap: () async {
-                                            await cubit.pickImageFromGallery();
-                                            setState(() {});
-                                          },
-                                          child: CircleAvatar(
-                                            radius: 20.r,
-                                            backgroundColor: AppColors.primary,
-                                            child: Icon(
-                                              Icons.camera_alt_outlined,
-                                              color: AppColors.white,
-                                              size: 20.sp,
-                                            ),
+                                        10.w.horizontalSpace,
+                                        AutoSizeText(
+                                          'edit_account'.tr(),
+                                          maxLines: 1,
+                                          style: getRegularStyle(
+                                            color: AppColors.white,
+                                            fontSize: 16.sp,
                                           ),
-                                        )
+                                        ),
                                       ],
                                     ),
                                   ),
-                                ],
-                              )),
+                                ),
+                                Positioned(
+                                  bottom: -50.h,
+                                  child: Stack(
+                                    alignment: Alignment.topLeft,
+                                    children: [
+                                      Container(
+                                        margin: EdgeInsets.all(8.w),
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.black12,
+                                              blurRadius: 10,
+                                              spreadRadius: 2,
+                                              offset: const Offset(0, 2),
+                                            ),
+                                          ],
+                                        ),
+                                        child: CircleAvatar(
+                                          radius: 60.r,
+                                          backgroundColor: Colors.white,
+                                          child: CircleAvatar(
+                                            radius: 50.r,
+                                            backgroundImage:
+                                                cubit.pickedProfileImage != null
+                                                ? FileImage(
+                                                    cubit.pickedProfileImage!,
+                                                  )
+                                                : cubit.authData?.data?.image !=
+                                                      null
+                                                ? NetworkImage(
+                                                    cubit
+                                                        .authData!
+                                                        .data!
+                                                        .image!,
+                                                  )
+                                                : const AssetImage(
+                                                    ImageAssets.userIcon,
+                                                  ),
+                                          ),
+                                        ),
+                                      ),
+                                      InkWell(
+                                        onTap: () async {
+                                          await cubit.pickImageFromGallery();
+                                          setState(() {});
+                                        },
+                                        child: CircleAvatar(
+                                          radius: 20.r,
+                                          backgroundColor: AppColors.primary,
+                                          child: Icon(
+                                            Icons.camera_alt_outlined,
+                                            color: AppColors.white,
+                                            size: 20.sp,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ],
                       ),
                       60.h.verticalSpace,
@@ -188,162 +194,8 @@ class _UpdateUserProfileState extends State<UpdateUserProfile> {
                                   enabled: false,
                                   isRequired: true,
                                 ),
+
                                 //!
-                                10.h.verticalSpace,
-
-                                Text('exporter_card'.tr(),
-                                    style: getMediumStyle()),
-                                10.h.verticalSpace,
-
-                                InkWell(
-                                  onTap: () async {
-                                    await cubit.pickUserCardImageFromGallery();
-                                    setState(() {});
-                                  },
-                                  child: Padding(
-                                    padding: EdgeInsets.all(5.0.sp),
-                                    child: DottedBorder(
-                                      color: Colors.black12,
-                                      strokeWidth: 1,
-                                      borderType: BorderType.RRect,
-                                      radius: Radius.circular(8),
-                                      dashPattern: [12, 3],
-                                      child: SizedBox(
-                                        height: 150.h,
-                                        child: Stack(
-                                          children: [
-                                            // Display either the placeholder or the uploaded image
-
-                                            (cubit.authData?.data?.exportCard !=
-                                                        null &&
-                                                    cubit.pickedUserCardProfileImage ==
-                                                        null)
-                                                ? ClipRRect(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            12.r),
-                                                    child: Image.network(
-                                                      cubit.authData?.data
-                                                              ?.exportCard ??
-                                                          '',
-                                                      fit: BoxFit.cover,
-                                                      width: double.infinity,
-                                                      height: 150.h,
-                                                      errorBuilder: (context,
-                                                              error,
-                                                              stackTrace) =>
-                                                          Center(
-                                                        child: Padding(
-                                                          padding:
-                                                              EdgeInsets.all(
-                                                                  20.sp),
-                                                          child: Image.asset(
-                                                            ImageAssets.logo,
-                                                            // color: AppColors
-                                                            //     .primary,
-                                                            width: 40.w,
-                                                            height: 40.h,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  )
-                                                : cubit.pickedUserCardProfileImage ==
-                                                        null
-                                                    ? Center(
-                                                        child: Column(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .center,
-                                                          children: [
-                                                            Icon(
-                                                                Icons
-                                                                    .cloud_upload_outlined,
-                                                                size: 40.sp,
-                                                                color: AppColors
-                                                                    .primary),
-                                                            SizedBox(
-                                                                height: 10.h),
-                                                            Text(
-                                                              'upload_exporter_card'
-                                                                  .tr(),
-                                                              style: TextStyle(
-                                                                color: Colors
-                                                                    .grey[600],
-                                                                fontSize: 14.sp,
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      )
-                                                    : ClipRRect(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(12.r),
-                                                        child: Image.file(
-                                                          File(cubit
-                                                              .pickedUserCardProfileImage!
-                                                              .path),
-                                                          fit: BoxFit.cover,
-                                                          width:
-                                                              double.infinity,
-                                                          height: 150.h,
-                                                          errorBuilder: (context,
-                                                                  error,
-                                                                  stackTrace) =>
-                                                              Center(
-                                                            child: Padding(
-                                                              padding:
-                                                                  EdgeInsets
-                                                                      .all(20
-                                                                          .sp),
-                                                              child:
-                                                                  Image.asset(
-                                                                ImageAssets
-                                                                    .logo,
-                                                                color: AppColors
-                                                                    .primary,
-                                                                width: 40.w,
-                                                                height: 40.h,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                            // Show remove button only if an image is uploaded
-                                            if (cubit.pickedUserCardProfileImage !=
-                                                    null ||
-                                                cubit.authData?.data
-                                                        ?.exportCard !=
-                                                    null)
-                                              Positioned(
-                                                top: 10.h,
-                                                right: 10.w,
-                                                child: GestureDetector(
-                                                  onTap: () {
-                                                    cubit.pickedUserCardProfileImage =
-                                                        null;
-                                                    cubit.authData?.data
-                                                        ?.exportCard = null;
-                                                    setState(() {});
-                                                  },
-                                                  child: CircleAvatar(
-                                                    backgroundColor: Colors.red,
-                                                    radius: 15.r,
-                                                    child: Icon(
-                                                      Icons.close_rounded,
-                                                      color: Colors.white,
-                                                      size: 18.sp,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
                                 20.h.verticalSpace,
                                 CustomButton(
                                   title: 'confirm'.tr(),

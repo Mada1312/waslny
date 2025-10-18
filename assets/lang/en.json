@@ -149,5 +149,10 @@
     "searching_for_driver": "Looking for a captain",
     "select_location_from_map": "Locate the location on the map",
     "from_map": "From my location",
-    "saved_locations": "Saved Locations"
+    "saved_locations": "Saved Locations",
+    "make_trip": "Request a trip",
+    "make_schedule_trip": "Schedule a trip",
+    "remove_from_fav": "Remove address from favorites?",
+    "sure_to_make_schedule_trip": "Are you sure to schedule the trip?",
+    "sure_to_make_trip": "Are you sure to request the trip?"
 }

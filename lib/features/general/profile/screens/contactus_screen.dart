@@ -1,6 +1,7 @@
 import 'package:waslny/core/utils/call_method.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:waslny/extention.dart';
 
 import '../../../../core/exports.dart';
 import '../cubit/cubit.dart';
@@ -43,25 +44,14 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
                           height: 200.h,
                         ),
                       ),
+
                       CustomTextField(
-                        title: 'address'.tr(),
-                        hintText: 'enter_address'.tr(),
-                        controller: cubit.addressController,
+                        title: 'name'.tr(),
+                        hintText: 'enter_your_name'.tr(),
+                        controller: cubit.nameController,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'enter_address'.tr();
-                          } else {
-                            return null;
-                          }
-                        },
-                      ),
-                      CustomTextField(
-                        title: 'subject'.tr(),
-                        hintText: 'enter_subject'.tr(),
-                        controller: cubit.subjectController,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'enter_subject'.tr();
+                            return 'enter_your_name'.tr();
                           } else {
                             return null;
                           }
@@ -82,8 +72,11 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
                       ),
                       50.h.verticalSpace,
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 32.w),
+                        padding: EdgeInsets.symmetric(horizontal: 18.w),
                         child: CustomButton(
+                          width: context.w,
+                          padding: EdgeInsets.all(8.h),
+                          radius: 10.r,
                           title: 'confirm'.tr(),
                           onPressed: () {
                             if (key.currentState!.validate()) {
@@ -96,9 +89,9 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
                       Center(
                         child: Text(
                           'contact_us_using'.tr(),
-                          style: getBoldStyle(
-                            color: AppColors.primary,
-                            fontSize: 20.sp,
+                          style: getMediumStyle(
+                            color: AppColors.secondPrimary,
+                            fontSize: 14.sp,
                           ),
                         ),
                       ),

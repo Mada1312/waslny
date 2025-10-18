@@ -7,6 +7,9 @@ class EndPoints {
   static const String changeFavUrl = '${baseUrl}tripFav/';
   static const String getLastAddressesUrl =
       '${baseUrl}get-last-addresses?is_service=';
+  static const String getFavTripsAndServicesUrl =
+      '${baseUrl}get-fav?filter_by=';
+  static const String cloneTripUrl = '${baseUrl}clone-trip';
 
   //!
 
@@ -52,7 +55,6 @@ class EndPoints {
   static const String updateDeliveryprofiletUrl =
       '${baseUrl}driver/update-driver-data';
   static const String getSettingsUrl = '${baseUrl}get-settings';
-  static const String actionFavUrl = '${baseUrl}action-fav';
 
   static const String getChatRoomsUrl = '${baseUrl}get-all-chat-rooms';
   // static const String sendMessageUrl = '${baseUrl}v1/chat/sendMessage';

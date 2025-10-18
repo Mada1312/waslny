@@ -349,7 +349,6 @@ class LoginCubit extends Cubit<LoginState> {
   TextEditingController updateNameController = TextEditingController();
   TextEditingController updateAddressController = TextEditingController();
   TextEditingController updatePhoneNumberController = TextEditingController();
-  TextEditingController updateNationalIdController = TextEditingController();
 
   LoginModel? authData;
   onTapToEdit(BuildContext context, {bool isDeriver = false}) async {
@@ -367,7 +366,6 @@ class LoginCubit extends Cubit<LoginState> {
           updateNameController.text = r.data?.name ?? '';
           updateAddressController.text = r.data?.address ?? '';
           updatePhoneNumberController.text = r.data?.phone.toString() ?? '';
-          updateNationalIdController.text = r.data?.nationalId ?? '';
 
           emit(GetAuthDataLoaded());
         },
@@ -464,7 +462,6 @@ class LoginCubit extends Cubit<LoginState> {
         name: updateNameController.text,
         address: updateAddressController.text,
         image: pickedProfileImage,
-        exportCard: pickedUserCardProfileImage,
       );
 
       res.fold(
