@@ -1,4 +1,5 @@
 import 'package:waslny/features/general/auth/data/model/validate_data.dart';
+import 'package:waslny/features/user/home/data/models/get_home_model.dart';
 
 import '../../../../core/exports.dart';
 import '../../../../core/preferences/preferences.dart';
@@ -12,19 +13,16 @@ class ProfileRepo {
   //key
 
   Future<Either<Failure, DefaultPostModel>> contactUs({
-    required String address,
-    required String subject,
+    required String name,
+
     required String message,
   }) async {
     try {
-      var response = await dio.post(EndPoints.contactUsUrl,
-          formDataIsEnabled: true,
-          body: {
-            "key": "contactUs",
-            'address': address,
-            'title': subject,
-            'body': message
-          });
+      var response = await dio.post(
+        EndPoints.contactUsUrl,
+        formDataIsEnabled: true,
+        body: {"key": "contactUs", 'name': name, 'body': message},
+      );
 
       return Right(DefaultPostModel.fromJson(response));
     } on ServerException {
@@ -44,10 +42,13 @@ class ProfileRepo {
 
   Future<Either<Failure, DefaultPostModel>> logout() async {
     try {
-      var response = await dio.post(EndPoints.logoutUrl, body: {
-        "key": "logout",
-        "device_token": await Preferences.instance.getDeviceToken()
-      });
+      var response = await dio.post(
+        EndPoints.logoutUrl,
+        body: {
+          "key": "logout",
+          "device_token": await Preferences.instance.getDeviceToken(),
+        },
+      );
 
       return Right(DefaultPostModel.fromJson(response));
     } on ServerException {
@@ -65,26 +66,41 @@ class ProfileRepo {
     }
   }
 
-  Future<Either<Failure, MainFavModel>> getMainFavUserDriver() async {
+  Future<Either<Failure, GetUserHomeModel>> getMainFavUserTripsAndServices(
+    String type,
+  ) async {
     try {
-      final userModel = await Preferences.instance.getUserModel();
-      var response = await dio.get(EndPoints.mainGetDataUrl, queryParameters: {
-        "model": "Fav",
-        // "where[0]": "user_id,105"
-        "where[0]": "user_id,${userModel.data!.id.toString()}"
-      });
+      var response = await dio.get(EndPoints.getFavTripsAndServicesUrl + type);
 
-      return Right(MainFavModel.fromJson(response));
+      return Right(GetUserHomeModel.fromJson(response));
     } on ServerException {
       return Left(ServerFailure());
     }
   }
 
-  Future<Either<Failure, DefaultMainModel>> actionFav(String driverId) async {
+  Future<Either<Failure, DefaultMainModel>> actionFav(String id) async {
     try {
-      var response = await dio.post(EndPoints.actionFavUrl,
-          formDataIsEnabled: true,
-          body: {"key": "actionFav", "driver_id": driverId});
+      var response = await dio.get(EndPoints.changeFavUrl + id);
+
+      return Right(DefaultMainModel.fromJson(response));
+    } on ServerException {
+      return Left(ServerFailure());
+    }
+  }
+
+  Future<Either<Failure, DefaultMainModel>> cloneTrip(
+    String id, {
+    String? scheduleTime,
+  }) async {
+    try {
+      var response = await dio.post(
+        EndPoints.cloneTripUrl,
+        formDataIsEnabled: true,
+        body: {
+          "trip_id": id,
+          if (scheduleTime != null) "schedule_time": scheduleTime,
+        },
+      );
 
       return Right(DefaultMainModel.fromJson(response));
     } on ServerException {

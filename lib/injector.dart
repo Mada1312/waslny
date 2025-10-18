@@ -13,7 +13,7 @@ import 'package:waslny/features/general/notifications/cubit/cubit.dart';
 import 'package:waslny/features/general/notifications/data/repo.dart';
 import 'package:waslny/features/general/profile/cubit/cubit.dart';
 import 'package:waslny/features/general/profile/data/repo.dart';
-import 'package:waslny/features/general/tutorial_videos/data/repo.dart';
+
 import 'package:waslny/features/main/cubit/cubit.dart';
 import 'package:waslny/features/main/data/main_repo.dart';
 import 'package:waslny/features/general/on_boarding/cubit/onboarding_cubit.dart';
@@ -31,7 +31,6 @@ import 'features/user/add_new_trip/data/repo.dart';
 import 'features/user/driver_details/cubit/cubit.dart';
 import 'features/user/driver_details/data/repo.dart';
 import 'features/general/chat/cubit/chat_cubit.dart';
-import 'features/general/tutorial_videos/cubit/cubit.dart';
 
 final serviceLocator = GetIt.instance;
 Future<void> setupCubit() async {
@@ -48,7 +47,7 @@ Future<void> setupCubit() async {
   serviceLocator.registerFactory(() => ProfileCubit(serviceLocator()));
   serviceLocator.registerFactory(() => AddNewTripCubit(serviceLocator()));
   serviceLocator.registerFactory(() => LocationCubit(serviceLocator()));
-  serviceLocator.registerFactory(() => TutorialVideoCubit(serviceLocator()));
+
   serviceLocator.registerFactory(() => ChatCubit(serviceLocator()));
   serviceLocator.registerFactory(() => NotificationsCubit(serviceLocator()));
   serviceLocator.registerFactory(() => DriverDetailsCubit(serviceLocator()));
@@ -67,9 +66,7 @@ Future<void> setupRepo() async {
   );
   serviceLocator.registerLazySingleton(() => ProfileRepo(serviceLocator()));
   serviceLocator.registerLazySingleton(() => AddNewTripRepo(serviceLocator()));
-  serviceLocator.registerLazySingleton(
-    () => TutorialVideoRepo(serviceLocator()),
-  );
+
   serviceLocator.registerLazySingleton(() => ChatRepo(serviceLocator()));
   serviceLocator.registerLazySingleton(
     () => NotificationsRepo(serviceLocator()),

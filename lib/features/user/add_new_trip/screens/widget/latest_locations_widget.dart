@@ -1,4 +1,5 @@
 import 'package:waslny/features/user/add_new_trip/cubit/cubit.dart';
+import 'package:waslny/features/user/add_new_trip/data/models/latest_model.dart';
 
 import '../../../../../core/exports.dart';
 
@@ -22,56 +23,78 @@ class LatestLocationsWidgets extends StatelessWidget {
       physics: const NeverScrollableScrollPhysics(),
       itemBuilder: (context, index) {
         var item = cubit.latestLocation?.data?[index];
-        return GestureDetector(
-          onTap: () {
-            //! SET SELECTED LOCATION
-            cubit.setSelectedLocationToFields(item!);
-            if (showAll) {
-              Navigator.pop(context);
-            }
-          },
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10.r),
-              color: AppColors.second2Primary,
-            ),
-            padding: const EdgeInsets.all(8.0),
-            margin: const EdgeInsets.symmetric(vertical: 2.0),
-            child: Row(
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10.r),
-                    color: AppColors.second3Primary,
-                  ),
-                  padding: EdgeInsets.all(8),
-                  child: MySvgWidget(path: AppIcons.dateTime),
-                ),
-                10.w.horizontalSpace,
-                Flexible(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        item?.from ?? '',
-                        style: getSemiBoldStyle(fontSize: 14.sp),
-                        maxLines: 1,
-                      ),
-                      Text(
-                        item?.isService == 1
-                            ? item?.serviceToName ?? ''
-                            : item?.to ?? '',
-                        style: getRegularStyle(fontSize: 12.sp),
-                        maxLines: 1,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
+        return CustomLatestLocationItem(
+          cubit: cubit,
+          item: item,
+          showAll: showAll,
         );
       },
+    );
+  }
+}
+
+class CustomLatestLocationItem extends StatelessWidget {
+  const CustomLatestLocationItem({
+    super.key,
+    required this.cubit,
+    required this.item,
+    required this.showAll,
+  });
+
+  final AddNewTripCubit cubit;
+  final GetMainLastestLocationData? item;
+  final bool showAll;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        //! SET SELECTED LOCATION
+        cubit.setSelectedLocationToFields(item!);
+        if (showAll) {
+          Navigator.pop(context);
+        }
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10.r),
+          color: AppColors.second2Primary,
+        ),
+        padding: const EdgeInsets.all(8.0),
+        margin: const EdgeInsets.symmetric(vertical: 2.0),
+        child: Row(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10.r),
+                color: AppColors.second3Primary,
+              ),
+              padding: EdgeInsets.all(8),
+              child: MySvgWidget(path: AppIcons.dateTime),
+            ),
+            10.w.horizontalSpace,
+            Flexible(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    item?.from ?? '',
+                    style: getSemiBoldStyle(fontSize: 14.sp),
+                    maxLines: 1,
+                  ),
+                  Text(
+                    item?.isService == 1
+                        ? item?.serviceToName ?? ''
+                        : item?.to ?? '',
+                    style: getRegularStyle(fontSize: 12.sp),
+                    maxLines: 1,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

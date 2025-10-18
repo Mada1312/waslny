@@ -113,30 +113,6 @@ class AddNewTripCubit extends Cubit<AddNewTripState> {
     }
   }
 
-  // Future<void> selectDateTime(BuildContext context) async {
-  //   await selectDate(context);
-  //   if (selectedDate != null) {
-  //     await selectTime(context);
-  //     if (selectedTime != null) {
-  // final DateTime finalDateTime = DateTime(
-  //   selectedDate!.year,
-  //   selectedDate!.month,
-  //   selectedDate!.day,
-  //   selectedTime!.hour,
-  //   selectedTime!.minute,
-  // );
-
-  // final String formattedDateTime = DateFormat(
-  //   'yyyy-MM-dd HH:mm:ss',
-  //   'en',
-  // ).format(finalDateTime);
-
-  //       selectedTimeController.text = formattedDateTime;
-  //       emit(DateTimeSelected(formattedDateTime));
-  //     }
-  //   }
-  // }
-
   addNewTrip(BuildContext context, {bool isService = false}) async {
     try {
       if (selectedTimeType?.name == TimeType.later.name) {

@@ -78,7 +78,8 @@ class TripAndServiceModel {
   String? toLat;
   String? toLong;
   String? type;
-  String? serviceTo;
+  String? serviceToName;
+  int? serviceTo;
   dynamic roomToken;
   bool? isFav;
   Driver? driver;
@@ -99,6 +100,7 @@ class TripAndServiceModel {
     this.serviceTo,
     this.driver,
     this.isFav,
+    this.serviceToName,
   });
 
   factory TripAndServiceModel.fromJson(Map<String, dynamic> json) =>
@@ -116,6 +118,7 @@ class TripAndServiceModel {
         toLat: json["to_lat"],
         toLong: json["to_long"],
         type: json["type"],
+        serviceToName: json["service_to_name"],
         roomToken: json["room_token"],
         driver: json["driver"] == null ? null : Driver.fromJson(json["driver"]),
       );
@@ -129,6 +132,7 @@ class TripAndServiceModel {
     "from": from,
     "from_lat": fromLat,
     "service_to": serviceTo,
+    "service_to_name": serviceToName,
     "is_fav": isFav,
     "from_long": fromLong,
     "to": to,

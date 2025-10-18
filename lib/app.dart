@@ -26,7 +26,7 @@ import 'features/user/driver_details/cubit/cubit.dart';
 import 'features/general/auth/cubit/cubit.dart';
 import 'features/general/chat/cubit/chat_cubit.dart';
 import 'features/general/splash/cubit/cubit.dart';
-import 'features/general/tutorial_videos/cubit/cubit.dart';
+
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -65,9 +65,8 @@ class _MyAppState extends State<MyApp> {
         BlocProvider(create: (_) => injector.serviceLocator<ProfileCubit>()),
         BlocProvider(create: (_) => injector.serviceLocator<AddNewTripCubit>()),
         BlocProvider(create: (_) => injector.serviceLocator<LocationCubit>()),
-        BlocProvider(
-          create: (_) => injector.serviceLocator<TutorialVideoCubit>(),
-        ),
+      
+      
         BlocProvider(create: (_) => injector.serviceLocator<ChatCubit>()),
         BlocProvider(
           create: (_) => injector.serviceLocator<NotificationsCubit>(),

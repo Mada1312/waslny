@@ -208,19 +208,7 @@ class _UpdateDeliveryProfileState extends State<UpdateDeliveryProfile> {
                                       enabled: false,
                                       isRequired: true,
                                     ),
-                                    10.h.verticalSpace,
-                                    if (cubit
-                                        .updateNationalIdController
-                                        .text
-                                        .isNotEmpty)
-                                      CustomTextField(
-                                        title: 'national_id'.tr(),
-                                        controller:
-                                            cubit.updateNationalIdController,
-                                        hintText: 'national_id'.tr(),
-                                        enabled: false,
-                                        isRequired: true,
-                                      ),
+
                                     //!
                                     10.h.verticalSpace,
 

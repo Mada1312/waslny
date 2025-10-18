@@ -105,8 +105,8 @@
   "add": "طلب",
   "select_location": "حدد الموقع",
   "subject": "الموضوع",
-  "message": "رسالتك",
-  "enter_mesage": "أدخل رسالتك",
+  "message": "الموضوع",
+  "enter_mesage": "وصف المشكلة",
   "enter_subject": "أدخل موضوعك",
   "address": "العنوان",
   "enter_address": "ادخل عنوانك",
@@ -124,7 +124,7 @@
   "accept_terms": "الموافقة علي الشروط و الاحكام",
   "countries": "دول التصدير",
   "driver_details": "تفاصيل الكابتن",
-  "contact_us_using": "أو تواصل معنا عبر",
+  "contact_us_using": "او تواصـــل معنـــا عبـــر",
   "enter_valid_number": "الرجاء إدخال رقم هاتف صحيح",
   "change_langauge": "تغيير اللغة",
   "------------------------------------": "-------------------Waslny----------------------",
@@ -149,5 +149,10 @@
   "searching_for_driver": "جاري البحث عن كابتن",
   "select_location_from_map": "حدد الموقع علي الخريطة",
   "from_map": "من موقعي",
-  "saved_locations": "الأماكن المحفوظة"
+  "saved_locations": "الأماكن المحفوظة",
+  "make_trip": "طلب رحلة",
+  "make_schedule_trip": "جدولة رحلة",
+  "remove_from_fav": "حذف العنوان من المفضلة؟",
+  "sure_to_make_schedule_trip": "هل انت متاكد من جدولة الرحلة؟",
+  "sure_to_make_trip": "هل انت متاكد من طلب الرحلة؟"
 }
