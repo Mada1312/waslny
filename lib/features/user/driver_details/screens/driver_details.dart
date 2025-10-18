@@ -45,21 +45,22 @@ class _DriverDetailsView extends StatelessWidget {
 
           if (state is DriverDetailsError) {
             return Center(
-                child: Text(state.message, textAlign: TextAlign.center));
+              child: Text(state.message, textAlign: TextAlign.center),
+            );
           }
 
           if (state is DriverDetailsLoaded) {
             final d = state.driver; // domain entity
 
             return state.driver == null
-                ? Center(
-                    child: Text('no_data'.tr()),
-                  )
+                ? Center(child: Text('no_data'.tr()))
                 : Directionality(
                     textDirection: TextDirection.rtl,
                     child: SingleChildScrollView(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 24, vertical: 16),
+                        horizontal: 24,
+                        vertical: 16,
+                      ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
@@ -68,37 +69,47 @@ class _DriverDetailsView extends StatelessWidget {
                             children: [
                               CircleAvatar(
                                 radius: 60,
-                                backgroundImage:
-                                    NetworkImage(d?.data?.image ?? ''),
+                                backgroundImage: NetworkImage(
+                                  d?.data?.image ?? '',
+                                ),
                               ),
                               if (d?.data?.isVerified == 1)
                                 Positioned(
-                                    bottom: 0,
-                                    child: Image.asset(
-                                      ImageAssets.verifyIcon,
-                                      width: 40.w,
-                                      height: 40.w,
-                                    ))
+                                  bottom: 0,
+                                  child: Image.asset(
+                                    ImageAssets.verifyIcon,
+                                    width: 40.w,
+                                    height: 40.w,
+                                  ),
+                                ),
                             ],
                           ),
                           10.h.verticalSpace,
-                          Text(d?.data?.name ?? '',
-                              style: getBoldStyle(
-                                  color: AppColors.primary, fontSize: 20.sp)),
+                          Text(
+                            d?.data?.name ?? '',
+                            style: getBoldStyle(
+                              color: AppColors.primary,
+                              fontSize: 20.sp,
+                            ),
+                          ),
                           // Text('${d?.data?.country} , ${d?.data?.city}',
                           //     style: Theme.of(context)
                           //         .textTheme
                           //         .bodyMedium
                           //         ?.copyWith(color: Colors.grey)),
-                          Text(d?.data?.phone ?? '',
-                              style: getMediumStyle(
-                                  color: AppColors.secondPrimary)),
+                          Text(
+                            d?.data?.phone ?? '',
+                            style: getMediumStyle(
+                              color: AppColors.secondPrimary,
+                            ),
+                          ),
                           const Divider(thickness: 1.2, height: 32),
 
                           // ── Static info rows (value on the left) ────────────────
                           _InfoRow(
-                              title: 'countries'.tr(),
-                              value: d?.data?.countries ?? []),
+                            title: 'countries'.tr(),
+                            value: d?.data?.countries ?? [],
+                          ),
                           const Divider(thickness: 1.2, height: 32),
 
                           SizedBox(
@@ -108,12 +119,12 @@ class _DriverDetailsView extends StatelessWidget {
                               children: [
                                 Text(
                                   'shipment_type'.tr(),
-                                  style: getBoldStyle(
-                                    color: AppColors.primary,
-                                  ),
+                                  style: getBoldStyle(color: AppColors.primary),
                                 ),
-                                Text(d?.data?.truckType?.name ?? '',
-                                    style: getRegularStyle()),
+                                Text(
+                                  d?.data?.truckType?.name ?? '',
+                                  style: getRegularStyle(),
+                                ),
                               ],
                             ),
                           ),
@@ -121,8 +132,9 @@ class _DriverDetailsView extends StatelessWidget {
 
                           // ── Rating summary (average & histogram) ───────────────
                           _RatingSection(
-                            average:
-                                double.parse(d?.data?.averageRates ?? '0.0'),
+                            average: double.parse(
+                              d?.data?.averageRates ?? '0.0',
+                            ),
                             counts: d?.data?.totalRates ?? 0,
                           ),
                         ],
@@ -151,22 +163,15 @@ class _InfoRow extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            title,
-            style: getBoldStyle(
-              color: AppColors.primary,
-            ),
-          ),
+          Text(title, style: getBoldStyle(color: AppColors.primary)),
           ListView.builder(
-              itemCount: value.length,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemBuilder: (context, index) {
-                return Text(
-                  value[index].name ?? '',
-                  style: getRegularStyle(),
-                );
-              })
+            itemCount: value.length,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemBuilder: (context, index) {
+              return Text(value[index].name ?? '', style: getRegularStyle());
+            },
+          ),
         ],
       ),
     );
@@ -184,10 +189,7 @@ class _RatingSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'rating'.tr(),
-          style: getBoldStyle(color: AppColors.primary),
-        ),
+        Text('rating'.tr(), style: getBoldStyle(color: AppColors.primary)),
         5.h.verticalSpace,
         Row(
           children: [

@@ -7,15 +7,20 @@ class ResponsiveTimeGenderVehicleDropdowns extends StatelessWidget {
   final Gender? selectedGenderType;
   final VehicleType? selectedVehicleType;
   final ValueChanged<TimeType?> onTimeTypeChanged;
+  final ServiceTo? selectedServiceTo;
+  final ValueChanged<ServiceTo?> onServiceToChanged;
   final ValueChanged<Gender?> onGenderTypeChanged;
   final ValueChanged<VehicleType?> onVehicleTypeChanged;
-
+  final bool isService;
   const ResponsiveTimeGenderVehicleDropdowns({
     super.key,
     this.selectedTimeType,
+    this.isService = false,
     this.selectedGenderType,
     this.selectedVehicleType,
     required this.onTimeTypeChanged,
+    this.selectedServiceTo,
+    required this.onServiceToChanged,
     required this.onGenderTypeChanged,
     required this.onVehicleTypeChanged,
   });
@@ -65,6 +70,13 @@ class ResponsiveTimeGenderVehicleDropdowns extends StatelessWidget {
           onChanged: onVehicleTypeChanged,
           itemBuilder: (item) => item.displayValue,
         ),
+        if (isService)
+          buildDropdown<ServiceTo>(
+            items: ServiceTo.values,
+            value: selectedServiceTo,
+            onChanged: onServiceToChanged,
+            itemBuilder: (item) => item.displayValue,
+          ),
       ],
     );
   }

@@ -5,6 +5,9 @@ class EndPoints {
   static const String registerUrl = '${baseUrl}register';
   static const String homeUrl = '${baseUrl}get-home?filter_by=';
   static const String changeFavUrl = '${baseUrl}tripFav/';
+  static const String getLastAddressesUrl =
+      '${baseUrl}get-last-addresses?is_service=';
+
   //!
 
   static const String shipmentDetailsUrl = '${baseUrl}get-shipment-detail/';

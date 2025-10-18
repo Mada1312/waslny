@@ -1,9 +1,11 @@
 import 'dart:developer';
 
 import 'package:get/get_connect/http/src/utils/utils.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:location/location.dart' as loc;
 import 'package:waslny/core/exports.dart';
 import 'package:waslny/core/utils/general_enum.dart';
+import 'package:waslny/features/user/add_new_trip/data/models/latest_model.dart';
 
 import 'package:waslny/features/user/home/cubit/cubit.dart';
 import 'package:waslny/features/user/trip_and_services/cubit/cubit.dart';
@@ -23,6 +25,7 @@ class AddNewTripCubit extends Cubit<AddNewTripState> {
   loc.LocationData? toSelectedLocation;
 
   TimeType? selectedTimeType = TimeType.now;
+  ServiceTo? selectedServiceTo = ServiceTo.electric;
   Gender? selectedGenderType = Gender.male;
   VehicleType? selectedVehicleType = VehicleType.car;
   //!TRIP
@@ -150,7 +153,7 @@ class AddNewTripCubit extends Cubit<AddNewTripState> {
         gender: selectedGenderType?.name == Gender.male.name ? '0' : '1',
         isSchedule: selectedTimeType?.name == TimeType.later.name,
         isService: isService,
-        serviceTo: toAddressController.text,
+        serviceTo: selectedServiceTo?.id.toString(),
         scheduleTime: selectedTimeType?.name == TimeType.later.name
             ? DateFormat('yyyy-MM-dd HH:mm:ss', 'en').format(
                 DateTime(
@@ -218,6 +221,66 @@ class AddNewTripCubit extends Cubit<AddNewTripState> {
     selectedDateController.clear();
   }
 
+  GetMainLastestLocation? latestLocation;
+  gettMainLastestLocation(bool isService) async {
+    try {
+      emit(LoadingGetLatestLocation());
+      final res = await api.gettMainLastestLocation(isService);
+      res.fold(
+        (l) {
+          errorGetBar(l.toString());
+
+          emit(ErrorGetLatestLocation());
+        },
+        (r) {
+          if (r.status == 200) {
+            latestLocation = r;
+            emit(LoadedGetLatestLocation());
+          } else {
+            errorGetBar(r.msg.toString());
+
+            emit(ErrorGetLatestLocation());
+          }
+        },
+      );
+    } catch (e) {
+      errorGetBar(e.toString());
+
+      emit(ErrorGetLatestLocation());
+    }
+  }
+
+  setSelectedLocationToFields(GetMainLastestLocationData item) {
+    if (item.isService == 1) {
+      fromAddressController.text = item.from ?? '';
+      fromSelectedLocation = loc.LocationData.fromMap({
+        "latitude": double.parse(item.fromLat ?? '0.0'),
+        "longitude": double.parse(item.fromLong ?? " 0.0"),
+      });
+      for (var i in ServiceTo.values) {
+        if (i.id == item.serviceTo) {
+          selectedServiceTo = i;
+        }
+        log('selectedServiceTo ${selectedServiceTo?.name}');
+      }
+    } else {
+      fromAddressController.text = item.from ?? '';
+      toAddressController.text = item.to ?? '';
+      fromSelectedLocation = loc.LocationData.fromMap({
+        "latitude": double.parse(item.fromLat ?? "0.0"),
+        "longitude": double.parse(item.fromLong ?? '0.0'),
+      });
+
+      toSelectedLocation = loc.LocationData.fromMap({
+        "latitude": double.parse(item.toLat ?? "0.0"),
+        "longitude": double.parse(item.toLong ?? "0.0"),
+      });
+    }
+
+    emit(SuccessSelectedLocationToFields());
+  }
+
+  //! END
   updateShipment(BuildContext context, {required String id}) async {
     try {
       AppWidget.createProgressDialog(context, msg: 'locading'.tr());

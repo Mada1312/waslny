@@ -78,6 +78,7 @@ class TripAndServiceModel {
   String? toLat;
   String? toLong;
   String? type;
+  String? serviceTo;
   dynamic roomToken;
   bool? isFav;
   Driver? driver;
@@ -95,6 +96,7 @@ class TripAndServiceModel {
     this.toLong,
     this.type,
     this.roomToken,
+    this.serviceTo,
     this.driver,
     this.isFav,
   });
@@ -105,6 +107,7 @@ class TripAndServiceModel {
         code: json["code"],
         day: json["day"] == null ? null : DateTime.parse(json["day"]),
         time: json["time"],
+        serviceTo: json["service_to"],
         isFav: json["is_fav"] == 0 ? false : true,
         from: json["from"],
         fromLat: json["from_lat"],
@@ -125,6 +128,7 @@ class TripAndServiceModel {
     "time": time,
     "from": from,
     "from_lat": fromLat,
+    "service_to": serviceTo,
     "is_fav": isFav,
     "from_long": fromLong,
     "to": to,
