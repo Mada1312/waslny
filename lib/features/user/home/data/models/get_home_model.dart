@@ -79,6 +79,7 @@ class TripAndServiceModel {
   String? toLong;
   String? type;
   dynamic roomToken;
+  bool? isFav;
   Driver? driver;
 
   TripAndServiceModel({
@@ -95,23 +96,26 @@ class TripAndServiceModel {
     this.type,
     this.roomToken,
     this.driver,
+    this.isFav,
   });
 
-  factory TripAndServiceModel.fromJson(Map<String, dynamic> json) => TripAndServiceModel(
-    id: json["id"],
-    code: json["code"],
-    day: json["day"] == null ? null : DateTime.parse(json["day"]),
-    time: json["time"],
-    from: json["from"],
-    fromLat: json["from_lat"],
-    fromLong: json["from_long"],
-    to: json["to"],
-    toLat: json["to_lat"],
-    toLong: json["to_long"],
-    type: json["type"],
-    roomToken: json["room_token"],
-    driver: json["driver"] == null ? null : Driver.fromJson(json["driver"]),
-  );
+  factory TripAndServiceModel.fromJson(Map<String, dynamic> json) =>
+      TripAndServiceModel(
+        id: json["id"],
+        code: json["code"],
+        day: json["day"] == null ? null : DateTime.parse(json["day"]),
+        time: json["time"],
+        isFav: json["is_fav"] == 0 ? false : true,
+        from: json["from"],
+        fromLat: json["from_lat"],
+        fromLong: json["from_long"],
+        to: json["to"],
+        toLat: json["to_lat"],
+        toLong: json["to_long"],
+        type: json["type"],
+        roomToken: json["room_token"],
+        driver: json["driver"] == null ? null : Driver.fromJson(json["driver"]),
+      );
 
   Map<String, dynamic> toJson() => {
     "id": id,
@@ -121,6 +125,7 @@ class TripAndServiceModel {
     "time": time,
     "from": from,
     "from_lat": fromLat,
+    "is_fav": isFav,
     "from_long": fromLong,
     "to": to,
     "to_lat": toLat,

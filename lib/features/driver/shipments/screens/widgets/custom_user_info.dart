@@ -2,7 +2,7 @@ import 'package:waslny/core/exports.dart';
 import 'package:waslny/core/widgets/network_image.dart';
 import 'package:waslny/features/driver/shipments/cubit/cubit.dart';
 import 'package:waslny/features/user/home/data/models/get_home_model.dart';
-import 'package:waslny/features/user/shipments/screens/widgets/call_message.dart';
+import 'package:waslny/features/user/trip_and_services/screens/widgets/call_message.dart';
 
 class CustomTheUserInfo extends StatelessWidget {
   const CustomTheUserInfo({

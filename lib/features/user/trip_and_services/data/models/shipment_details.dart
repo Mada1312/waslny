@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:waslny/features/driver/shipments/screens/data/models/shipment_details_model.dart';
-import 'package:waslny/features/user/add_new_shipment/data/models/countries_and_types_model.dart';
+import 'package:waslny/features/user/add_new_trip/data/models/countries_and_types_model.dart';
 import 'package:waslny/features/user/home/data/models/get_home_model.dart';
 
 GetUserShipmentDetailsModel getUserShipmentDetailsModelFromJson(String str) =>

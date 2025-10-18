@@ -1,8 +1,8 @@
 import 'package:waslny/core/exports.dart';
 import 'package:waslny/features/driver/shipments/screens/widgets/custom_user_info.dart';
-import 'package:waslny/features/user/shipments/screens/details/widgets/rate_bottomsheet.dart';
+import 'package:waslny/features/user/trip_and_services/screens/details/widgets/rate_bottomsheet.dart';
 
-import '../../../../user/shipments/screens/details/widgets/follow_shipment.dart';
+import '../../../../user/trip_and_services/screens/details/widgets/follow_shipment.dart';
 import '../../cubit/cubit.dart';
 import '../../cubit/state.dart';
 import '../widgets/shipment_details_body.dart';

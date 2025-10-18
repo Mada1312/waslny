@@ -4,9 +4,9 @@ import 'package:flutter_svg/svg.dart';
 import 'package:waslny/core/exports.dart';
 import 'package:waslny/core/utils/general_enum.dart';
 import 'package:waslny/core/utils/user_info.dart';
-import 'package:waslny/features/user/add_new_shipment/screens/add_new_shipment.dart';
-import 'package:waslny/features/user/shipments/cubit/cubit.dart';
-import 'package:waslny/features/user/shipments/screens/widgets/shipment_widget.dart';
+import 'package:waslny/features/user/add_new_trip/screens/add_new_trip.dart';
+import 'package:waslny/features/user/trip_and_services/cubit/cubit.dart';
+import 'package:waslny/features/user/trip_and_services/screens/widgets/trip_and_service_widget.dart';
 import 'package:escapable_padding/escapable_padding.dart';
 
 import '../cubit/cubit.dart';
@@ -65,8 +65,8 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                             onTap: () {
                               Navigator.pushNamed(
                                 context,
-                                Routes.addNewShipmentRoute,
-                                arguments: AddShipmentsArgs(),
+                                Routes.addNewTripRoute,
+                                arguments: AddTripArgs(isService: false),
                               );
                             },
                           ),
@@ -78,6 +78,11 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                             title: "add_service".tr(),
                             onTap: () {
                               //!
+                              Navigator.pushNamed(
+                                context,
+                                Routes.addNewTripRoute,
+                                arguments: AddTripArgs(isService: true),
+                              );
                               log('Ad add_service');
                             },
                           ),
@@ -203,7 +208,9 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                     : ListView.separated(
                                         shrinkWrap: true,
                                         padding: EdgeInsets.only(
-                                          bottom: kBottomNavigationBarHeight.h,
+                                          bottom:
+                                              (kBottomNavigationBarHeight + 5)
+                                                  .h,
                                         ),
                                         physics:
                                             const NeverScrollableScrollPhysics(),

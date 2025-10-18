@@ -4,8 +4,8 @@ import 'dart:io';
 import 'package:waslny/core/exports.dart';
 import 'package:waslny/features/user/home/cubit/cubit.dart';
 import 'package:waslny/features/user/home/data/models/get_home_model.dart';
-import 'package:waslny/features/user/shipments/data/models/get_shipments.dart';
-import 'package:waslny/features/user/shipments/data/models/shipment_details.dart';
+import 'package:waslny/features/user/trip_and_services/data/models/get_shipments.dart';
+import 'package:waslny/features/user/trip_and_services/data/models/shipment_details.dart';
 import 'package:waslny/features/general/location/cubit/location_cubit.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:screenshot/screenshot.dart';
@@ -15,12 +15,44 @@ import 'state.dart';
 
 enum ShipmentsStatusEnum { newShipments, pending, loaded, delivered }
 
-class UserShipmentsCubit extends Cubit<UserShipmentsState> {
-  UserShipmentsCubit(this.api) : super(ShipmentsInitial());
+class UserTripAndServicesCubit extends Cubit<UserTripAndServicesState> {
+  UserTripAndServicesCubit(this.api) : super(ShipmentsInitial());
 
   UserShipmentsRepo api;
 
   ShipmentsStatusEnum selectedStatus = ShipmentsStatusEnum.newShipments;
+
+  //!TRIP AND SERVICES
+
+  changeFavOfTripAndService(TripAndServiceModel model) async {
+    emit(LoadingChangeStatusOfTripAndServiceState());
+    try {
+      final response = await api.changeFavOfTripAndService(
+        model!.id.toString(),
+      );
+      response.fold(
+        (failure) => emit(ErrorChangeStatusOfTripAndServiceState()),
+        (success) {
+          if (success.status == 200) {
+            model?.isFav = !(model.isFav ?? false);
+            successGetBar(success.msg);
+
+            emit(LoadedChangeStatusOfTripAndServiceState());
+          } else {
+            errorGetBar(success.msg ?? 'Failed to change status');
+
+            emit(ErrorChangeStatusOfTripAndServiceState());
+          }
+        },
+      );
+    } catch (e) {
+      log("Error in Fav: $e");
+      emit(ErrorChangeStatusOfTripAndServiceState());
+    }
+  }
+
+  //!TRIP AND SERVICES
+
   void changeSelectedStatus(ShipmentsStatusEnum status) {
     selectedStatus = status;
 

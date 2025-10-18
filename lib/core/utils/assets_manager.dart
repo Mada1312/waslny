@@ -82,4 +82,5 @@ class AppIcons {
   static const String addServiceIcon = '$iconsPath/add_service.svg';
   static const String carIcon = '$iconsPath/car.svg';
   static const String messageIcon = '$iconsPath/message_icon.svg';
+  static const String waslnyArIcon = '$iconsPath/waslny_ar.svg';
 }

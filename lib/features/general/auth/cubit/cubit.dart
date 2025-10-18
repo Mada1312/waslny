@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:waslny/core/utils/general_enum.dart';
-import 'package:waslny/features/user/add_new_shipment/cubit/cubit.dart';
+import 'package:waslny/features/user/add_new_trip/cubit/cubit.dart';
 
 import '../../../../core/exports.dart';
 import '../../../../core/preferences/preferences.dart';
@@ -369,33 +369,6 @@ class LoginCubit extends Cubit<LoginState> {
           updatePhoneNumberController.text = r.data?.phone.toString() ?? '';
           updateNationalIdController.text = r.data?.nationalId ?? '';
 
-          if (isDeriver) {
-            context.read<AddNewShipmentCubit>().selectedCountriesAtEditProfile =
-                r.data?.countries ?? [];
-            for (
-              int i = 0;
-              i <
-                  (context
-                          .read<AddNewShipmentCubit>()
-                          .allTruckType
-                          ?.data
-                          ?.length ??
-                      0);
-              i++
-            ) {
-              if (context
-                      .read<AddNewShipmentCubit>()
-                      .allTruckType
-                      ?.data?[i]
-                      .id ==
-                  r.data?.truckType?.id) {
-                context.read<AddNewShipmentCubit>().shipmentType = context
-                    .read<AddNewShipmentCubit>()
-                    .allTruckType
-                    ?.data?[i];
-              }
-            }
-          }
           emit(GetAuthDataLoaded());
         },
       );
@@ -531,11 +504,9 @@ class LoginCubit extends Cubit<LoginState> {
         backDriverCard: pickedDeliveryBackImage,
         frontDriverCard: pickedDeliveryFrontImage,
         countries:
-            context
-                .read<AddNewShipmentCubit>()
-                .selectedCountriesAtEditProfile ??
+            context.read<AddNewTripCubit>().selectedCountriesAtEditProfile ??
             [],
-        truckTypeId: context.read<AddNewShipmentCubit>().shipmentType,
+        truckTypeId: null,
       );
 
       res.fold(

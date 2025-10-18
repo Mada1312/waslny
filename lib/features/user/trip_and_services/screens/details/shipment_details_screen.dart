@@ -1,7 +1,7 @@
 import 'package:waslny/core/exports.dart';
-import 'package:waslny/features/user/add_new_shipment/screens/add_new_shipment.dart';
+import 'package:waslny/features/user/add_new_trip/screens/add_new_trip.dart';
 import 'package:waslny/features/user/home/data/models/get_home_model.dart';
-import 'package:waslny/features/user/shipments/screens/widgets/custom_driver_info.dart';
+import 'package:waslny/features/user/trip_and_services/screens/widgets/custom_driver_info.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:screenshot/screenshot.dart';
 
@@ -33,17 +33,17 @@ class _UserShipmentDetailsScreenState extends State<UserShipmentDetailsScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<UserShipmentsCubit>().changeSelectedDriver(null);
-    context.read<UserShipmentsCubit>().getShipmentDetails(
+    context.read<UserTripAndServicesCubit>().changeSelectedDriver(null);
+    context.read<UserTripAndServicesCubit>().getShipmentDetails(
       id: widget.args.shipmentId,
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<UserShipmentsCubit, UserShipmentsState>(
+    return BlocBuilder<UserTripAndServicesCubit, UserTripAndServicesState>(
       builder: (context, state) {
-        var cubit = context.read<UserShipmentsCubit>();
+        var cubit = context.read<UserTripAndServicesCubit>();
 
         return WillPopScope(
           onWillPop: () async {
@@ -324,7 +324,7 @@ class _UserShipmentDetailsScreenState extends State<UserShipmentDetailsScreen> {
 
   PreferredSizeWidget buildAppBar(
     BuildContext context,
-    UserShipmentsCubit cubit,
+    UserTripAndServicesCubit cubit,
   ) {
     return customAppBar(
       context,
@@ -350,8 +350,8 @@ class _UserShipmentDetailsScreenState extends State<UserShipmentDetailsScreen> {
                 onTap: () {
                   Navigator.pushNamed(
                     context,
-                    Routes.addNewShipmentRoute,
-                    arguments: AddShipmentsArgs(
+                    Routes.addNewTripRoute,
+                    arguments: AddTripArgs(
                       shipment: cubit.shipmentDetailsModel?.data,
                     ),
                   );
@@ -426,7 +426,7 @@ class _UserShipmentDetailsScreenState extends State<UserShipmentDetailsScreen> {
   }
 
   Column buildCurrentDrivers(
-    UserShipmentsCubit cubit, {
+    UserTripAndServicesCubit cubit, {
     List<Driver>? drivers,
   }) {
     return Column(

@@ -14,6 +14,7 @@ class CustomDropdownButtonFormField<T> extends StatelessWidget {
   final String? validationMessage;
   final String? hintText;
   final Color? fillColor;
+  final double? borderRadius;
   const CustomDropdownButtonFormField({
     super.key,
     required this.items,
@@ -27,6 +28,7 @@ class CustomDropdownButtonFormField<T> extends StatelessWidget {
     this.isRequired = false,
     this.validationMessage,
     this.hintText,
+    this.borderRadius,
   });
 
   @override
@@ -75,34 +77,42 @@ class CustomDropdownButtonFormField<T> extends StatelessWidget {
           elevation: 0,
           decoration: InputDecoration(
             hintText: hintText ?? "choose",
-            contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 12.h),
+            contentPadding: EdgeInsets.symmetric(
+              horizontal: 12.w,
+              vertical: 8.h,
+            ),
             hintStyle: getRegularStyle(
               fontSize: 10.sp,
               color: AppColors.secondPrimary,
             ),
             filled: true,
-
             fillColor: fillColor ?? AppColors.second2Primary,
             border: OutlineInputBorder(
               borderSide: BorderSide(
                 color: fillColor ?? AppColors.second2Primary,
                 width: 0,
               ),
-              borderRadius: BorderRadius.all(Radius.circular(10.r)),
+              borderRadius: BorderRadius.all(
+                Radius.circular(borderRadius ?? 10.r),
+              ),
             ),
             focusedBorder: OutlineInputBorder(
               borderSide: BorderSide(
                 color: fillColor ?? AppColors.second2Primary,
                 width: 0.w,
               ),
-              borderRadius: BorderRadius.all(Radius.circular(10.r)),
+              borderRadius: BorderRadius.all(
+                Radius.circular(borderRadius ?? 10.r),
+              ),
             ),
             enabledBorder: OutlineInputBorder(
               borderSide: BorderSide(
                 color: fillColor ?? AppColors.second2Primary,
                 width: 0.w,
               ),
-              borderRadius: BorderRadius.all(Radius.circular(10.r)),
+              borderRadius: BorderRadius.all(
+                Radius.circular(borderRadius ?? 10.r),
+              ),
             ),
             alignLabelWithHint: true,
             suffixIcon: Padding(
@@ -113,19 +123,15 @@ class CustomDropdownButtonFormField<T> extends StatelessWidget {
               ),
             ),
           ),
-          style: getMediumStyle(color: AppColors.black, fontSize: 16.sp),
+          style: getMediumStyle(color: AppColors.black, fontSize: 14.sp),
           items: items.map((T item) {
             return DropdownMenuItem<T>(
               value: item,
-
               child: AutoSizeText(
                 itemBuilder(item),
                 maxLines: 1,
                 // Use the itemBuilder to display the item
-                style: getSemiBoldStyle(
-                  color: AppColors.black,
-                  fontSize: 16.sp,
-                ),
+                style: getMediumStyle(color: AppColors.black, fontSize: 14.sp),
               ),
             );
           }).toList(),

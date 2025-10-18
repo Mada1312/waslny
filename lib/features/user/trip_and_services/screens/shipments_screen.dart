@@ -3,16 +3,16 @@ import 'package:waslny/core/exports.dart';
 import '../cubit/cubit.dart';
 import '../cubit/state.dart';
 import 'widgets/shipment_statuss.dart';
-import 'widgets/shipment_widget.dart';
+import 'widgets/trip_and_service_widget.dart';
 
 class UserShipmentsScreen extends StatelessWidget {
   const UserShipmentsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<UserShipmentsCubit, UserShipmentsState>(
+    return BlocBuilder<UserTripAndServicesCubit, UserTripAndServicesState>(
       builder: (context, state) {
-        var cubit = context.read<UserShipmentsCubit>();
+        var cubit = context.read<UserTripAndServicesCubit>();
 
         return Scaffold(
           appBar: customAppBar(context, title: 'trips'.tr()),
