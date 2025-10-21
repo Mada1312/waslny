@@ -13,5 +13,15 @@ class AppUtilsError extends ProfileState {
 }
 
 class LoadingContactUsState extends ProfileState {}
+
 class LoadedContactUsState extends ProfileState {}
+
 class ErrorContactUsState extends ProfileState {}
+
+class LoadingCloneTripState extends ProfileState {}
+
+class LoadedCloneTripState extends ProfileState {}
+
+class ErrorCloneTripState extends ProfileState {}
+
+class DateTimeSelected extends ProfileState {}

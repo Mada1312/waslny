@@ -29,12 +29,12 @@ class ChatCubit extends Cubit<ChatState> {
         .orderBy('time', descending: true)
         .snapshots()
         .listen((snapshot) {
-      messages = snapshot.docs
-          .map((doc) => MessageModel.fromJson(doc.data()))
-          .toList();
-      log('messages length : ${messages.length}');
-      emit(ChatLoaded(messages));
-    });
+          messages = snapshot.docs
+              .map((doc) => MessageModel.fromJson(doc.data()))
+              .toList();
+          log('messages length : ${messages.length}');
+          emit(ChatLoaded(messages));
+        });
   }
 
   //////////!
@@ -65,9 +65,10 @@ class ChatCubit extends Cubit<ChatState> {
       // Save to Firestore
       await messageRef.set(message.toJson());
       await sentNotification(
-          message: message.bodyMessage ?? '',
-          chatId: chatId,
-          receiverId: receiverId);
+        message: message.bodyMessage ?? '',
+        chatId: chatId,
+        receiverId: receiverId,
+      );
     } catch (e) {
       log('Error sending message: $e');
       emit(MessageErrorState());
@@ -85,16 +86,19 @@ class ChatCubit extends Cubit<ChatState> {
       userId: receiverId,
     );
 
-    res.fold((l) {
-      log('Error sending message notification: ${l.toString()}');
-    }, (r) {
-      if (kDebugMode) {
-        if (r.status == 200) {
-          successGetBar(r.msg);
-        } else {}
-      }
-      log('Message notification sent successfully: ${r.msg}');
-    });
+    res.fold(
+      (l) {
+        log('Error sending message notification: ${l.toString()}');
+      },
+      (r) {
+        if (kDebugMode) {
+          if (r.status == 200) {
+            successGetBar(r.msg);
+          } else {}
+        }
+        log('Message notification sent successfully: ${r.msg}');
+      },
+    );
   }
   // Future<void> sendMessage({
   //   required String chatId,
@@ -145,8 +149,10 @@ class ChatCubit extends Cubit<ChatState> {
     );
   }
 
-  Future<void> deleteMessage(
-      {required String chatId, required String messageId}) async {
+  Future<void> deleteMessage({
+    required String chatId,
+    required String messageId,
+  }) async {
     try {
       await _firestore
           .collection('rooms')
@@ -167,33 +173,41 @@ class ChatCubit extends Cubit<ChatState> {
 
   MainCreateChatRoomModel? createChatRoomModel;
 
-  void createChatRoom({String? driverId, String? shipmentId}) async {
+  void createChatRoom({String? driverId, String? tripId}) async {
     emit(LoadingCreateChatRoomState());
     log('xxxxxxxxx ${driverId}');
-    log('xxxxxxxxx ${shipmentId}');
+    log('xxxxxxxxx ${tripId}');
     final res = await chatRepo.createChatRoom(
-        driverId: driverId, shipmentId: shipmentId);
+      driverId: driverId,
+      tripId: tripId,
+    );
 
-    res.fold((l) {
-      emit(ErrorCreateChatRoomState());
-    }, (r) {
-      messages = [];
-      listenForMessages(r.data?.roomToken ?? '');
-      createChatRoomModel = r;
-      emit(LoadedCreateChatRoomState());
-    });
+    res.fold(
+      (l) {
+        emit(ErrorCreateChatRoomState());
+      },
+      (r) {
+        messages = [];
+        listenForMessages(r.data?.roomToken ?? '');
+        createChatRoomModel = r;
+        emit(LoadedCreateChatRoomState());
+      },
+    );
   }
 
   ChatRoomModel? chatRoomModel;
   void getChatRooms() async {
     emit(LoadingCreateChatRoomState());
     final res = await chatRepo.getChatRooms();
-    res.fold((l) {
-      emit(ErrorCreateChatRoomState());
-    }, (r) {
-      chatRoomModel = r;
-      emit(LoadedCreateChatRoomState());
-    });
+    res.fold(
+      (l) {
+        emit(ErrorCreateChatRoomState());
+      },
+      (r) {
+        chatRoomModel = r;
+        emit(LoadedCreateChatRoomState());
+      },
+    );
   }
 }
 

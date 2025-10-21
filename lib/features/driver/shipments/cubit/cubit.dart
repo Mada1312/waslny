@@ -1,9 +1,9 @@
 import 'dart:developer';
 
 import 'package:waslny/core/exports.dart';
-import 'package:waslny/features/driver/shipments/data/models/get_shipments_model.dart';
-import 'package:waslny/features/driver/shipments/data/models/shipment_details_model.dart';
-import '../data/repo.dart';
+import 'package:waslny/features/driver/shipments/screens/data/models/get_shipments_model.dart';
+import 'package:waslny/features/driver/shipments/screens/data/models/shipment_details_model.dart';
+import '../screens/data/repo.dart';
 import 'state.dart';
 
 enum ShipmentsStatusEnum { newShipments, pending, loaded, delivered }

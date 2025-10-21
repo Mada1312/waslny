@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:waslny/features/general/auth/screens/widget/enum_gender.dart';
-import 'package:waslny/features/user/add_new_shipment/cubit/cubit.dart';
+import 'package:waslny/core/utils/general_enum.dart';
+import 'package:waslny/features/user/add_new_trip/cubit/cubit.dart';
 
 import '../../../../core/exports.dart';
 import '../../../../core/preferences/preferences.dart';
@@ -22,7 +22,7 @@ class LoginCubit extends Cubit<LoginState> {
   String? fullPhoneNumber;
   bool acceptTermsAndConditions = false;
   Gender? gender;
-  Gender? vehicleType;
+  VehicleType? vehicleType;
   onChangeStatus() {
     acceptTermsAndConditions = !acceptTermsAndConditions;
     emit(OnChangeStatusOfLogin());
@@ -99,9 +99,9 @@ class LoginCubit extends Cubit<LoginState> {
         isDriver: isDriver,
         name: nameController.text,
         gender: gender?.name == Gender.male.name ? '0' : '1',
-        vehicleType: vehicleType?.name == Gender.male.name
+        vehicleType: vehicleType?.name == VehicleType.car.name
             ? 'car'
-            : 'Moto', //TODO get it from List
+            : 'scooter', //TODO get it from List
         phone: fullPhoneNumber ?? '',
         password: passwordController.text,
       );
@@ -349,7 +349,6 @@ class LoginCubit extends Cubit<LoginState> {
   TextEditingController updateNameController = TextEditingController();
   TextEditingController updateAddressController = TextEditingController();
   TextEditingController updatePhoneNumberController = TextEditingController();
-  TextEditingController updateNationalIdController = TextEditingController();
 
   LoginModel? authData;
   onTapToEdit(BuildContext context, {bool isDeriver = false}) async {
@@ -367,35 +366,7 @@ class LoginCubit extends Cubit<LoginState> {
           updateNameController.text = r.data?.name ?? '';
           updateAddressController.text = r.data?.address ?? '';
           updatePhoneNumberController.text = r.data?.phone.toString() ?? '';
-          updateNationalIdController.text = r.data?.nationalId ?? '';
 
-          if (isDeriver) {
-            context.read<AddNewShipmentCubit>().selectedCountriesAtEditProfile =
-                r.data?.countries ?? [];
-            for (
-              int i = 0;
-              i <
-                  (context
-                          .read<AddNewShipmentCubit>()
-                          .allTruckType
-                          ?.data
-                          ?.length ??
-                      0);
-              i++
-            ) {
-              if (context
-                      .read<AddNewShipmentCubit>()
-                      .allTruckType
-                      ?.data?[i]
-                      .id ==
-                  r.data?.truckType?.id) {
-                context.read<AddNewShipmentCubit>().shipmentType = context
-                    .read<AddNewShipmentCubit>()
-                    .allTruckType
-                    ?.data?[i];
-              }
-            }
-          }
           emit(GetAuthDataLoaded());
         },
       );
@@ -418,7 +389,7 @@ class LoginCubit extends Cubit<LoginState> {
           authData = r;
 
           if (isFirstTime) {
-            if (authData?.data?.userType == 0) {
+            /*if (authData?.data?.userType == 0) {
               if (authData?.data?.exportCard == null) {
                 warningDialog(
                   context,
@@ -457,7 +428,7 @@ class LoginCubit extends Cubit<LoginState> {
                   },
                 );
               }
-            }
+            }*/
             changeLanguage();
           }
           isFirstTime = false;
@@ -491,7 +462,6 @@ class LoginCubit extends Cubit<LoginState> {
         name: updateNameController.text,
         address: updateAddressController.text,
         image: pickedProfileImage,
-        exportCard: pickedUserCardProfileImage,
       );
 
       res.fold(
@@ -531,11 +501,9 @@ class LoginCubit extends Cubit<LoginState> {
         backDriverCard: pickedDeliveryBackImage,
         frontDriverCard: pickedDeliveryFrontImage,
         countries:
-            context
-                .read<AddNewShipmentCubit>()
-                .selectedCountriesAtEditProfile ??
+            context.read<AddNewTripCubit>().selectedCountriesAtEditProfile ??
             [],
-        truckTypeId: context.read<AddNewShipmentCubit>().shipmentType,
+        truckTypeId: null,
       );
 
       res.fold(

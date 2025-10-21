@@ -3,7 +3,16 @@ class EndPoints {
   static const String loginUrl = '${baseUrl}login';
   static const String validateDataUrl = '${baseUrl}validate-data';
   static const String registerUrl = '${baseUrl}register';
-  static const String homeUrl = '${baseUrl}get-home';
+  static const String homeUrl = '${baseUrl}get-home?filter_by=';
+  static const String changeFavUrl = '${baseUrl}tripFav/';
+  static const String getLastAddressesUrl =
+      '${baseUrl}get-last-addresses?is_service=';
+  static const String getFavTripsAndServicesUrl =
+      '${baseUrl}get-fav?filter_by=';
+  static const String cloneTripUrl = '${baseUrl}clone-trip';
+
+  //!
+
   static const String shipmentDetailsUrl = '${baseUrl}get-shipment-detail/';
   static const String userCompleteShipmentUrl =
       '${baseUrl}mark-shipment-complete/';
@@ -35,8 +44,8 @@ class EndPoints {
   static const String forgetPasswordUrl = '${baseUrl}forget-password';
   static const String resetPasswordUrl = '${baseUrl}reset-password';
   static const String mainGetDataUrl = '${baseUrl}get-data';
-  static const String addNewShipmentUrl = '${baseUrl}add-shipment';
-  static const String updateShipment = '${baseUrl}update-shipment/';
+  static const String addNewTripUrl = '${baseUrl}add-trip';
+  static const String updateTrip = '${baseUrl}update-trip/';
   static const String contactUsUrl = '${baseUrl}contact-us';
   static const String deleteAccountUrl = '${baseUrl}delete-account';
   static const String logoutUrl = '${baseUrl}logout';
@@ -46,7 +55,6 @@ class EndPoints {
   static const String updateDeliveryprofiletUrl =
       '${baseUrl}driver/update-driver-data';
   static const String getSettingsUrl = '${baseUrl}get-settings';
-  static const String actionFavUrl = '${baseUrl}action-fav';
 
   static const String getChatRoomsUrl = '${baseUrl}get-all-chat-rooms';
   // static const String sendMessageUrl = '${baseUrl}v1/chat/sendMessage';

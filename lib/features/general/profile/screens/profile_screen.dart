@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:waslny/core/exports.dart';
 import 'package:waslny/core/widgets/network_image.dart';
-import 'package:waslny/features/user/shipments/cubit/cubit.dart';
+import 'package:waslny/features/user/trip_and_services/cubit/cubit.dart';
 import 'package:waslny/features/general/auth/cubit/cubit.dart';
 import '../../../../core/preferences/preferences.dart';
 import '../../../../core/utils/restart_app_class.dart';
@@ -164,25 +164,12 @@ class ProfileScreen extends StatelessWidget {
                           child: SingleChildScrollView(
                             child: Column(
                               children: [
-                                //TODO
-                                CustomProfileRow(
-                                  title: 'tutorial_video',
-                                  path: AppIcons.video,
-                                  onTap: () {
-                                    Navigator.pushNamed(
-                                      context,
-                                      Routes.tutorialVideoScreenRoute,
-                                    );
-                                    log('video screen');
-                                  },
-                                ),
-
                                 //! Done
                                 if (!isDriver)
                                   CustomProfileRow(
                                     onTap: () {
                                       context
-                                          .read<UserShipmentsCubit>()
+                                          .read<UserTripAndServicesCubit>()
                                           .changeSelectedStatus(
                                             ShipmentsStatusEnum.delivered,
                                           );
@@ -206,7 +193,8 @@ class ProfileScreen extends StatelessWidget {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => UserFavDriver(),
+                                          builder: (context) =>
+                                              UserFavTripsAndServices(),
                                         ),
                                       );
                                     },
@@ -332,6 +320,9 @@ class ProfileScreen extends StatelessWidget {
                                     );
                                   },
                                 ),
+                                (kBottomNavigationBarHeight + 5)
+                                    .h
+                                    .verticalSpace,
                               ],
                             ),
                           ),

@@ -3,10 +3,13 @@ import 'dart:io';
 import 'package:waslny/core/exports.dart';
 import 'package:waslny/core/preferences/preferences.dart';
 import 'package:waslny/core/utils/appwidget.dart';
+import 'package:waslny/core/utils/general_enum.dart';
 import 'package:waslny/features/maintenance_screen.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:waslny/features/user/home/cubit/cubit.dart';
+import 'package:waslny/features/user/home/data/models/get_home_model.dart';
 import '../data/models/fav_ecporter_model.dart';
 import '../data/models/main_settings_model.dart';
 import '../data/repo.dart';
@@ -17,8 +20,7 @@ class ProfileCubit extends Cubit<ProfileState> {
 
   ProfileRepo api;
 
-  TextEditingController addressController = TextEditingController();
-  TextEditingController subjectController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
   TextEditingController messageController = TextEditingController();
 
   Future<String> _getStoreUrl() async {
@@ -38,8 +40,10 @@ class ProfileCubit extends Cubit<ProfileState> {
     try {
       final url = await _getStoreUrl();
       final uri = Uri.parse(url);
-      final success =
-          await launchUrl(uri, mode: LaunchMode.externalApplication);
+      final success = await launchUrl(
+        uri,
+        mode: LaunchMode.externalApplication,
+      );
       if (!success) throw Exception("Could not launch $url");
       emit(AppUtilsSuccess("App store opened"));
     } catch (e) {
@@ -63,29 +67,32 @@ class ProfileCubit extends Cubit<ProfileState> {
       emit(LoadingContactUsState());
 
       final res = await api.contactUs(
-          address: addressController.text,
-          subject: subjectController.text,
-          message: messageController.text);
+        name: nameController.text,
+        message: messageController.text,
+      );
 
-      res.fold((l) {
-        errorGetBar(l.toString());
-        Navigator.pop(context);
-
-        emit(ErrorContactUsState());
-      }, (r) {
-        if (r.status == 200) {
-          successGetBar(r.msg);
-          addressController.clear();
-          subjectController.clear();
-          messageController.clear();
-          emit(LoadedContactUsState());
+      res.fold(
+        (l) {
+          errorGetBar(l.toString());
           Navigator.pop(context);
-        } else {
-          errorGetBar(r.msg ?? '');
+
           emit(ErrorContactUsState());
-        }
-        Navigator.pop(context);
-      });
+        },
+        (r) {
+          if (r.status == 200) {
+            successGetBar(r.msg);
+
+            nameController.clear();
+            messageController.clear();
+            emit(LoadedContactUsState());
+            Navigator.pop(context);
+          } else {
+            errorGetBar(r.msg ?? '');
+            emit(ErrorContactUsState());
+          }
+          Navigator.pop(context);
+        },
+      );
     } catch (e) {
       errorGetBar(e.toString());
       Navigator.pop(context);
@@ -100,27 +107,33 @@ class ProfileCubit extends Cubit<ProfileState> {
 
       final res = await api.deleteAccount();
 
-      res.fold((l) {
-        errorGetBar(l.toString());
-        Navigator.pop(context);
-
-        emit(ErrorContactUsState());
-      }, (r) {
-        if (r.status == 200) {
-          successGetBar(r.msg);
-          Preferences.instance.clearUser();
-          Navigator.pop(context);
-          Navigator.pop(context);
-          Navigator.pushNamedAndRemoveUntil(
-              context, Routes.chooseLoginRoute, (route) => false);
-          emit(LoadedContactUsState());
-        } else {
-          errorGetBar(r.msg ?? '');
+      res.fold(
+        (l) {
+          errorGetBar(l.toString());
           Navigator.pop(context);
 
           emit(ErrorContactUsState());
-        }
-      });
+        },
+        (r) {
+          if (r.status == 200) {
+            successGetBar(r.msg);
+            Preferences.instance.clearUser();
+            Navigator.pop(context);
+            Navigator.pop(context);
+            Navigator.pushNamedAndRemoveUntil(
+              context,
+              Routes.chooseLoginRoute,
+              (route) => false,
+            );
+            emit(LoadedContactUsState());
+          } else {
+            errorGetBar(r.msg ?? '');
+            Navigator.pop(context);
+
+            emit(ErrorContactUsState());
+          }
+        },
+      );
     } catch (e) {
       errorGetBar(e.toString());
       Navigator.pop(context);
@@ -135,84 +148,259 @@ class ProfileCubit extends Cubit<ProfileState> {
 
       final res = await api.logout();
 
-      res.fold((l) {
-        errorGetBar(l.toString());
-        Navigator.pop(context);
-        Navigator.pushNamedAndRemoveUntil(
-            context, Routes.chooseLoginRoute, (route) => false);
-        emit(ErrorContactUsState());
-      }, (r) {
-        if (r.status == 200) {
-          successGetBar(r.msg);
-
+      res.fold(
+        (l) {
+          errorGetBar(l.toString());
+          Navigator.pop(context);
           Preferences.instance.clearUser();
-          Navigator.pop(context);
-
-          Navigator.pop(context);
           Navigator.pushNamedAndRemoveUntil(
-              context, Routes.chooseLoginRoute, (route) => false);
-          emit(LoadedContactUsState());
-        } else {
-          errorGetBar(r.msg ?? '');
-          Navigator.pop(context);
-          Navigator.pushNamedAndRemoveUntil(
-              context, Routes.chooseLoginRoute, (route) => false);
-
+            context,
+            Routes.chooseLoginRoute,
+            (route) => false,
+          );
           emit(ErrorContactUsState());
-        }
-      });
+        },
+        (r) {
+          if (r.status == 200) {
+            successGetBar(r.msg);
+            Preferences.instance.clearUser();
+            Navigator.pop(context);
+            Navigator.pop(context);
+            Navigator.pushNamedAndRemoveUntil(
+              context,
+              Routes.chooseLoginRoute,
+              (route) => false,
+            );
+            emit(LoadedContactUsState());
+          } else {
+            errorGetBar(r.msg ?? '');
+            Navigator.pop(context);
+            Preferences.instance.clearUser();
+
+            Navigator.pushNamedAndRemoveUntil(
+              context,
+              Routes.chooseLoginRoute,
+              (route) => false,
+            );
+
+            emit(ErrorContactUsState());
+          }
+        },
+      );
     } catch (e) {
       errorGetBar(e.toString());
       Navigator.pop(context);
+      Preferences.instance.clearUser();
+
       Navigator.pushNamedAndRemoveUntil(
-          context, Routes.chooseLoginRoute, (route) => false);
+        context,
+        Routes.chooseLoginRoute,
+        (route) => false,
+      );
       emit(ErrorContactUsState());
     }
   }
 
-  MainFavModel? mainFavModel;
-  getMainFavUserDriver() async {
+  GetUserHomeModel? mainFavModel;
+
+  getMainFavUserTripsAndServices(BuildContext context) async {
     try {
       emit(LoadingContactUsState());
+      mainFavModel = null;
+      final res = await api.getMainFavUserTripsAndServices(
+        context.read<UserHomeCubit>().serviceType?.name ==
+                ServicesType.services.name
+            ? '1'
+            : '0',
+      );
 
-      final res = await api.getMainFavUserDriver();
-
-      res.fold((l) {
-        emit(ErrorContactUsState());
-      }, (r) {
-        if (r.status == 200) {
-          mainFavModel = r;
-          emit(LoadedContactUsState());
-        } else {
+      res.fold(
+        (l) {
           emit(ErrorContactUsState());
-        }
-      });
-    } catch (e) {
-      emit(ErrorContactUsState());
-    }
-  }
-
-  actionFav(String driverId, {bool isFavScreen = true}) async {
-    try {
-      emit(LoadingContactUsState());
-
-      final res = await api.actionFav(driverId);
-
-      res.fold((l) {
-        emit(ErrorContactUsState());
-      }, (r) {
-        if (r.status == 200) {
-          if (isFavScreen) {
-            mainFavModel?.data!.removeWhere(
-                (element) => element.driverId.toString() == driverId);
+        },
+        (r) {
+          if (r.status == 200) {
+            mainFavModel = r;
             emit(LoadedContactUsState());
           } else {
             emit(ErrorContactUsState());
           }
-        }
-      });
+        },
+      );
     } catch (e) {
       emit(ErrorContactUsState());
+    }
+  }
+
+  actionFav(
+    String id, {
+    bool isFavScreen = true,
+    required BuildContext context,
+  }) async {
+    try {
+      emit(LoadingContactUsState());
+      final res = await api.actionFav(id);
+      res.fold(
+        (l) {
+          emit(ErrorContactUsState());
+        },
+        (r) {
+          if (r.status == 200) {
+            if (isFavScreen) {
+              if (context.read<UserHomeCubit>().serviceType?.name ==
+                  ServicesType.services.name) {
+                mainFavModel?.data!.services!.removeWhere(
+                  (element) => element.id.toString() == id,
+                );
+              } else {
+                mainFavModel?.data!.trips!.removeWhere(
+                  (element) => element.id.toString() == id,
+                );
+              }
+
+              emit(LoadedContactUsState());
+            } else {
+              emit(ErrorContactUsState());
+            }
+          }
+        },
+      );
+    } catch (e) {
+      emit(ErrorContactUsState());
+    }
+  }
+
+  DateTime? selectedDate;
+  TimeOfDay? selectedTime;
+  TextEditingController selectedDateTimeController = TextEditingController();
+  TextEditingController selectedTimeController = TextEditingController();
+  TextEditingController selectedDateController = TextEditingController();
+  Future<void> selectDate(BuildContext context) async {
+    DateTime initialDate;
+    try {
+      initialDate = DateFormat(
+        'yyyy-MM-dd',
+        'en',
+      ).parse(selectedDateController.text);
+    } catch (_) {
+      initialDate = DateTime.now();
+    }
+
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: initialDate,
+      locale: const Locale('ar'),
+      firstDate: DateTime.now(),
+      lastDate: DateTime(50100),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            textTheme: TextTheme(
+              bodyLarge: getRegularStyle(),
+              bodyMedium: getRegularStyle(),
+              bodySmall: getRegularStyle(),
+            ),
+            colorScheme: ColorScheme.light(
+              primary: AppColors.secondPrimary,
+              onSurface: Colors.black,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (pickedDate != null) {
+      selectedDate = pickedDate;
+      selectedDateController.text = DateFormat(
+        'yyyy-MM-dd',
+        'en',
+      ).format(pickedDate);
+    }
+  }
+
+  Future<void> selectTime(BuildContext context) async {
+    final TimeOfDay initialTime = TimeOfDay.now();
+    final TimeOfDay? pickedTime = await showTimePicker(
+      context: context,
+      initialTime: initialTime,
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            textTheme: TextTheme(
+              bodyLarge: getRegularStyle(),
+              bodyMedium: getRegularStyle(),
+              bodySmall: getRegularStyle(),
+            ),
+            colorScheme: ColorScheme.light(
+              primary: AppColors.secondPrimary,
+              onSurface: Colors.black,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (pickedTime != null) {
+      selectedTime = pickedTime;
+      selectedTimeController.text = pickedTime.format(context);
+    }
+  }
+
+  Future<void> selectDateTime(BuildContext context) async {
+    await selectDate(context);
+    if (selectedDate != null) {
+      await selectTime(context);
+      if (selectedTime != null) {
+        final DateTime finalDateTime = DateTime(
+          selectedDate!.year,
+          selectedDate!.month,
+          selectedDate!.day,
+          selectedTime!.hour,
+          selectedTime!.minute,
+        );
+
+        final String formattedDateTime = DateFormat(
+          'yyyy-MM-dd HH:mm:ss',
+          'en',
+        ).format(finalDateTime);
+
+        selectedDateTimeController.text = formattedDateTime;
+        emit(DateTimeSelected());
+      }
+    }
+  }
+
+  cloneTrip(
+    String id, {
+    required BuildContext context,
+    bool isSchedule = false,
+  }) async {
+    try {
+      emit(LoadingCloneTripState());
+      final res = await api.cloneTrip(
+        id,
+        scheduleTime: isSchedule ? selectedDateTimeController.text : null,
+      );
+      res.fold(
+        (l) {
+          emit(ErrorCloneTripState());
+        },
+        (r) {
+          if (r.status == 200) {
+            successGetBar(r.msg);
+            selectedDateTimeController.clear;
+            selectedDateController.clear;
+            selectedTimeController.clear;
+            emit(LoadedCloneTripState());
+          } else {
+            emit(ErrorCloneTripState());
+          }
+        },
+      );
+    } catch (e) {
+      emit(ErrorCloneTripState());
     }
   }
 
@@ -223,38 +411,46 @@ class ProfileCubit extends Cubit<ProfileState> {
 
       final res = await api.getSettings();
 
-      res.fold((l) {
-        emit(ErrorContactUsState());
-      }, (r) async {
-        if (r.status == 200) {
-          settings = r;
-          if (r.data?.appMaintenance == 'true') {
-            //!
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) => MaintenanceScreen()));
-          }
-          if (r.data?.liveLocationHours != null) {
-            await Preferences.instance
-                .setLocationHours(r.data?.liveLocationHours ?? '3');
-          }
-          await checkAndShowUpdateDialog(
-            context: context,
-            latestAndroidVersion: r.data?.androidAppVersion ?? "1.0.0",
-            latestIosVersion: r.data?.iosAppVersion ?? "1.0.0",
-          );
-          emit(LoadedContactUsState());
-        } else {
+      res.fold(
+        (l) {
           emit(ErrorContactUsState());
-        }
-      });
+        },
+        (r) async {
+          if (r.status == 200) {
+            settings = r;
+            if (r.data?.appMaintenance == 'true') {
+              //!
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => MaintenanceScreen()),
+              );
+            }
+            if (r.data?.liveLocationHours != null) {
+              await Preferences.instance.setLocationHours(
+                r.data?.liveLocationHours ?? '3',
+              );
+            }
+            await checkAndShowUpdateDialog(
+              context: context,
+              latestAndroidVersion: r.data?.androidAppVersion ?? "1.0.0",
+              latestIosVersion: r.data?.iosAppVersion ?? "1.0.0",
+            );
+            emit(LoadedContactUsState());
+          } else {
+            emit(ErrorContactUsState());
+          }
+        },
+      );
     } catch (e) {
       emit(ErrorContactUsState());
     }
   }
 
   Future<void> _launchUrl(url) async {
-    if (!await launchUrl(Uri.parse(url),
-        mode: LaunchMode.externalApplication)) {
+    if (!await launchUrl(
+      Uri.parse(url),
+      mode: LaunchMode.externalApplication,
+    )) {
       throw Exception('Could not launch $url');
     }
   }

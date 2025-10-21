@@ -8,7 +8,7 @@ class ChatRepo {
   BaseApiConsumer dio;
   ChatRepo(this.dio);
 
-//! :: chat/getChatRooms
+  //! :: chat/getChatRooms
   Future<Either<Failure, ChatRoomModel>> getChatRooms() async {
     try {
       final response = await dio.get(EndPoints.getChatRoomsUrl);
@@ -19,11 +19,15 @@ class ChatRepo {
     }
   }
 
-  Future<Either<Failure, MainCreateChatRoomModel>> createChatRoom(
-      {String? shipmentId, String? driverId}) async {
+  Future<Either<Failure, MainCreateChatRoomModel>> createChatRoom({
+    String? tripId,
+    String? driverId,
+  }) async {
     try {
-      final response = await dio.get(EndPoints.createChatRoomUrl,
-          queryParameters: {"shipment_id": shipmentId, "driver_id": driverId});
+      final response = await dio.get(
+        EndPoints.createChatRoomUrl,
+        queryParameters: {"trip_id": tripId, "driver_id": driverId},
+      );
 
       return Right(MainCreateChatRoomModel.fromJson(response));
     } on ServerException {
@@ -39,11 +43,7 @@ class ChatRepo {
     try {
       final response = await dio.post(
         EndPoints.sendMessageNotificationUrl,
-        body: {
-          "message": message,
-          "room_token": roomToken,
-          "user_id": userId,
-        },
+        body: {"message": message, "room_token": roomToken, "user_id": userId},
       );
 
       return Right(MainCreateChatRoomModel.fromJson(response));
@@ -51,6 +51,7 @@ class ChatRepo {
       return Left(ServerFailure());
     }
   }
+
   // Future<Either<Failure, DefaultMainModel>> sendMessage(
   //     {String? chatId, String? message, File? file}) async {
   //   try {

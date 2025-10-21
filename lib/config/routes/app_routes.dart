@@ -1,6 +1,6 @@
 import 'package:waslny/features/driver/shipments/screens/details/shipment_details_screen.dart';
-import 'package:waslny/features/user/shipments/screens/details/shipment_details_screen.dart';
-import 'package:waslny/features/user/shipments/screens/shipments_screen.dart';
+import 'package:waslny/features/user/trip_and_services/screens/details/shipment_details_screen.dart';
+import 'package:waslny/features/user/trip_and_services/screens/shipments_screen.dart';
 import 'package:waslny/features/main/screens/main_screen.dart';
 import 'package:waslny/features/general/auth/screens/choose_login_screen.dart';
 import 'package:waslny/features/general/on_boarding/screen/onboarding_screen.dart';
@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:waslny/features/general/splash/screens/splash_screen.dart';
 import '../../core/utils/app_strings.dart';
 import 'package:page_transition/page_transition.dart';
-import '../../features/user/add_new_shipment/screens/add_new_shipment.dart';
+import '../../features/user/add_new_trip/screens/add_new_trip.dart';
 import '../../features/general/auth/screens/forget_password.dart';
 import '../../features/general/auth/screens/login_screen.dart';
 import '../../features/general/auth/screens/new_password.dart';
@@ -18,7 +18,7 @@ import '../../features/general/auth/screens/update_exporter_profile.dart';
 import '../../features/general/auth/screens/verify_code.dart';
 import '../../features/general/chat/screens/message_screen.dart';
 import '../../features/general/profile/screens/contactus_screen.dart';
-import '../../features/general/tutorial_videos/screens/tutorial_video_screen.dart';
+
 
 class Routes {
   static const String initialRoute = '/';
@@ -33,7 +33,7 @@ class Routes {
   static const String userShipmentsRoute = '/userShipmentsRoute';
   static const String userShipmentDetailsRoute = '/userShipmentDetailsRoute';
   static const String driverShipmentDetailsRoute = '/driverShipmentDetails';
-  static const String addNewShipmentRoute = '/addNewShipment';
+  static const String addNewTripRoute = '/addNewTrip';
   static const String updateShipmentRoute = '/updateShipment';
   static const String tutorialVideoScreenRoute = '/TutorialVideoScreen';
   static const String contactUsScreen = '/contactUsScreen';
@@ -147,21 +147,16 @@ class AppRoutes {
           duration: const Duration(milliseconds: 800),
         );
 
-      case Routes.addNewShipmentRoute:
-        AddShipmentsArgs args = settings.arguments as AddShipmentsArgs;
+      case Routes.addNewTripRoute:
+        AddTripArgs args = settings.arguments as AddTripArgs;
         return PageTransition(
-          child: AddNewShipmentScreen(args: args),
+          child: AddNewTripScreen(args: args),
           type: PageTransitionType.fade,
           alignment: Alignment.center,
           duration: const Duration(milliseconds: 800),
         );
-      case Routes.tutorialVideoScreenRoute:
-        return PageTransition(
-          child: const TutorialVideoScreen(),
-          type: PageTransitionType.fade,
-          alignment: Alignment.center,
-          duration: const Duration(milliseconds: 800),
-        );
+   
+   
       case Routes.contactUsScreen:
         return PageTransition(
           child: const ContactUsScreen(),

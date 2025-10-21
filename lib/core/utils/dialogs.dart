@@ -34,46 +34,50 @@ errorGetBar(String message) {
 /*----------------------------------------------------------------------------*/
 
 successGetBar(String? message) {
-  Get.showSnackbar(GetSnackBar(
-    messageText: Text(
-      message ?? 'success'.tr(),
-      style: Get.textTheme.bodyMedium!.copyWith(
-        color: Colors.white,
-        height: 1.5,
+  Get.showSnackbar(
+    GetSnackBar(
+      messageText: Text(
+        message ?? 'success'.tr(),
+        style: Get.textTheme.bodyMedium!.copyWith(
+          color: Colors.white,
+          height: 1.5,
+        ),
       ),
+      icon: const Icon(CupertinoIcons.checkmark_seal, color: Colors.white),
+      backgroundColor: AppColors.secondPrimary,
+      barBlur: 5.0,
+      borderRadius: 12.0,
+      duration: const Duration(milliseconds: 2500),
+      isDismissible: true,
+      margin: const EdgeInsets.all(8.0),
+      snackPosition: SnackPosition.TOP,
     ),
-    icon: const Icon(CupertinoIcons.checkmark_seal, color: Colors.white),
-    backgroundColor: AppColors.secondPrimary,
-    barBlur: 5.0,
-    borderRadius: 12.0,
-    duration: const Duration(milliseconds: 2500),
-    isDismissible: true,
-    margin: const EdgeInsets.all(8.0),
-    snackPosition: SnackPosition.TOP,
-  ));
+  );
 }
 
 /*----------------------------------------------------------------------------*/
 /*------------------------------  Message Get Bar  ---------------------------*/
 /*----------------------------------------------------------------------------*/
 messageGetBar(String message) {
-  Get.showSnackbar(GetSnackBar(
-    messageText: Text(
-      message,
-      style: Get.textTheme.labelMedium!.copyWith(
-        color: Colors.white,
-        height: 1.5,
+  Get.showSnackbar(
+    GetSnackBar(
+      messageText: Text(
+        message,
+        style: Get.textTheme.labelMedium!.copyWith(
+          color: Colors.white,
+          height: 1.5,
+        ),
       ),
+      icon: const Icon(CupertinoIcons.arrow_left_circle, color: Colors.white),
+      backgroundColor: Get.theme.primaryColor,
+      barBlur: 5.0,
+      borderRadius: 12.0,
+      duration: const Duration(seconds: 3),
+      isDismissible: true,
+      margin: const EdgeInsets.all(8.0),
+      snackPosition: SnackPosition.TOP,
     ),
-    icon: const Icon(CupertinoIcons.arrow_left_circle, color: Colors.white),
-    backgroundColor: Get.theme.primaryColor,
-    barBlur: 5.0,
-    borderRadius: 12.0,
-    duration: const Duration(seconds: 3),
-    isDismissible: true,
-    margin: const EdgeInsets.all(8.0),
-    snackPosition: SnackPosition.TOP,
-  ));
+  );
 }
 //
 // warningDialog(

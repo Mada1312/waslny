@@ -10,14 +10,14 @@ import 'widgets/chat_bubble_widget.dart';
 
 class MainUserAndRoomChatModel {
   String? driverId;
-  String? shipmentId;
+  String? tripId;
   String? chatId;
   String? title;
   bool? isDriver;
   bool? isNotification;
   MainUserAndRoomChatModel({
     this.driverId,
-    this.shipmentId,
+    this.tripId,
     this.chatId,
     this.title,
     this.isDriver,
@@ -41,15 +41,16 @@ class _MessageScreenState extends State<MessageScreen> {
     // MessageStateManager().enterChatRoom(widget.model.chatId ?? '');
     log('999999999 ${widget.model.chatId}');
     log('8888888888 ${widget.model.driverId.toString()}');
-    log('7777777777 ${widget.model.shipmentId.toString()}');
+    log('7777777777 ${widget.model.tripId.toString()}');
     if (widget.model.chatId != null) {
       log('999999999 8888888888 ${widget.model.chatId}');
 
       context.read<ChatCubit>().listenForMessages(widget.model.chatId ?? '');
     } else {
       context.read<ChatCubit>().createChatRoom(
-          driverId: widget.model.driverId ?? '',
-          shipmentId: widget.model.shipmentId);
+        driverId: widget.model.driverId ?? '',
+        tripId: widget.model.tripId,
+      );
     }
   }
 
@@ -67,8 +68,11 @@ class _MessageScreenState extends State<MessageScreen> {
         return WillPopScope(
           onWillPop: () async {
             if (widget.model.isNotification == true) {
-              Navigator.pushReplacementNamed(context, Routes.mainRoute,
-                  arguments: widget.model.isDriver == true);
+              Navigator.pushReplacementNamed(
+                context,
+                Routes.mainRoute,
+                arguments: widget.model.isDriver == true,
+              );
             } else {
               Navigator.pop(context);
             }
@@ -85,60 +89,68 @@ class _MessageScreenState extends State<MessageScreen> {
                   onPressed: () {
                     MessageStateManager().isInChatRoom("1");
                     if (widget.model.isNotification == true) {
-                      Navigator.pushReplacementNamed(context, Routes.mainRoute,
-                          arguments: widget.model.isDriver == true);
+                      Navigator.pushReplacementNamed(
+                        context,
+                        Routes.mainRoute,
+                        arguments: widget.model.isDriver == true,
+                      );
                     } else {
                       Navigator.pop(context);
                     }
                   },
                 ),
               ),
-              body: (state is LoadingGetNewMessagteState ||
+              body:
+                  (state is LoadingGetNewMessagteState ||
                       state is LoadingCreateChatRoomState)
-                  ? Center(
-                      child: CustomLoadingIndicator(),
-                    )
+                  ? Center(child: CustomLoadingIndicator())
                   : Column(
                       children: [
                         // App Bar with Image
 
                         // Chat Messages Area
                         Expanded(
-                            child: ListView.builder(
-                          controller: cubit.scrollController,
-                          itemCount: cubit.messages.length,
-                          reverse: true,
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 16.w, vertical: 10.h),
-                          itemBuilder: (context, index) {
-                            var item = cubit.messages[index];
-                            return ChatBubble(
-                              chatId: item.chatId ?? '',
-                              messageId: item.id,
-                              isSender: ((context
-                                      .read<LoginCubit>()
-                                      .authData
-                                      ?.data
-                                      ?.id
-                                      .toString() ==
-                                  item.senderId.toString())),
-                              // image: item.fileUrl,
-                              message: item.bodyMessage ?? '',
-                              time: item.time!,
-                            );
-                          },
-                        )
-                            // : Container(),
+                          child: ListView.builder(
+                            controller: cubit.scrollController,
+                            itemCount: cubit.messages.length,
+                            reverse: true,
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 16.w,
+                              vertical: 10.h,
                             ),
+                            itemBuilder: (context, index) {
+                              var item = cubit.messages[index];
+                              return ChatBubble(
+                                chatId: item.chatId ?? '',
+                                messageId: item.id,
+                                isSender:
+                                    ((context
+                                        .read<LoginCubit>()
+                                        .authData
+                                        ?.data
+                                        ?.id
+                                        .toString() ==
+                                    item.senderId.toString())),
+                                // image: item.fileUrl,
+                                message: item.bodyMessage ?? '',
+                                time: item.time!,
+                              );
+                            },
+                          ),
+                          // : Container(),
+                        ),
                         // Input Field
                         Container(
                           padding: EdgeInsets.symmetric(
-                              horizontal: 10.w, vertical: 8.h),
+                            horizontal: 10.w,
+                            vertical: 8.h,
+                          ),
                           decoration: BoxDecoration(
                             color: AppColors.white,
                             border: Border(
                               top: BorderSide(
-                                  color: AppColors.gray.withOpacity(0.5)),
+                                color: AppColors.gray.withOpacity(0.5),
+                              ),
                             ),
                           ),
                           child: Row(
@@ -147,16 +159,22 @@ class _MessageScreenState extends State<MessageScreen> {
                                 onPressed: () {
                                   _showBottomSheet(context, cubit);
                                 },
-                                icon: Icon(Icons.emoji_emotions_outlined,
-                                    color: AppColors.gray, size: 24.sp),
+                                icon: Icon(
+                                  Icons.emoji_emotions_outlined,
+                                  color: AppColors.gray,
+                                  size: 24.sp,
+                                ),
                               ),
                               Expanded(
                                 child: TextField(
                                   onSubmitted: (value) {
                                     cubit.sendMessage(
                                       receiverId: widget.model.driverId,
-                                      chatId: widget.model.chatId ??
-                                          cubit.createChatRoomModel?.data
+                                      chatId:
+                                          widget.model.chatId ??
+                                          cubit
+                                              .createChatRoomModel
+                                              ?.data
                                               ?.roomToken ??
                                           '',
                                     );
@@ -166,7 +184,9 @@ class _MessageScreenState extends State<MessageScreen> {
                                     hintText: "write_msg".tr(),
                                     hintStyle: TextStyle(color: AppColors.gray),
                                     contentPadding: EdgeInsets.symmetric(
-                                        horizontal: 5.w, vertical: 5.h),
+                                      horizontal: 5.w,
+                                      vertical: 5.h,
+                                    ),
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(
                                         20.sp,
@@ -179,17 +199,22 @@ class _MessageScreenState extends State<MessageScreen> {
                                 ),
                               ),
                               IconButton(
-                                onPressed: (state
-                                            is LoadingCreateChatRoomState ||
+                                onPressed:
+                                    (state is LoadingCreateChatRoomState ||
                                         state is LoadingCreate2ChatRoomState)
                                     ? () {}
                                     : () {
-                                        if (cubit.messageController.text
+                                        if (cubit
+                                            .messageController
+                                            .text
                                             .isNotEmpty) {
                                           cubit.sendMessage(
                                             receiverId: widget.model.driverId,
-                                            chatId: widget.model.chatId ??
-                                                cubit.createChatRoomModel?.data
+                                            chatId:
+                                                widget.model.chatId ??
+                                                cubit
+                                                    .createChatRoomModel
+                                                    ?.data
                                                     ?.roomToken ??
                                                 '',
                                           );
@@ -267,8 +292,9 @@ class _MessageScreenState extends State<MessageScreen> {
       builder: (BuildContext context) {
         return Padding(
           padding: EdgeInsets.only(
-            bottom:
-                MediaQuery.of(context).viewInsets.bottom, // Adjust for keyboard
+            bottom: MediaQuery.of(
+              context,
+            ).viewInsets.bottom, // Adjust for keyboard
           ),
           child: Column(
             mainAxisSize:
@@ -299,9 +325,7 @@ class _MessageScreenState extends State<MessageScreen> {
                             vertical: 5.h,
                           ),
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(
-                              20.sp,
-                            ),
+                            borderRadius: BorderRadius.circular(20.sp),
                             borderSide: BorderSide.none,
                           ),
                           filled: true,
@@ -310,7 +334,8 @@ class _MessageScreenState extends State<MessageScreen> {
                         onSubmitted: (value) {
                           cubit.sendMessage(
                             receiverId: widget.model.driverId,
-                            chatId: widget.model.chatId ??
+                            chatId:
+                                widget.model.chatId ??
                                 cubit.createChatRoomModel?.data?.roomToken ??
                                 '',
                           );
@@ -319,10 +344,13 @@ class _MessageScreenState extends State<MessageScreen> {
                     ),
                     IconButton(
                       onPressed: () {
-                        log('0000 : ${widget.model.chatId ?? cubit.createChatRoomModel?.data?.roomToken ?? ''}');
+                        log(
+                          '0000 : ${widget.model.chatId ?? cubit.createChatRoomModel?.data?.roomToken ?? ''}',
+                        );
                         cubit.sendMessage(
                           receiverId: widget.model.driverId,
-                          chatId: widget.model.chatId ??
+                          chatId:
+                              widget.model.chatId ??
                               cubit.createChatRoomModel?.data?.roomToken ??
                               '',
                         );

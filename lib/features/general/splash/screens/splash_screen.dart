@@ -56,9 +56,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 height: getHeightSize(context),
                 width: getWidthSize(context),
               ),
-              Container(
-                color: AppColors.secondPrimary.withOpacity(0.8),
-              ),
+              Container(color: AppColors.secondPrimary.withOpacity(0.8)),
               Center(
                 child: Padding(
                   padding: EdgeInsets.only(
@@ -66,18 +64,17 @@ class _SplashScreenState extends State<SplashScreen> {
                     left: 70.w,
                     right: 70.w,
                   ),
-                  child: Image.asset(
-                    ImageAssets.appIcon,
-                    height: 160.h,
-                  ),
+                  child: Image.asset(ImageAssets.appIcon, height: 160.h),
                 ),
               ),
               GestureDetector(
                 onTap: () async {
                   openExternal('https://octopusteam.net/');
                 },
-                child: Image.asset(ImageAssets.octopusTeamImage,
-                    height: getHeightSize(context) * 0.1),
+                child: Image.asset(
+                  ImageAssets.octopusTeamImage,
+                  height: getHeightSize(context) * 0.1,
+                ),
               ),
             ],
           ),

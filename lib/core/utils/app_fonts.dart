@@ -1,16 +1,18 @@
 import 'package:waslny/core/exports.dart';
 
-TextStyle _getTextStyle(
-    {required double fontSize,
-    double? fontHeight,
-    required FontWeight fontWeight,
-    required Color color}) {
+TextStyle _getTextStyle({
+  required double fontSize,
+  double? fontHeight,
+  required FontWeight fontWeight,
+  required Color color,
+}) {
   return TextStyle(
-      height: fontHeight,
-      fontSize: fontSize,
-      fontFamily: AppStrings.fontFamily,
-      color: color,
-      fontWeight: fontWeight);
+    height: fontHeight,
+    fontSize: fontSize,
+    fontFamily: AppStrings.fontFamily,
+    color: color,
+    fontWeight: fontWeight,
+  );
 }
 
 // light style 300
@@ -50,55 +52,65 @@ TextStyle getUnderLine({Color? color, double? fontSize}) {
 //textcolor
 
 // regular style 400
-TextStyle getRegularStyle(
-    {Color? color, double? fontHeight, double? fontSize}) {
+TextStyle getRegularStyle({
+  Color? color,
+  double? fontHeight,
+  double? fontSize,
+}) {
   return _getTextStyle(
-      color: color ?? AppColors.secondPrimary,
-      fontWeight: FontWeight.w400,
-      fontSize: fontSize ?? 16.sp,
-      fontHeight: fontHeight);
+    color: color ?? AppColors.secondPrimary,
+    fontWeight: FontWeight.w400,
+    fontSize: fontSize ?? 16.sp,
+    fontHeight: fontHeight,
+  );
 }
 
 // regular style 500
 TextStyle getMediumStyle({Color? color, double? fontHeight, double? fontSize}) {
   return _getTextStyle(
-      color: color ?? AppColors.secondPrimary,
-      fontWeight: FontWeight.w500,
-      fontSize: fontSize ?? 18.sp,
-      fontHeight: fontHeight);
+    color: color ?? AppColors.secondPrimary,
+    fontWeight: FontWeight.w500,
+    fontSize: fontSize ?? 18.sp,
+    fontHeight: fontHeight,
+  );
 }
 
 // semi bold style 600
-TextStyle getSemiBoldStyle(
-    {Color? color,
-    double? fontHeight,
-    double? fontSize,
-    FontWeight? fontweight}) {
+TextStyle getSemiBoldStyle({
+  Color? color,
+  double? fontHeight,
+  double? fontSize,
+  FontWeight? fontweight,
+}) {
   return _getTextStyle(
-      color: color ?? AppColors.secondPrimary,
-      fontWeight: fontweight ?? FontWeight.w600,
-      fontSize: fontSize ?? 18.sp,
-      fontHeight: fontHeight);
+    color: color ?? AppColors.secondPrimary,
+    fontWeight: fontweight ?? FontWeight.w600,
+    fontSize: fontSize ?? 18.sp,
+    fontHeight: fontHeight,
+  );
 }
 
 // bold style 700
-TextStyle getBoldStyle(
-    {Color? color,
-    double? fontHeight,
-    double? fontSize,
-    FontWeight? fontweight}) {
+TextStyle getBoldStyle({
+  Color? color,
+  double? fontHeight,
+  double? fontSize,
+  FontWeight? fontweight,
+}) {
   return _getTextStyle(
-      color: color ?? AppColors.secondPrimary,
-      fontWeight: fontweight ?? FontWeight.w700,
-      fontSize: fontSize ?? 18.sp,
-      fontHeight: fontHeight);
+    color: color ?? AppColors.secondPrimary,
+    fontWeight: fontweight ?? FontWeight.w700,
+    fontSize: fontSize ?? 18.sp,
+    fontHeight: fontHeight,
+  );
 }
 
 // Extra Bold style 800
 TextStyle getExtraStyle({Color? color, double? fontHeight, double? fontSize}) {
   return _getTextStyle(
-      color: color ?? AppColors.secondPrimary,
-      fontWeight: FontWeight.w800,
-      fontSize: fontSize ?? 18.sp,
-      fontHeight: fontHeight);
+    color: color ?? AppColors.secondPrimary,
+    fontWeight: FontWeight.w800,
+    fontSize: fontSize ?? 18.sp,
+    fontHeight: fontHeight,
+  );
 }

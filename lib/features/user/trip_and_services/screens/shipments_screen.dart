@@ -1,0 +1,75 @@
+import 'package:waslny/core/exports.dart';
+
+import '../cubit/cubit.dart';
+import '../cubit/state.dart';
+import 'widgets/shipment_statuss.dart';
+import 'widgets/trip_and_service_widget.dart';
+
+class UserShipmentsScreen extends StatelessWidget {
+  const UserShipmentsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<UserTripAndServicesCubit, UserTripAndServicesState>(
+      builder: (context, state) {
+        var cubit = context.read<UserTripAndServicesCubit>();
+
+        return Scaffold(
+          appBar: customAppBar(context, title: 'trips'.tr()),
+          body: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CustomShipmentsTypes(),
+              20.h.verticalSpace,
+              Expanded(
+                child: Center(
+                  child: state is ShipmentsErrorState
+                      ? CustomNoDataWidget(
+                          message: 'error_happened'.tr(),
+                          onTap: () {
+                            cubit.getShipments();
+                          },
+                        )
+                      : state is ShipmentsLoadingState ||
+                            cubit.shipmentsModel?.data == null
+                      ? const Center(child: CustomLoadingIndicator())
+                      : cubit.shipmentsModel?.data?.isEmpty == true
+                      ? CustomNoDataWidget(
+                          message: 'no_trips'.tr(),
+                          onTap: () {
+                            cubit.getShipments();
+                          },
+                        )
+                      : RefreshIndicator(
+                          color: AppColors.primary,
+                          onRefresh: () async {
+                            await cubit.getShipments();
+                          },
+                          child: ListView.separated(
+                            itemBuilder: (context, index) => Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: getHorizontalPadding(context),
+                                vertical: 3.h,
+                              ),
+                              child: TripOrServiceItemWidget(
+                                tripOrService:
+                                    cubit.shipmentsModel?.data?[index],
+                                isDelivered:
+                                    cubit.selectedStatus ==
+                                    ShipmentsStatusEnum.delivered,
+                              ),
+                            ),
+                            separatorBuilder: (context, index) =>
+                                20.h.verticalSpace,
+                            itemCount: cubit.shipmentsModel?.data?.length ?? 0,
+                          ),
+                        ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}

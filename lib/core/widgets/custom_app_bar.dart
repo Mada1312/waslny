@@ -1,16 +1,20 @@
 import 'package:waslny/core/exports.dart';
 
-PreferredSizeWidget customAppBar(BuildContext context,
-    {String title = '',
-    VoidCallback? onBack,
-    List<Widget>? actions,
-    double? height,
-    Widget? leading}) {
+PreferredSizeWidget customAppBar(
+  BuildContext context, {
+  String title = '',
+  VoidCallback? onBack,
+  List<Widget>? actions,
+  double? height,
+  Widget? leading,
+  Widget? titleWidget,
+}) {
   return AppBar(
     backgroundColor: AppColors.white,
     elevation: 0,
     toolbarHeight: height,
-    leading: leading ??
+    leading:
+        leading ??
         IconButton(
           icon: Icon(
             Icons.arrow_back_rounded,
@@ -20,12 +24,7 @@ PreferredSizeWidget customAppBar(BuildContext context,
           padding: EdgeInsets.zero,
           onPressed: onBack ?? () => Navigator.pop(context),
         ),
-    title: Text(
-      title,
-      style: getMediumStyle(
-        fontSize: 18.sp,
-      ),
-    ),
+    title: titleWidget ?? Text(title, style: getMediumStyle(fontSize: 18.sp)),
     actions: actions,
   );
 }

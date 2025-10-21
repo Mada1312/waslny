@@ -1,4 +1,4 @@
-import '../../../../user/add_new_shipment/data/models/countries_and_types_model.dart';
+import '../../../../user/add_new_trip/data/models/countries_and_types_model.dart';
 
 class LoginModel {
   LoginModelData? data;

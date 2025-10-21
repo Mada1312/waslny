@@ -24,12 +24,14 @@ class CustomTextField extends StatefulWidget {
   final TextInputType? keyboardType;
   final bool isReadOnly;
   final Color? backgroundColor;
+  final TextAlign? textAlign;
   //FocusNode myFocusNode = FocusNode();
   const CustomTextField({
     super.key,
     this.hintText,
     this.validationMessage,
     this.title,
+    this.textAlign,
     this.isRequired = true,
     this.prefixIcon,
     this.validator,
@@ -127,18 +129,17 @@ class _CustomTextFieldState extends State<CustomTextField> {
                           }
                     : null,
                 keyboardType: widget.keyboardType ?? TextInputType.text,
-                maxLines: widget.isMessage ? 5 : 1,
-                minLines: widget.isMessage ? 5 : 1,
+                maxLines: widget.isMessage ? 3 : 1,
+                minLines: widget.isMessage ? 3 : 1,
                 onFieldSubmitted: widget.onSubmitted,
                 inputFormatters: widget.inputFormatters,
                 initialValue: widget.initialValue,
                 obscureText: widget.isPassword ? !showPassword : false,
                 obscuringCharacter: '*',
+                textAlign: widget.textAlign ?? TextAlign.start,
                 decoration: InputDecoration(
                   filled: true,
-                  fillColor:
-                      widget.backgroundColor ??
-                      AppColors.secondPrimary.withAlpha(25),
+                  fillColor: widget.backgroundColor ?? AppColors.second2Primary,
                   hintText: widget.hintText,
                   prefixIcon: widget.prefixIcon,
                   prefixIconColor: myFocusNode.hasFocus
@@ -178,21 +179,27 @@ class _CustomTextFieldState extends State<CustomTextField> {
                       : widget.suffixIcon,
                   contentPadding: EdgeInsets.symmetric(
                     horizontal: 8,
-                    vertical: 12.h,
+                    vertical: 8.h,
                   ),
-                  hintStyle: getRegularStyle(fontSize: 14.sp),
+                  hintStyle: getRegularStyle(
+                    fontSize: 14.sp,
+                    color: AppColors.grey,
+                  ),
                   errorStyle: getRegularStyle(color: AppColors.red),
                   enabledBorder: OutlineInputBorder(
                     borderSide: BorderSide(
-                      color: AppColors.lightGrey,
-                      width: 1.5,
+                      color: AppColors.second2Primary,
+                      width: 0,
                     ),
                     borderRadius: BorderRadius.all(
                       Radius.circular(widget.borderRadius ?? 10.r),
                     ),
                   ),
                   disabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: AppColors.gray, width: 1.5),
+                    borderSide: BorderSide(
+                      color: AppColors.second2Primary,
+                      width: 0,
+                    ),
                     borderRadius: BorderRadius.all(
                       Radius.circular(widget.borderRadius ?? 10.r),
                     ),
@@ -200,8 +207,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
                   // focused border style
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(
-                      color: AppColors.secondPrimary,
-                      width: 1.5,
+                      color: AppColors.second2Primary,
+                      width: 0,
                     ),
                     borderRadius: BorderRadius.all(
                       Radius.circular(widget.borderRadius ?? 10.r),
@@ -210,13 +217,13 @@ class _CustomTextFieldState extends State<CustomTextField> {
 
                   // error border style
                   errorBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: AppColors.red, width: 1.5),
+                    borderSide: BorderSide(color: AppColors.red, width: 0),
                     borderRadius: BorderRadius.all(
                       Radius.circular(widget.borderRadius ?? 10.r),
                     ),
                   ),
                   focusedErrorBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: AppColors.red, width: 1.5),
+                    borderSide: BorderSide(color: AppColors.red, width: 0),
                     borderRadius: BorderRadius.all(
                       Radius.circular(widget.borderRadius ?? 10.r),
                     ),
@@ -315,7 +322,7 @@ class CustomPhoneFormField extends StatelessWidget {
                   filled: true,
                   fillColor: enabled!
                       ? AppColors.secondPrimary.withAlpha(25)
-                      : AppColors.secondPrimary.withAlpha(25),
+                      : AppColors.second2Primary,
                   counterText: '',
                   hintText: 'enter_your_number'.tr(),
 
@@ -327,31 +334,31 @@ class CustomPhoneFormField extends StatelessWidget {
                   errorStyle: getRegularStyle(color: AppColors.red),
                   enabledBorder: OutlineInputBorder(
                     borderSide: BorderSide(
-                      color: AppColors.secondPrimary.withAlpha(25),
-                      width: 1.5,
+                      color: AppColors.second2Primary,
+                      width: 0,
                     ),
                     borderRadius: BorderRadius.all(Radius.circular(10.r)),
                   ),
                   disabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: AppColors.gray, width: 1.5),
+                    borderSide: BorderSide(color: AppColors.gray, width: 0),
                     borderRadius: BorderRadius.all(Radius.circular(10.r)),
                   ),
                   // focused border style
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(
                       color: AppColors.secondPrimary,
-                      width: 1.5,
+                      width: 0,
                     ),
                     borderRadius: BorderRadius.all(Radius.circular(10.r)),
                   ),
 
                   // error border style
                   errorBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: AppColors.red, width: 1.5),
+                    borderSide: BorderSide(color: AppColors.red, width: 0),
                     borderRadius: BorderRadius.all(Radius.circular(10.r)),
                   ),
                   focusedErrorBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: AppColors.red, width: 1.5),
+                    borderSide: BorderSide(color: AppColors.red, width: 0),
                     borderRadius: BorderRadius.all(Radius.circular(10.r)),
                   ),
                 ),

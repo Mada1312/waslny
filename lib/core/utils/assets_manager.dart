@@ -34,6 +34,7 @@ class ImageAssets {
   static const String editIcon = '$imagePath/edit_icon.png';
   static const String verifyIcon = '$imagePath/verify.png';
   static const String userCover = '$imagePath/user_cover.png';
+  static const String carIcon = '$iconsPath/car.svg';
 
   static const String loaderIcon = '$imagePath/dialog_logo.png';
   // static const String loaderIcon = '$imagePath/loader.png';
@@ -77,4 +78,12 @@ class AppIcons {
   static const String insta = '$iconsPath/insta.svg';
   static const String whatsapp = '$iconsPath/whatsapp.svg';
   static const String facebook = '$iconsPath/facebook.svg';
+
+  static const String addServiceIcon = '$iconsPath/add_service.svg';
+  static const String carIcon = '$iconsPath/car.svg';
+  static const String messageIcon = '$iconsPath/message_icon.svg';
+  static const String waslnyArIcon = '$iconsPath/waslny_ar.svg';
+  static const String selectLocation = '$iconsPath/select_location.svg';
+  static const String savedLocations = '$iconsPath/saved_locations.svg';
+  static const String noDataIcon = '$iconsPath/no_data.svg';
 }
