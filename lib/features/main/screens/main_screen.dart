@@ -1,4 +1,5 @@
 // import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:flutter_floating_bottom_bar/flutter_floating_bottom_bar.dart';
 import 'package:waslny/core/exports.dart';
 
 import '../../general/auth/cubit/cubit.dart';
