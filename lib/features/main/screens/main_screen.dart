@@ -1,5 +1,4 @@
-import 'package:awesome_dialog/awesome_dialog.dart';
-
+// import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter_floating_bottom_bar/flutter_floating_bottom_bar.dart';
 import 'package:waslny/core/exports.dart';
 
@@ -55,7 +54,7 @@ class _MainScreenState extends State<MainScreen>
               tabController.animateTo(0);
               return false;
             } else {
-              bool shouldExit = await _showExitDialog(context);
+              bool shouldExit = await showExitDialog(context);
               if (shouldExit) {
                 SystemNavigator.pop();
               }
@@ -167,79 +166,204 @@ class _MainScreenState extends State<MainScreen>
     );
   }
 
-  Future<bool> _showExitDialog(BuildContext context) async {
-    bool exitConfirmed = false;
-    await AwesomeDialog(
-      context: context,
-      animType: AnimType.bottomSlide,
-      customHeader: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Image.asset(ImageAssets.dialogLogo, width: 80, height: 80),
-      ),
-      body: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            "exit_app".tr(),
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            "exit_app_desc".tr(),
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 16),
-          ),
-          const SizedBox(height: 20),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      exitConfirmed = true;
-                      Navigator.of(context).pop();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.secondPrimary,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+
+}
+//
+// Future<bool> _showExitDialog(BuildContext context) async {
+//   bool exitConfirmed = false;
+//   await AwesomeDialog(
+//     context: context,
+//     animType: AnimType.bottomSlide,
+//     customHeader: Padding(
+//       padding: const EdgeInsets.all(20),
+//       child: Image.asset(
+//         ImageAssets.dialogLogo,
+//         // color: AppColors.primary,
+//         width: 80,
+//         height: 80,
+//       ),
+//     ),
+//     body: Column(
+//       mainAxisSize: MainAxisSize.min,
+//       children: [
+//         Text(
+//           "exit_app".tr(),
+//           textAlign: TextAlign.center,
+//           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+//         ),
+//         const SizedBox(height: 10),
+//         Text(
+//           "exit_app_desc".tr(),
+//           textAlign: TextAlign.center,
+//           style: const TextStyle(fontSize: 16),
+//         ),
+//         const SizedBox(height: 20),
+//         Padding(
+//           padding: const EdgeInsets.all(8.0),
+//           child: Row(
+//             mainAxisAlignment: MainAxisAlignment.center,
+//             children: [
+//               Expanded(
+//                 child: ElevatedButton(
+//                   onPressed: () {
+//                     exitConfirmed = true; // تأكيد تسجيل الخروج
+//                     Navigator.of(context).pop(); // إغلاق الـ Dialog
+//                   },
+//                   style: ElevatedButton.styleFrom(
+//                     backgroundColor: AppColors.secondPrimary,
+//                     shape: RoundedRectangleBorder(
+//                         borderRadius: BorderRadius.circular(8)),
+//                   ),
+//                   child: Text("out".tr(),
+//                       style: getRegularStyle(color: AppColors.primary)),
+//                 ),
+//               ),
+//               const SizedBox(width: 10),
+//               Expanded(
+//                 child: ElevatedButton(
+//                   onPressed: () {
+//                     exitConfirmed = false; // المستخدم لا يريد الخروج
+//                     Navigator.of(context).pop(); // إغلاق الـ Dialog
+//                   },
+//                   style: ElevatedButton.styleFrom(
+//                     backgroundColor: AppColors.secondPrimary,
+//                     shape: RoundedRectangleBorder(
+//                         borderRadius: BorderRadius.circular(8)),
+//                   ),
+//                   child: Text("cancel".tr(),
+//                       style: getRegularStyle(color: AppColors.primary)),
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ),
+//       ],
+//     ),
+//   ).show();
+//
+//   return exitConfirmed;
+// }
+
+Future<bool> showExitDialog(BuildContext context) async {
+  bool exitConfirmed = false;
+
+  await showGeneralDialog(
+    context: context,
+    barrierLabel: "ExitDialog",
+    barrierDismissible: false,
+    barrierColor: Colors.black54,
+    transitionDuration: const Duration(milliseconds: 300),
+    pageBuilder: (context, anim1, anim2) {
+      return Align(
+        alignment: Alignment.bottomCenter,
+        child: Material(
+          color: Colors.transparent,
+          child: SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(0, 1),
+              end: Offset.zero,
+            ).animate(CurvedAnimation(
+              parent: anim1,
+              curve: Curves.easeOut,
+            )),
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Dialog(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: Image.asset(
+                          ImageAssets.dialogLogo,
+                          width: 80,
+                          height: 80,
+                        ),
                       ),
-                    ),
-                    child: Text(
-                      "out".tr(),
-                      style: getRegularStyle(color: AppColors.primary),
-                    ),
+                      Text(
+                        "exit_app".tr(),
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        "exit_app_desc".tr(),
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                      const SizedBox(height: 20),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  exitConfirmed = true;
+                                  Navigator.of(context).pop();
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.secondPrimary,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                                child: Text(
+                                  "out".tr(),
+                                  style: getRegularStyle(
+                                    color: AppColors.primary,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  exitConfirmed = false;
+                                  Navigator.of(context).pop();
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.secondPrimary,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                                child: Text(
+                                  "cancel".tr(),
+                                  style: getRegularStyle(
+                                    color: AppColors.primary,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      exitConfirmed = false;
-                      Navigator.of(context).pop();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.secondPrimary,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: Text(
-                      "cancel".tr(),
-                      style: getRegularStyle(color: AppColors.primary),
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
-        ],
-      ),
-    ).show();
+        ),
+      );
+    },
+    transitionBuilder: (context, anim1, anim2, child) {
+      return FadeTransition(
+        opacity: anim1,
+        child: child,
+      );
+    },
+  );
 
-    return exitConfirmed;
-  }
+  return exitConfirmed;
 }

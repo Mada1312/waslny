@@ -1,3 +1,4 @@
+import 'package:waslny/features/driver/home/screens/driver_data_screen.dart';
 import 'package:waslny/features/driver/shipments/screens/details/shipment_details_screen.dart';
 import 'package:waslny/features/user/trip_and_services/screens/details/shipment_details_screen.dart';
 import 'package:waslny/features/user/trip_and_services/screens/shipments_screen.dart';
@@ -19,7 +20,6 @@ import '../../features/general/auth/screens/verify_code.dart';
 import '../../features/general/chat/screens/message_screen.dart';
 import '../../features/general/profile/screens/contactus_screen.dart';
 
-
 class Routes {
   static const String initialRoute = '/';
   static const String loginRoute = '/login';
@@ -40,6 +40,7 @@ class Routes {
   static const String editDeliveryProfileRoute = '/editProfileRoute';
   static const String editUserProfileRoute = '/editUserProfileRoute';
   static const String messageRoute = '/messageRoute';
+  static const String driverDataRoute = '/driverDataRoute';
 }
 
 class AppRoutes {
@@ -155,8 +156,7 @@ class AppRoutes {
           alignment: Alignment.center,
           duration: const Duration(milliseconds: 800),
         );
-   
-   
+
       case Routes.contactUsScreen:
         return PageTransition(
           child: const ContactUsScreen(),
@@ -183,6 +183,13 @@ class AppRoutes {
             settings.arguments as MainUserAndRoomChatModel;
         return PageTransition(
           child: MessageScreen(model: model),
+          type: PageTransitionType.fade,
+          alignment: Alignment.center,
+          duration: const Duration(milliseconds: 800),
+        );
+      case Routes.driverDataRoute:
+        return PageTransition(
+          child: DriverDataScreen(),
           type: PageTransitionType.fade,
           alignment: Alignment.center,
           duration: const Duration(milliseconds: 800),

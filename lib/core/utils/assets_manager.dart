@@ -50,6 +50,7 @@ class AppIcons {
   static const String call = '$iconsPath/call.svg';
   static const String contactUs = '$iconsPath/contact_us.svg';
   static const String date = '$iconsPath/date.svg';
+  static const String dateTrip = '$iconsPath/date_trip.svg';
   static const String dateTime = '$iconsPath/date_time.svg';
   static const String deleteAccount = '$iconsPath/delete_account.svg';
   static const String delete = '$iconsPath/delete.svg';
@@ -86,4 +87,6 @@ class AppIcons {
   static const String selectLocation = '$iconsPath/select_location.svg';
   static const String savedLocations = '$iconsPath/saved_locations.svg';
   static const String noDataIcon = '$iconsPath/no_data.svg';
+  static const String menu = '$iconsPath/menu.svg';
+  static const String upload = '$iconsPath/upload.svg';
 }

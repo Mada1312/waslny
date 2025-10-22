@@ -510,7 +510,8 @@ class _UpdateDeliveryProfileState extends State<UpdateDeliveryProfile> {
                                                                 ],
                                                               ),
                                                             )
-                                                          : ClipRRect(
+                                                          :
+                                                           ClipRRect(
                                                               borderRadius:
                                                                   BorderRadius.circular(
                                                                     12.r,
