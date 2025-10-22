@@ -127,31 +127,39 @@ class DriverHomeUI extends StatelessWidget {
                         ),
                       ),
                       12.w.horizontalSpace,
-                      Container(
-                        decoration: BoxDecoration(
-                          color: AppColors.white,
-                          borderRadius: BorderRadius.circular(16.r),
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.grey.withOpacity(0.3),
-                              blurRadius: 2,
-                              offset: const Offset(0, 3),
-                            ),
-                            BoxShadow(
-                              color: AppColors.grey.withOpacity(0.3),
-                              blurRadius: 2,
-                              offset: const Offset(0, -3),
-                            ),
-                          ],
-                        ),
-                        padding: EdgeInsets.symmetric(
-                          vertical: 15.sp,
-                          horizontal: 15.sp,
-                        ),
-                        child: MySvgWidget(
-                          path: AppIcons.menu,
-                          height: 25.sp,
-                          width: 25.sp,
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.pushReplacementNamed(
+                            context,
+                            Routes.driverDataRoute,
+                          );
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: AppColors.white,
+                            borderRadius: BorderRadius.circular(16.r),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.grey.withOpacity(0.3),
+                                blurRadius: 2,
+                                offset: const Offset(0, 3),
+                              ),
+                              BoxShadow(
+                                color: AppColors.grey.withOpacity(0.3),
+                                blurRadius: 2,
+                                offset: const Offset(0, -3),
+                              ),
+                            ],
+                          ),
+                          padding: EdgeInsets.symmetric(
+                            vertical: 15.sp,
+                            horizontal: 15.sp,
+                          ),
+                          child: MySvgWidget(
+                            path: AppIcons.menu,
+                            height: 25.sp,
+                            width: 25.sp,
+                          ),
                         ),
                       ),
                     ],

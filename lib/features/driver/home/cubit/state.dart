@@ -12,3 +12,5 @@ class CancelShipmentSuccessState extends DriverHomeState {}
 class CancelShipmentLoadingState extends DriverHomeState {}
 class BackgroundLocationUpdated extends DriverHomeState {}
 class ChangeOnlineStatusState extends DriverHomeState {}
+class ChangeSelectedIndexState extends DriverHomeState {}
+class ImageFileUpdatedState extends DriverHomeState {}

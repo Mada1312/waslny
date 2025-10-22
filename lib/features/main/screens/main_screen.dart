@@ -54,7 +54,7 @@ class _MainScreenState extends State<MainScreen>
               tabController.animateTo(0);
               return false;
             } else {
-              bool shouldExit = await _showExitDialog(context);
+              bool shouldExit = await showExitDialog(context);
               if (shouldExit) {
                 SystemNavigator.pop();
               }
@@ -244,7 +244,7 @@ class _MainScreenState extends State<MainScreen>
 //   return exitConfirmed;
 // }
 
-Future<bool> _showExitDialog(BuildContext context) async {
+Future<bool> showExitDialog(BuildContext context) async {
   bool exitConfirmed = false;
 
   await showGeneralDialog(
