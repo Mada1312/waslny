@@ -83,6 +83,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     });
                                   },
                                   items: Gender.values,
+                                  validationMessage: 'type'.tr(),
+                                  validator: (value) {
+                                    if (value == null) {
+                                      return 'type'.tr();
+                                    }
+                                    return null;
+                                  },
                                   itemBuilder: (item) => item.displayValue,
                                 ),
                               ),
@@ -98,6 +105,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                           cubit.vehicleType = value;
                                         });
                                       },
+                                      validationMessage: 'vehicle_type'.tr(),
                                       items: VehicleType.values,
                                       itemBuilder: (item) => item.displayValue,
                                     ),

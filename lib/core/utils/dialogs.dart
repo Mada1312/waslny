@@ -79,7 +79,7 @@ messageGetBar(String message) {
     ),
   );
 }
-//
+
 // warningDialog(
 //   BuildContext context, {
 //   void Function()? onPressedOk,
@@ -91,13 +91,9 @@ messageGetBar(String message) {
 //     context: context,
 //     customHeader: Padding(
 //       padding: const EdgeInsets.all(20),
-//       child: Image.asset(
-//         ImageAssets.dialogLogo,
-//         width: 80,
-//         height: 80,
-//       ),
+//       child: Image.asset(ImageAssets.dialogLogo, width: 80, height: 80),
 //     ),
-//     animType: AnimType.topSlide,
+//     animType: AnimType.TOPSLIDE,
 //     showCloseIcon: false, // لأنك هتعمل زرار Cancel بنفسك
 //     body: Column(
 //       mainAxisSize: MainAxisSize.min,
@@ -163,93 +159,314 @@ messageGetBar(String message) {
 //     ),
 //   ).show();
 // }
+
+// customTripAndServiceCloneDialog(
+//   BuildContext context, {
+//   void Function()? onPressedOk,
+//   String? title,
+//   bool? isSchedule,
+//   TextEditingController? controller,
+//   dynamic Function()? onTap,
+//   String? btnOkText,
+// }) async {
+//   await AwesomeDialog(
+//     context: context,
+//     customHeader: Padding(
+//       padding: const EdgeInsets.all(20),
+//       child: Image.asset(ImageAssets.dialogLogo, width: 80, height: 80),
+//     ),
+//     animType: AnimType.TOPSLIDE,
+//     showCloseIcon: false, // لأنك هتعمل زرار Cancel بنفسك
+//     body: Column(
+//       mainAxisSize: MainAxisSize.min,
+//       children: [
+//         Text(
+//           title ?? "warning".tr(),
+//           textAlign: TextAlign.center,
+//           style: getRegularStyle(fontSize: 16.sp),
+//         ),
+//         const SizedBox(height: 10),
+//         if (isSchedule == true)
+//           CustomTextField(
+//             borderRadius: 20.r,
+//             isRequired: false,
+//             textAlign: TextAlign.center,
+//             isReadOnly: true,
+//             controller: controller,
+//             keyboardType: TextInputType.datetime,
+//             hintText: 'YYYY-MM-DD',
+//             onTap: onTap,
+//             validationMessage: 'date_is_required'.tr(),
+//           ),
+//         const SizedBox(height: 20),
+//         Padding(
+//           padding: const EdgeInsets.all(8.0),
+//           child: Row(
+//             mainAxisAlignment: MainAxisAlignment.center,
+//             children: [
+//               Expanded(
+//                 child: ElevatedButton(
+//                   onPressed: () {
+//                     if (onPressedOk != null) onPressedOk();
+//                     Navigator.of(context).pop();
+//                   },
+//                   style: ElevatedButton.styleFrom(
+//                     backgroundColor: AppColors.secondPrimary,
+//                     shape: RoundedRectangleBorder(
+//                       borderRadius: BorderRadius.circular(8),
+//                     ),
+//                   ),
+//                   child: Text(
+//                     btnOkText ?? "confirm".tr(),
+//                     style: getRegularStyle(color: AppColors.primary),
+//                   ),
+//                 ),
+//               ),
+//               const SizedBox(width: 10),
+//               Expanded(
+//                 child: ElevatedButton(
+//                   onPressed: () {
+//                     Navigator.of(context).pop();
+//                   },
+//                   style: ElevatedButton.styleFrom(
+//                     backgroundColor: AppColors.secondPrimary,
+//                     shape: RoundedRectangleBorder(
+//                       borderRadius: BorderRadius.circular(8),
+//                     ),
+//                   ),
+//                   child: Text(
+//                     "cancel".tr(),
+//                     style: getRegularStyle(color: AppColors.primary),
+//                   ),
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ),
+//       ],
+//     ),
+//   ).show();
+// }
 Future<void> warningDialog(
-    BuildContext context, {
-      void Function()? onPressedOk,
-      String? title,
-      String? btnOkText,
-      String? desc,
-    }) async {
-  await showDialog(
+  BuildContext context, {
+  void Function()? onPressedOk,
+  String? title,
+  String? btnOkText,
+  String? desc,
+}) async {
+  await showGeneralDialog(
     context: context,
+    barrierLabel: "WarningDialog",
     barrierDismissible: false,
-    builder: (BuildContext dialogContext) {
-      return Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(20),
-                child: Image.asset(
-                  ImageAssets.dialogLogo,
-                  width: 80,
-                  height: 80,
-                ),
+    barrierColor: Colors.black54,
+    transitionDuration: const Duration(milliseconds: 300),
+    pageBuilder: (context, anim1, anim2) {
+      return Align(
+        alignment: Alignment.center,
+        child: Material(
+          color: Colors.transparent,
+          child: FadeTransition(
+            opacity: anim1,
+            child: Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
               ),
-              Text(
-                title ?? "warning".tr(),
-                textAlign: TextAlign.center,
-                style: getRegularStyle(fontSize: 16.sp),
-              ),
-              const SizedBox(height: 10),
-              if (desc != null)
-                Text(
-                  desc,
-                  textAlign: TextAlign.center,
-                  style: getMediumStyle(fontSize: 14.sp),
-                ),
-              const SizedBox(height: 20),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          if (onPressedOk != null) onPressedOk();
-                          Navigator.of(dialogContext).pop();
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.secondPrimary,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        child: Text(
-                          btnOkText ?? "confirm".tr(),
-                          style: getRegularStyle(color: AppColors.primary),
-                        ),
+                    Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Image.asset(
+                        ImageAssets.dialogLogo,
+                        width: 80,
+                        height: 80,
                       ),
                     ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.of(dialogContext).pop();
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.secondPrimary,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                    Text(
+                      title ?? "warning".tr(),
+                      textAlign: TextAlign.center,
+                      style: getRegularStyle(fontSize: 16.sp),
+                    ),
+                    const SizedBox(height: 10),
+                    if (desc != null)
+                      Text(
+                        desc,
+                        textAlign: TextAlign.center,
+                        style: getMediumStyle(fontSize: 14.sp),
+                      ),
+                    const SizedBox(height: 20),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: () {
+                                if (onPressedOk != null) onPressedOk();
+                                Navigator.of(context).pop();
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.secondPrimary,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              child: Text(
+                                btnOkText ?? "confirm".tr(),
+                                style: getRegularStyle(
+                                  color: AppColors.primary,
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
-                        child: Text(
-                          "cancel".tr(),
-                          style: getRegularStyle(color: AppColors.primary),
-                        ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.secondPrimary,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              child: Text(
+                                "cancel".tr(),
+                                style: getRegularStyle(
+                                  color: AppColors.primary,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
                 ),
               ),
-            ],
+            ),
           ),
         ),
       );
     },
   );
 }
-// test
+
+Future<void> customTripAndServiceCloneDialog(
+  BuildContext context, {
+  void Function()? onPressedOk,
+  String? title,
+  bool? isSchedule,
+  TextEditingController? controller,
+  dynamic Function()? onTap,
+  String? btnOkText,
+}) async {
+  await showGeneralDialog(
+    context: context,
+    barrierLabel: "TripCloneDialog",
+    barrierDismissible: false,
+    barrierColor: Colors.black54,
+    transitionDuration: const Duration(milliseconds: 300),
+    pageBuilder: (context, anim1, anim2) {
+      return Align(
+        alignment: Alignment.center,
+        child: Material(
+          color: Colors.transparent,
+          child: FadeTransition(
+            opacity: anim1,
+            child: Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Image.asset(
+                        ImageAssets.dialogLogo,
+                        width: 80,
+                        height: 80,
+                      ),
+                    ),
+                    Text(
+                      title ?? "warning".tr(),
+                      textAlign: TextAlign.center,
+                      style: getRegularStyle(fontSize: 16.sp),
+                    ),
+                    const SizedBox(height: 10),
+                    if (isSchedule == true)
+                      CustomTextField(
+                        borderRadius: 20.r,
+                        isRequired: false,
+                        textAlign: TextAlign.center,
+                        isReadOnly: true,
+                        controller: controller,
+                        keyboardType: TextInputType.datetime,
+                        hintText: 'YYYY-MM-DD',
+                        onTap: onTap,
+                        validationMessage: 'date_is_required'.tr(),
+                      ),
+                    const SizedBox(height: 20),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: () {
+                                if (onPressedOk != null) onPressedOk();
+                                Navigator.of(context).pop();
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.secondPrimary,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              child: Text(
+                                btnOkText ?? "confirm".tr(),
+                                style: getRegularStyle(
+                                  color: AppColors.primary,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.secondPrimary,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              child: Text(
+                                "cancel".tr(),
+                                style: getRegularStyle(
+                                  color: AppColors.primary,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    },
+  );
+}
