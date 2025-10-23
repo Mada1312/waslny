@@ -4,7 +4,7 @@
 
 import 'dart:convert';
 
-import 'package:waslny/features/driver/shipments/screens/data/models/shipment_details_model.dart';
+import 'package:waslny/features/driver/trips/screens/data/models/shipment_details_model.dart';
 import 'package:waslny/features/user/home/data/models/get_home_model.dart';
 
 GetDriverHomeModel getDriverHomeModelFromJson(String str) =>

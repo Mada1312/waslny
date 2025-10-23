@@ -1,5 +1,5 @@
 import 'package:waslny/core/exports.dart';
-import 'package:waslny/features/driver/shipments/screens/widgets/custom_user_info.dart';
+import 'package:waslny/features/driver/trips/screens/widgets/custom_user_info.dart';
 import 'package:waslny/features/user/trip_and_services/screens/details/widgets/rate_bottomsheet.dart';
 
 import '../../../../user/trip_and_services/screens/details/widgets/follow_shipment.dart';
@@ -26,8 +26,8 @@ class _DriverShipmentDetailsScreenState
   @override
   void initState() {
     super.initState();
-    context.read<DriverShipmentsCubit>().changeSelectedDriver(null);
-    context.read<DriverShipmentsCubit>().getShipmentDetails(
+    context.read<DriverTripsCubit>().changeSelectedDriver(null);
+    context.read<DriverTripsCubit>().getShipmentDetails(
       id: widget.args.shipmentId ?? '',
     );
   }
@@ -36,9 +36,9 @@ class _DriverShipmentDetailsScreenState
   // 0: new, 1: pending, 2: loaded, 3: delivered
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<DriverShipmentsCubit, DriverShipmentsState>(
+    return BlocBuilder<DriverTripsCubit, DriverTripsState>(
       builder: (context, state) {
-        var cubit = context.read<DriverShipmentsCubit>();
+        var cubit = context.read<DriverTripsCubit>();
 
         return WillPopScope(
           onWillPop: () async {

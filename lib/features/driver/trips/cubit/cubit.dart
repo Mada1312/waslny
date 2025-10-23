@@ -1,23 +1,15 @@
 import 'dart:developer';
 
 import 'package:waslny/core/exports.dart';
-import 'package:waslny/features/driver/shipments/screens/data/models/get_shipments_model.dart';
-import 'package:waslny/features/driver/shipments/screens/data/models/shipment_details_model.dart';
+import 'package:waslny/features/driver/trips/screens/data/models/get_shipments_model.dart';
+import 'package:waslny/features/driver/trips/screens/data/models/shipment_details_model.dart';
 import '../screens/data/repo.dart';
 import 'state.dart';
 
-enum ShipmentsStatusEnum { newShipments, pending, loaded, delivered }
-
-class DriverShipmentsCubit extends Cubit<DriverShipmentsState> {
-  DriverShipmentsCubit(this.api) : super(DriverShipmentsInitial());
+class DriverTripsCubit extends Cubit<DriverTripsState> {
+  DriverTripsCubit(this.api) : super(DriverTripsInitial());
 
   DriverShipmentsRepo api;
-
-  ShipmentsStatusEnum selectedStatus = ShipmentsStatusEnum.newShipments;
-  void changeSelectedStatus(ShipmentsStatusEnum status) {
-    selectedStatus = status;
-    emit(ChangeShipmentsStatusState());
-  }
 
   int? selectedDriver;
   void changeSelectedDriver(int? driverId) {
@@ -31,7 +23,7 @@ class DriverShipmentsCubit extends Cubit<DriverShipmentsState> {
     emit(ChangeEnableNotificationsState());
   }
 
-// Rate
+  // Rate
   TextEditingController rateCommentController = TextEditingController();
   double rateValue = 0;
   void changeRateValue(double value) {
@@ -45,13 +37,10 @@ class DriverShipmentsCubit extends Cubit<DriverShipmentsState> {
     emit(GetShipmentsLoadingState());
     try {
       var response = await api.getDriverShipments();
-      response.fold(
-        (failure) => emit(GetShipmentsErrorState()),
-        (shipments) {
-          shipmentsModel = shipments;
-          emit(GetShipmentsSuccessState());
-        },
-      );
+      response.fold((failure) => emit(GetShipmentsErrorState()), (shipments) {
+        shipmentsModel = shipments;
+        emit(GetShipmentsSuccessState());
+      });
     } catch (e) {
       log("Error in getShipments: $e");
       emit(GetShipmentsErrorState());
@@ -64,27 +53,26 @@ class DriverShipmentsCubit extends Cubit<DriverShipmentsState> {
     try {
       emit(GetShipmentDetailsLoadingState());
       var response = await api.getDriverShipmentDetails(id: id);
-      response.fold(
-        (failure) => emit(GetShipmentDetailsErrorState()),
-        (details) {
-          shipmentDetails = details;
-          emit(GetShipmentDetailsSuccessState());
-        },
-      );
+      response.fold((failure) => emit(GetShipmentDetailsErrorState()), (
+        details,
+      ) {
+        shipmentDetails = details;
+        emit(GetShipmentDetailsSuccessState());
+      });
     } catch (e) {
       log("Error in getShipmentDetails: $e");
       emit(GetShipmentDetailsErrorState());
     }
   }
 
-  Future<void> requestShipment(
-      {required String shipmentId, required BuildContext context}) async {
+  Future<void> requestShipment({
+    required String shipmentId,
+    required BuildContext context,
+  }) async {
     AppWidget.createProgressDialog(context, msg: "Assigning driver...");
     emit(RequestShipmentLoadingState());
     try {
-      final response = await api.requestShipment(
-        id: shipmentId,
-      );
+      final response = await api.requestShipment(id: shipmentId);
       response.fold(
         (failure) {
           Navigator.pop(context); // Close the progress dialog
@@ -94,15 +82,14 @@ class DriverShipmentsCubit extends Cubit<DriverShipmentsState> {
           Navigator.pop(context); // Close the progress dialog
           if (response.status == 200 || response.status == 201) {
             emit(RequestShipmentSuccessState());
-            successGetBar(
-              response.msg ?? "success",
-            );
-            Navigator.pushNamed(context, Routes.mainRoute,
-                arguments: true); // Refresh shipment details
+            successGetBar(response.msg ?? "success");
+            Navigator.pushNamed(
+              context,
+              Routes.mainRoute,
+              arguments: true,
+            ); // Refresh shipment details
           } else {
-            errorGetBar(
-              response.msg ?? "Failed",
-            );
+            errorGetBar(response.msg ?? "Failed");
           }
         },
       );
@@ -112,14 +99,14 @@ class DriverShipmentsCubit extends Cubit<DriverShipmentsState> {
     }
   }
 
-  Future<void> cancelRequestShipment(
-      {required String shipmentId, required BuildContext context}) async {
+  Future<void> cancelRequestShipment({
+    required String shipmentId,
+    required BuildContext context,
+  }) async {
     AppWidget.createProgressDialog(context, msg: "Assigning driver...");
     emit(RequestShipmentLoadingState());
     try {
-      final response = await api.cancelRequestShipment(
-        id: shipmentId,
-      );
+      final response = await api.cancelRequestShipment(id: shipmentId);
       response.fold(
         (failure) {
           Navigator.pop(context); // Close the progress dialog
@@ -129,15 +116,14 @@ class DriverShipmentsCubit extends Cubit<DriverShipmentsState> {
           Navigator.pop(context); // Close the progress dialog
           if (response.status == 200 || response.status == 201) {
             emit(RequestShipmentSuccessState());
-            successGetBar(
-              response.msg ?? "success",
-            );
-            Navigator.pushNamed(context, Routes.mainRoute,
-                arguments: true); // Refresh shipment details
+            successGetBar(response.msg ?? "success");
+            Navigator.pushNamed(
+              context,
+              Routes.mainRoute,
+              arguments: true,
+            ); // Refresh shipment details
           } else {
-            errorGetBar(
-              response.msg ?? "Failed",
-            );
+            errorGetBar(response.msg ?? "Failed");
           }
         },
       );
@@ -147,17 +133,22 @@ class DriverShipmentsCubit extends Cubit<DriverShipmentsState> {
     }
   }
 
-  Future<void> addRateForUser(
-      {required String shipmentId,
-      required BuildContext context,
-      required String comment,
-      required String userId,
-      required double rate}) async {
+  Future<void> addRateForUser({
+    required String shipmentId,
+    required BuildContext context,
+    required String comment,
+    required String userId,
+    required double rate,
+  }) async {
     AppWidget.createProgressDialog(context, msg: "...");
     emit(AddRateForUserLoadingState());
     try {
       final response = await api.addRateForUser(
-          shipmentId: shipmentId, comment: comment, userId: userId, rate: rate);
+        shipmentId: shipmentId,
+        comment: comment,
+        userId: userId,
+        rate: rate,
+      );
       response.fold(
         (failure) {
           Navigator.pop(context); // Close the progress dialog
@@ -169,14 +160,10 @@ class DriverShipmentsCubit extends Cubit<DriverShipmentsState> {
           if (response.status == 200 || response.status == 201) {
             Navigator.pop(context); // Close bottom sheet
             emit(AddRateForUserSuccessState());
-            successGetBar(
-              response.msg ?? "Rate added successfully",
-            );
+            successGetBar(response.msg ?? "Rate added successfully");
             getShipmentDetails(id: shipmentId);
           } else {
-            errorGetBar(
-              response.msg ?? "Failed to add rate",
-            );
+            errorGetBar(response.msg ?? "Failed to add rate");
           }
         },
       );
@@ -187,11 +174,3 @@ class DriverShipmentsCubit extends Cubit<DriverShipmentsState> {
   }
 }
 
-class ShipMentsStatus {
-  final String title;
-  final ShipmentsStatusEnum status;
-  ShipMentsStatus({
-    required this.title,
-    required this.status,
-  });
-}

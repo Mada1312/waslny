@@ -1,14 +1,14 @@
 import 'package:waslny/core/exports.dart';
 import 'package:waslny/features/driver/home/data/models/driver_home_model.dart';
-import 'package:waslny/features/driver/shipments/screens/details/shipment_details_screen.dart';
+import 'package:waslny/features/driver/trips/screens/details/shipment_details_screen.dart';
 import 'package:waslny/features/user/trip_and_services/screens/widgets/custom_from_to.dart';
 
 import 'custom_user_info.dart';
 
 // import 'custom_exporter_info.dart';
 
-class DriverShipmentItemWidget extends StatelessWidget {
-  const DriverShipmentItemWidget({
+class DriverTripPrServiceItemWidget extends StatelessWidget {
+  const DriverTripPrServiceItemWidget({
     super.key,
     required this.withContactWidget,
     this.shipment,

@@ -1,5 +1,5 @@
 import 'package:waslny/core/exports.dart';
-import 'package:waslny/features/driver/shipments/cubit/cubit.dart';
+import 'package:waslny/features/driver/trips/cubit/cubit.dart';
 import 'package:waslny/features/user/trip_and_services/cubit/cubit.dart';
 import 'package:waslny/features/user/trip_and_services/cubit/state.dart';
 import 'package:flutter/cupertino.dart';
@@ -83,7 +83,7 @@ void showAddRateBottomSheet(
                     title: "send".tr(),
                     onPressed: () {
                       if (isDriver) {
-                        context.read<DriverShipmentsCubit>().addRateForUser(
+                        context.read<DriverTripsCubit>().addRateForUser(
                           shipmentId: shipmentId,
                           context: context,
                           comment: cubit.rateCommentController.text,

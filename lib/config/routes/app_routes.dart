@@ -1,5 +1,5 @@
 import 'package:waslny/features/driver/home/screens/driver_data_screen.dart';
-import 'package:waslny/features/driver/shipments/screens/details/shipment_details_screen.dart';
+import 'package:waslny/features/driver/trips/screens/details/shipment_details_screen.dart';
 import 'package:waslny/features/user/trip_and_services/screens/details/shipment_details_screen.dart';
 import 'package:waslny/features/user/trip_and_services/screens/shipments_screen.dart';
 import 'package:waslny/features/main/screens/main_screen.dart';

@@ -1,7 +1,7 @@
 import 'package:waslny/core/notification_services/notification_service.dart';
 import 'package:waslny/features/driver/home/cubit/cubit.dart';
-import 'package:waslny/features/driver/shipments/cubit/cubit.dart';
-import 'package:waslny/features/driver/shipments/screens/details/shipment_details_screen.dart';
+import 'package:waslny/features/driver/trips/cubit/cubit.dart';
+import 'package:waslny/features/driver/trips/screens/details/shipment_details_screen.dart';
 import 'package:waslny/features/user/home/cubit/cubit.dart';
 import 'package:waslny/features/user/trip_and_services/cubit/cubit.dart';
 import 'package:waslny/features/user/trip_and_services/screens/details/shipment_details_screen.dart';
@@ -26,7 +26,6 @@ import 'features/user/driver_details/cubit/cubit.dart';
 import 'features/general/auth/cubit/cubit.dart';
 import 'features/general/chat/cubit/chat_cubit.dart';
 import 'features/general/splash/cubit/cubit.dart';
-
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -60,13 +59,12 @@ class _MyAppState extends State<MyApp> {
         ),
         BlocProvider(create: (_) => injector.serviceLocator<DriverHomeCubit>()),
         BlocProvider(
-          create: (_) => injector.serviceLocator<DriverShipmentsCubit>(),
+          create: (_) => injector.serviceLocator<DriverTripsCubit>(),
         ),
         BlocProvider(create: (_) => injector.serviceLocator<ProfileCubit>()),
         BlocProvider(create: (_) => injector.serviceLocator<AddNewTripCubit>()),
         BlocProvider(create: (_) => injector.serviceLocator<LocationCubit>()),
-      
-      
+
         BlocProvider(create: (_) => injector.serviceLocator<ChatCubit>()),
         BlocProvider(
           create: (_) => injector.serviceLocator<NotificationsCubit>(),

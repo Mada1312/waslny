@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:waslny/core/exports.dart';
-import 'package:waslny/features/driver/shipments/screens/details/shipment_details_screen.dart';
+import 'package:waslny/features/driver/trips/screens/details/shipment_details_screen.dart';
 import 'package:waslny/features/user/trip_and_services/screens/details/shipment_details_screen.dart';
 import 'package:waslny/features/general/notifications/data/models/get_notifications_model.dart';
 import 'package:waslny/features/main/cubit/cubit.dart';
