@@ -78,7 +78,7 @@ class _DriverShipmentDetailsScreenState
               child: Column(
                 children: [
                   Expanded(
-                    child: state is GetShipmentDetailsErrorState
+                    child: state is GetTripDetailsErrorState
                         ? CustomNoDataWidget(
                             message: 'error_happened'.tr(),
                             onTap: () {
@@ -87,7 +87,7 @@ class _DriverShipmentDetailsScreenState
                               );
                             },
                           )
-                        : state is GetShipmentDetailsLoadingState ||
+                        : state is GetTripDetailsLoadingState ||
                               cubit.shipmentDetails?.data == null
                         ? const Center(child: CustomLoadingIndicator())
                         : SingleChildScrollView(

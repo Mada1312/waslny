@@ -14,3 +14,6 @@ class BackgroundLocationUpdated extends DriverHomeState {}
 class ChangeOnlineStatusState extends DriverHomeState {}
 class ChangeSelectedIndexState extends DriverHomeState {}
 class ImageFileUpdatedState extends DriverHomeState {}
+class UploadDriverDataLoadingState extends DriverHomeState {}
+class UploadDriverDataSuccessState extends DriverHomeState {}
+class UploadDriverDataErrorState extends DriverHomeState {}

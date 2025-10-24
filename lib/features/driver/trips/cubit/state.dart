@@ -2,19 +2,17 @@ abstract class DriverTripsState {}
 
 class DriverTripsInitial extends DriverTripsState {}
 
-class ChangeShipmentsStatusState extends DriverTripsState {}
-
 class ChangeDriverState extends DriverTripsState {}
 
 class ChangeEnableNotificationsState extends DriverTripsState {}
 
 class ChangeRateValueState extends DriverTripsState {}
 
-class GetShipmentDetailsLoadingState extends DriverTripsState {}
+class GetTripDetailsLoadingState extends DriverTripsState {}
 
-class GetShipmentDetailsSuccessState extends DriverTripsState {}
+class GetTripDetailsSuccessState extends DriverTripsState {}
 
-class GetShipmentDetailsErrorState extends DriverTripsState {}
+class GetTripDetailsErrorState extends DriverTripsState {}
 
 class RequestShipmentLoadingState extends DriverTripsState {}
 
@@ -22,11 +20,11 @@ class RequestShipmentSuccessState extends DriverTripsState {}
 
 class RequestShipmentErrorState extends DriverTripsState {}
 
-class GetShipmentsLoadingState extends DriverTripsState {}
+class GetTripsLoadingState extends DriverTripsState {}
 
-class GetShipmentsErrorState extends DriverTripsState {}
+class GetTripsErrorState extends DriverTripsState {}
 
-class GetShipmentsSuccessState extends DriverTripsState {}
+class GetTripsSuccessState extends DriverTripsState {}
 
 class AddRateForUserErrorState extends DriverTripsState {}
 

@@ -11,12 +11,12 @@ class DriverTripPrServiceItemWidget extends StatelessWidget {
   const DriverTripPrServiceItemWidget({
     super.key,
     required this.withContactWidget,
-    this.shipment,
+    this.trip,
   });
   // final Shipment shipment;
 
   final bool withContactWidget;
-  final ShipmentDriverModel? shipment;
+  final ShipmentDriverModel? trip;
 
   @override
   Widget build(BuildContext context) {
@@ -25,95 +25,135 @@ class DriverTripPrServiceItemWidget extends StatelessWidget {
         Navigator.pushNamed(
           context,
           Routes.driverShipmentDetailsRoute,
-          arguments: DriverSHipmentsArgs(shipmentId: shipment?.id.toString()),
+          arguments: DriverSHipmentsArgs(shipmentId: trip?.id.toString()),
         );
       },
       child: Container(
         decoration: BoxDecoration(
-          color: AppColors.white,
+          color: AppColors.second2Primary,
           borderRadius: BorderRadius.circular(10.r),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.grey.withOpacity(0.3),
-              blurRadius: 2,
-              offset: const Offset(0, 3),
-            ),
-            BoxShadow(
-              color: AppColors.grey.withOpacity(0.3),
-              blurRadius: 2,
-              offset: const Offset(0, -3),
-            ),
-          ],
+          // boxShadow: [
+          //   BoxShadow(
+          //     color: AppColors.grey.withOpacity(0.3),
+          //     blurRadius: 2,
+          //     offset: const Offset(0, 3),
+          //   ),
+          //   BoxShadow(
+          //     color: AppColors.grey.withOpacity(0.3),
+          //     blurRadius: 2,
+          //     offset: const Offset(0, -3),
+          //   ),
+          // ],
         ),
         padding: EdgeInsets.symmetric(vertical: 15.h, horizontal: 15.w),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              '${"code".tr()} ${shipment?.code ?? ""}',
-              style: getMediumStyle(fontSize: 16.sp, color: AppColors.primary),
-            ),
             Row(
               children: [
-                MySvgWidget(
-                  path: AppIcons.shipmentType,
-                  height: 25.h,
-                  width: 25.h,
-                  // imageColor: AppColors.dark2Grey,
+                Expanded(
+                  child: Row(
+                    children: [
+                      MySvgWidget(
+                        path: AppIcons.date,
+                        height: 24.h,
+                        // imageColor: AppColors.secondPrimary,
+                      ),
+                      10.w.horizontalSpace,
+                      Flexible(
+                        child: AutoSizeText(
+                          "30/10/2023",
+
+                          maxLines: 1,
+                          style: getRegularStyle(),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
                 10.w.horizontalSpace,
-                Text(
-                  "${"goods_type".tr()} : ",
-                  style: getMediumStyle(fontSize: 14.sp),
-                ),
-                Flexible(
-                  child: Text(
-                    shipment?.goodsType ?? " ",
-                    style: getRegularStyle(
-                      fontSize: 13.sp,
-                      color: AppColors.darkGrey,
-                    ),
+
+                Expanded(
+                  child: Row(
+                    children: [
+                      MySvgWidget(
+                        path: AppIcons.dateTime,
+                        height: 24.h,
+                        // imageColor: AppColors.secondPrimary,
+                      ),
+                      10.w.horizontalSpace,
+                      Flexible(
+                        child: AutoSizeText(
+                          "10:00 AM",
+
+                          maxLines: 1,
+                          style: getRegularStyle(),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
             ),
-            10.h.verticalSpace,
-            Row(
-              children: [
-                MySvgWidget(
-                  path: AppIcons.date,
-                  height: 24.h,
-                  // imageColor: AppColors.dark2Grey,
-                ),
-                10.w.horizontalSpace,
-                Flexible(
-                  child: Text(
-                    "${formatDate(shipment?.shipmentDateTime) ?? "30/10/2023"}  |  ${formatTime(shipment?.shipmentDateTime) ?? "10:00 AM"}",
-                    style: getRegularStyle(),
-                  ),
-                ),
-              ],
-            ),
+
             10.h.verticalSpace,
             CustomFromToWidget(
-              from: shipment?.from,
-              to: shipment?.toCountry?.name,
-              fromLat: shipment?.lat,
-              fromLng: shipment?.long,
+              from: trip?.from,
+              to: trip?.toCountry?.name,
+              fromLat: trip?.lat,
+              fromLng: trip?.long,
               toLat: null,
               toLng: null,
             ),
-            10.h.verticalSpace,
-            CustomTheUserInfo(
-              inProgress: shipment?.driverStatus == 0,
-              withContactWidget: withContactWidget,
-              exporter: shipment?.user,
-              roomToken: shipment?.roomToken,
-              driverId: null,
-              shipmentCode: shipment?.code,
-              tripId: shipment?.id.toString(),
+            // 10.h.verticalSpace,
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.secondPrimary,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: Text(
+                        "chat".tr(),
+                        style: getRegularStyle(color: AppColors.primary),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.secondPrimary,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: Text(
+                        "cancel_trip".tr(),
+                        style: getRegularStyle(color: AppColors.primary),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ],
+            // CustomTheUserInfo(
+            //   inProgress: trip?.driverStatus == 0,
+            //   withContactWidget: withContactWidget,
+            //   exporter: trip?.user,
+            //   roomToken: trip?.roomToken,
+            //   driverId: null,
+            //   shipmentCode: trip?.code,
+            //   tripId: trip?.id.toString(),
+            // ),
+             ],
         ),
       ),
     );

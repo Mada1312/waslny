@@ -93,18 +93,7 @@ class _DriverDataScreenState extends State<DriverDataScreen> {
                     title: 'next'.tr(),
                     onPressed: () =>
                         cubit.selectedIndex + 1 > DriverDataSteps.values.length
-                        ? completeDialog(
-                            context,
-                            btnOkText: 'done'.tr(),
-                            title: 'review_and_approval'.tr(),
-                            onPressedOk: () {
-                              Navigator.pushReplacementNamed(
-                                context,
-                                Routes.mainRoute,
-                                arguments: true,
-                              );
-                            },
-                          )
+                        ? cubit.updateDeliveryProfile(context)
                         : cubit.changeSelectedIndex(cubit.selectedIndex + 1),
                   ),
                 ),

@@ -89,4 +89,5 @@ class AppIcons {
   static const String noDataIcon = '$iconsPath/no_data.svg';
   static const String menu = '$iconsPath/menu.svg';
   static const String upload = '$iconsPath/upload.svg';
+  static const String backButton = '$iconsPath/back_button.svg';
 }

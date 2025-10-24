@@ -4,9 +4,8 @@ import 'dart:io';
 
 import 'package:image_picker/image_picker.dart';
 import 'package:waslny/core/exports.dart';
-import 'package:waslny/features/driver/background_services.dart';
 import 'package:waslny/features/driver/home/data/models/driver_home_model.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:waslny/features/main/screens/main_screen.dart';
 
 import '../data/repo.dart';
 import 'state.dart';
@@ -18,7 +17,7 @@ class DriverHomeCubit extends Cubit<DriverHomeState> {
   }
 
   DriverHomeRepo api;
-
+  bool isDataVerifided = false;
   GetDriverHomeModel? homeModel;
   Future<void> getDriverHomeData(BuildContext context) async {
     emit(DriverHomeLoading());
@@ -26,20 +25,22 @@ class DriverHomeCubit extends Cubit<DriverHomeState> {
       final result = await api.getHome();
       result.fold((failure) => emit(DriverHomeError()), (data) {
         homeModel = data;
+        isDataVerifided = homeModel?.data?.user?.isVerified == 1;
+        if (homeModel?.data?.user?.isDataUploaded != 1) {
+          Navigator.pushNamed(context, Routes.driverDataRoute);
+        }
+        if (homeModel?.data?.user?.isVerified != 1) {
+          completeDialog(
+            context,
+            btnOkText: 'done'.tr(),
+            title: 'reviewing_data'.tr(),
+            onPressedOk: () {
+              showExitDialog(context);
+            },
+          );
+        }
 
         emit(DriverHomeLoaded());
-        // if (homeModel?.data?.hasShipment == false) {
-        //   stopLocationService();
-        // } else {
-        //   homeModel?.data?.currentDriverShipment?.status == 2
-        //       //  &&
-        //       //         homeModel?.data?.currentDriverShipment?.driverIsDeliverd ==
-        //       //             0
-        //       ? isServiceRunning
-        //           ? null
-        //           : startLocationService(context: context)
-        //       : stopLocationService();
-        // }
       });
     } catch (e) {
       log("Error in getDriverHomeData: $e");
@@ -110,24 +111,19 @@ class DriverHomeCubit extends Cubit<DriverHomeState> {
     }
   }
 
-  // wasalnyyy  */
-
-  bool isOnline = false;
-
-  changeOnlineStatus() {
-    isOnline = !isOnline;
+  changeActiveStatus() {
+    homeModel?.data?.user?.isActive = (homeModel?.data?.user?.isActive == 1)
+        ? 0
+        : 1;
     emit(ChangeOnlineStatusState());
-  }
-
-  // 0 first time 1 has trip
-  int step = 0;
-
-  changeStep() {
-    if (step == 1)
-      step = 0;
-    else
-      step++;
-    emit(ChangeOnlineStatusState());
+    api.toggleActive().then((value) {
+      value.fold((failure) {
+        homeModel?.data?.user?.isActive = (homeModel?.data?.user?.isActive == 1)
+            ? 0
+            : 1;
+        emit(ChangeOnlineStatusState());
+      }, (response) {});
+    });
   }
 
   int selectedIndex = 1;
@@ -246,6 +242,51 @@ class DriverHomeCubit extends Cubit<DriverHomeState> {
 
     // الزر يتعطّل لو في صورة ناقصة من الخطوة الحالية
     return !requiredImages.every(isUploaded);
+  }
+
+  Future<void> updateDeliveryProfile(BuildContext context) async {
+    AppWidget.createProgressDialog(context, msg: "...");
+    emit(UploadDriverDataLoadingState());
+    try {
+      final response = await api.updateDeliveryProfile(
+        frontNationalId: idCardFrontImage,
+        backNationalId: idCardBackImage,
+        drivingLicense: driverLicenseImage,
+        frontVehicleLicense: vehicleInfoFrontImage,
+        backVehicleLicense: vehicleInfoBackImage,
+        image: personalPhotoImage,
+      );
+      response.fold(
+        (failure) {
+          Navigator.pop(context);
+          emit(UploadDriverDataErrorState());
+        },
+        (response) {
+          Navigator.pop(context);
+          if (response.status == 200 || response.status == 201) {
+            emit(UploadDriverDataSuccessState());
+            successGetBar(response.msg ?? "Data uploaded successfully");
+            completeDialog(
+              context,
+              btnOkText: 'done'.tr(),
+              title: 'review_and_approval'.tr(),
+              onPressedOk: () {
+                Navigator.pushReplacementNamed(
+                  context,
+                  Routes.mainRoute,
+                  arguments: true,
+                );
+              },
+            );
+          } else {
+            errorGetBar(response.msg ?? "Failed to upload data");
+          }
+        },
+      );
+    } catch (e) {
+      log("Error in completeShipment: $e");
+      emit(UploadDriverDataErrorState());
+    }
   }
 }
 

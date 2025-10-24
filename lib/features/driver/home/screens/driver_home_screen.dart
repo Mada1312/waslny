@@ -29,34 +29,41 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 40.0),
-        child: FloatingActionButton(
-          backgroundColor: AppColors.primary,
-          onPressed: () => context.read<DriverHomeCubit>().changeStep(),
-          child: Icon(Icons.add, color: AppColors.white),
-        ),
-      ),
-      body: Stack(
-        children: [
-          Image.asset(
-            ImageAssets.splashBG,
-            fit: BoxFit.cover,
-            height: getHeightSize(context),
-            width: getWidthSize(context),
+    var cubit = context.read<DriverHomeCubit>();
+    return BlocBuilder<DriverHomeCubit, DriverHomeState>(
+      builder: (context, state) {
+        return Scaffold(
+          body: Stack(
+            children: [
+              Image.asset(
+                ImageAssets.splashBG,
+                fit: BoxFit.cover,
+                height: getHeightSize(context),
+                width: getWidthSize(context),
+              ),
+              BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+                child: Container(
+                  color: AppColors.secondPrimary.withOpacity(0.8),
+                  height: getHeightSize(context),
+                  width: getWidthSize(context),
+                ),
+              ),
+              state is DriverHomeError
+                  ? CustomNoDataWidget(
+                      message: 'error_happened'.tr(),
+                      onTap: () {
+                        cubit.getDriverHomeData(context);
+                      },
+                    )
+                  : state is DriverHomeLoading || cubit.homeModel?.data == null
+                  ? const Center(child: CustomLoadingIndicator())
+                  : const SizedBox(),
+              if (cubit.isDataVerifided) DriverHomeUI(),
+            ],
           ),
-          BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-            child: Container(
-              color: AppColors.secondPrimary.withOpacity(0.8),
-              height: getHeightSize(context),
-              width: getWidthSize(context),
-            ),
-          ),
-          DriverHomeUI(),
-        ],
-      ),
+        );
+      },
     );
   }
 }
@@ -74,7 +81,6 @@ class DriverHomeUI extends StatelessWidget {
             SafeArea(
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 15.h),
-
                 child: IntrinsicHeight(
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -105,21 +111,22 @@ class DriverHomeUI extends StatelessWidget {
                             children: [
                               Expanded(
                                 child: Text(
-                                  cubit.isOnline
+                                  cubit.homeModel?.data?.user?.isActive == 1
                                       ? "online".tr()
                                       : "offline".tr(),
                                   style: getBoldStyle(fontSize: 18.sp),
                                 ),
                               ),
                               CupertinoSwitch(
-                                value: cubit.isOnline,
+                                value:
+                                    cubit.homeModel?.data?.user?.isActive == 1,
 
                                 activeTrackColor: AppColors.secondPrimary,
 
                                 inactiveThumbColor: AppColors.white,
                                 thumbColor: AppColors.primary,
                                 onChanged: (value) {
-                                  cubit.changeOnlineStatus();
+                                  cubit.changeActiveStatus();
                                 },
                               ),
                             ],
@@ -168,7 +175,9 @@ class DriverHomeUI extends StatelessWidget {
               ),
             ),
 
-            if (cubit.isOnline && cubit.step == 1) Spacer(),
+            if (cubit.homeModel?.data?.user?.isActive == 1 &&
+                cubit.homeModel?.data?.currentTrip != null)
+              Spacer(),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 20.w),
 
@@ -176,7 +185,7 @@ class DriverHomeUI extends StatelessWidget {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    if (cubit.step == 0)
+                    if (cubit.homeModel?.data?.scheduleTrip == null)
                       Expanded(child: Container())
                     else
                       Expanded(
@@ -254,35 +263,41 @@ class DriverHomeUI extends StatelessWidget {
 
                     12.w.horizontalSpace,
 
-                    Container(
-                      decoration: BoxDecoration(
-                        color: AppColors.primary,
-                        borderRadius: BorderRadius.circular(16.r),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColors.grey.withOpacity(0.3),
-                            blurRadius: 2,
-                            offset: const Offset(0, 3),
-                          ),
-                          BoxShadow(
-                            color: AppColors.grey.withOpacity(0.3),
-                            blurRadius: 2,
-                            offset: const Offset(0, -3),
-                          ),
-                        ],
-                      ),
-                      padding: EdgeInsets.all(15.sp),
-                      child: MySvgWidget(
-                        path: AppIcons.dateTrip,
-                        height: 25.sp,
-                        width: 25.sp,
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pushNamed(context, Routes.driverTripsRoute);
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: AppColors.primary,
+                          borderRadius: BorderRadius.circular(16.r),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.grey.withOpacity(0.3),
+                              blurRadius: 2,
+                              offset: const Offset(0, 3),
+                            ),
+                            BoxShadow(
+                              color: AppColors.grey.withOpacity(0.3),
+                              blurRadius: 2,
+                              offset: const Offset(0, -3),
+                            ),
+                          ],
+                        ),
+                        padding: EdgeInsets.all(15.sp),
+                        child: MySvgWidget(
+                          path: AppIcons.dateTrip,
+                          height: 25.sp,
+                          width: 25.sp,
+                        ),
                       ),
                     ),
                   ],
                 ),
               ),
             ),
-            if (cubit.isOnline && cubit.step == 1) ...[
+            if (cubit.homeModel?.data?.user?.isActive == 1 &&
+                cubit.homeModel?.data?.currentTrip != null) ...[
               CustomsSheduledTripWidet(),
             ],
           ],

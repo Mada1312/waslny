@@ -33,17 +33,17 @@ class DriverTripsCubit extends Cubit<DriverTripsState> {
   //// API Calls ////
 
   GetDriverShipmentsModel? shipmentsModel;
-  Future<void> getShipments() async {
-    emit(GetShipmentsLoadingState());
+  Future<void> getTrips() async {
+    emit(GetTripsLoadingState());
     try {
       var response = await api.getDriverShipments();
-      response.fold((failure) => emit(GetShipmentsErrorState()), (shipments) {
+      response.fold((failure) => emit(GetTripsErrorState()), (shipments) {
         shipmentsModel = shipments;
-        emit(GetShipmentsSuccessState());
+        emit(GetTripsSuccessState());
       });
     } catch (e) {
       log("Error in getShipments: $e");
-      emit(GetShipmentsErrorState());
+      emit(GetTripsErrorState());
     }
   }
 
@@ -51,17 +51,15 @@ class DriverTripsCubit extends Cubit<DriverTripsState> {
   Future<void> getShipmentDetails({required String id}) async {
     shipmentDetails = null;
     try {
-      emit(GetShipmentDetailsLoadingState());
+      emit(GetTripDetailsLoadingState());
       var response = await api.getDriverShipmentDetails(id: id);
-      response.fold((failure) => emit(GetShipmentDetailsErrorState()), (
-        details,
-      ) {
+      response.fold((failure) => emit(GetTripDetailsErrorState()), (details) {
         shipmentDetails = details;
-        emit(GetShipmentDetailsSuccessState());
+        emit(GetTripDetailsSuccessState());
       });
     } catch (e) {
       log("Error in getShipmentDetails: $e");
-      emit(GetShipmentDetailsErrorState());
+      emit(GetTripDetailsErrorState());
     }
   }
 
@@ -173,4 +171,3 @@ class DriverTripsCubit extends Cubit<DriverTripsState> {
     }
   }
 }
-
