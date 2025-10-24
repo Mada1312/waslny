@@ -1,14 +1,12 @@
 import 'dart:io';
 
+import 'package:dotted_border/dotted_border.dart';
 import 'package:waslny/core/exports.dart';
-import 'package:waslny/features/user/add_new_trip/cubit/state.dart';
 import 'package:waslny/features/general/auth/cubit/cubit.dart';
 import 'package:waslny/features/general/auth/cubit/state.dart';
-import 'package:dotted_border/dotted_border.dart';
+import 'package:waslny/features/user/add_new_trip/cubit/state.dart';
 
-import '../../../../core/widgets/multi_dropdown_button_form_field.dart';
 import '../../../user/add_new_trip/cubit/cubit.dart';
-import '../../../user/add_new_trip/data/models/countries_and_types_model.dart';
 
 class UpdateDeliveryProfile extends StatefulWidget {
   const UpdateDeliveryProfile({super.key});

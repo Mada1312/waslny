@@ -21,7 +21,7 @@ class ProfileRepo {
       var response = await dio.post(
         EndPoints.contactUsUrl,
         formDataIsEnabled: true,
-        body: {"key": "contactUs", 'name': name, 'body': message},
+        body: {"key": "contactUs", 'title': name, 'body': message},
       );
 
       return Right(DefaultPostModel.fromJson(response));

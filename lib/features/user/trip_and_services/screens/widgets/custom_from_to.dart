@@ -30,29 +30,32 @@ class CustomFromToWidget extends StatelessWidget {
         IntrinsicHeight(
           child: Row(
             children: [
-              Column(
-                children: [
-                  MySvgWidget(
-                    path: AppIcons.from,
-                    height: 20.h,
-                    width: 20.h,
-                    // imageColor: AppColors.dark2Grey,
-                  ),
-                  5.h.verticalSpace,
-                  Expanded(
-                    child: Column(
-                      children: List.generate(
-                        5,
-                        (index) => Expanded(
-                          child: Container(
-                            width: 2.w,
-                            color: AppColors.secondPrimary,
+              Padding(
+                padding: EdgeInsetsDirectional.only(start: 3.sp),
+                child: Column(
+                  children: [
+                    MySvgWidget(
+                      path: AppIcons.from,
+                      height: 20.sp,
+                      width: 20.sp,
+                      // imageColor: AppColors.dark2Grey,
+                    ),
+                    5.h.verticalSpace,
+                    Expanded(
+                      child: Column(
+                        children: List.generate(
+                          5,
+                          (index) => Expanded(
+                            child: Container(
+                              width: 2.w,
+                              color: AppColors.secondPrimary,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
               10.w.horizontalSpace,
               Flexible(
@@ -92,8 +95,8 @@ class CustomFromToWidget extends StatelessWidget {
           children: [
             MySvgWidget(
               path: AppIcons.to,
-              width: 20.w,
-              height: 30.h,
+              width: 25.sp,
+              height: 30.sp,
               // imageColor: AppColors.dark2Grey,
             ),
             10.w.horizontalSpace,

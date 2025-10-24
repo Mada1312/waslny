@@ -369,56 +369,61 @@ Future<void> completeDialog(
     barrierColor: Colors.black54,
     transitionDuration: const Duration(milliseconds: 300),
     pageBuilder: (context, anim1, anim2) {
-      return Align(
-        alignment: Alignment.center,
-        child: Material(
-          color: Colors.transparent,
-          child: FadeTransition(
-            opacity: anim1,
-            child: Dialog(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Text(
-                      title ?? "warning".tr(),
-                      textAlign: TextAlign.center,
-                      style: getSemiBoldStyle(fontSize: 14.sp),
-                    ),
+      return WillPopScope(
+        onWillPop: () async => false,
+        child: Align(
+          alignment: Alignment.center,
+          child: Material(
+            color: Colors.transparent,
+            child: FadeTransition(
+              opacity: anim1,
+              child: Dialog(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Text(
+                        title ?? "warning".tr(),
+                        textAlign: TextAlign.center,
+                        style: getSemiBoldStyle(fontSize: 14.sp),
+                      ),
 
-                    const SizedBox(height: 10),
-                    Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Center(
-                        child: ElevatedButton(
-                          onPressed: () {
-                            if (onPressedOk != null) onPressedOk();
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.secondPrimary,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
+                      const SizedBox(height: 10),
+                      Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Center(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              if (onPressedOk != null) onPressedOk();
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.secondPrimary,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
                             ),
-                          ),
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 30.w,
-                              vertical: 5.h,
-                            ),
-                            child: Text(
-                              btnOkText ?? "done".tr(),
-                              style: getRegularStyle(color: AppColors.primary),
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 30.w,
+                                vertical: 5.h,
+                              ),
+                              child: Text(
+                                btnOkText ?? "done".tr(),
+                                style: getRegularStyle(
+                                  color: AppColors.primary,
+                                ),
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),

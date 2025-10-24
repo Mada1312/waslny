@@ -1,7 +1,7 @@
 import 'package:waslny/features/driver/home/cubit/cubit.dart';
 import 'package:waslny/features/driver/home/data/repo.dart';
-import 'package:waslny/features/driver/shipments/cubit/cubit.dart';
-import 'package:waslny/features/driver/shipments/screens/data/repo.dart';
+import 'package:waslny/features/driver/trips/cubit/cubit.dart';
+import 'package:waslny/features/driver/trips/screens/data/repo.dart';
 import 'package:waslny/features/user/home/cubit/cubit.dart';
 import 'package:waslny/features/user/home/data/repo.dart';
 import 'package:waslny/features/user/trip_and_services/cubit/cubit.dart';
@@ -43,7 +43,7 @@ Future<void> setupCubit() async {
     () => UserTripAndServicesCubit(serviceLocator()),
   );
   serviceLocator.registerFactory(() => DriverHomeCubit(serviceLocator()));
-  serviceLocator.registerFactory(() => DriverShipmentsCubit(serviceLocator()));
+  serviceLocator.registerFactory(() => DriverTripsCubit(serviceLocator()));
   serviceLocator.registerFactory(() => ProfileCubit(serviceLocator()));
   serviceLocator.registerFactory(() => AddNewTripCubit(serviceLocator()));
   serviceLocator.registerFactory(() => LocationCubit(serviceLocator()));

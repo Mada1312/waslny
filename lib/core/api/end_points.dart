@@ -54,13 +54,13 @@ class EndPoints {
   static const String updateUserProfiletUrl = '${baseUrl}update-profile';
   static const String updateDeliveryprofiletUrl =
       '${baseUrl}driver/update-driver-data';
+  static const String updateDriverDataUrl = '${baseUrl}driver/upload-documents';
+  static const String toggleStatusUrl = '${baseUrl}driver/toggle-status';
   static const String getSettingsUrl = '${baseUrl}get-settings';
-
   static const String getChatRoomsUrl = '${baseUrl}get-all-chat-rooms';
   // static const String sendMessageUrl = '${baseUrl}v1/chat/sendMessage';
   static const String createChatRoomUrl = '${baseUrl}get-room-token';
   static const String getVideosUrl = '${baseUrl}get-videos';
-
   static const String getAddressMapUrl =
       'https://nominatim.openstreetmap.org/reverse';
   static const String searchOnMapUrl =

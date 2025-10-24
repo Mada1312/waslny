@@ -4,7 +4,7 @@
 
 import 'dart:convert';
 
-import 'package:waslny/features/driver/shipments/screens/data/models/shipment_details_model.dart';
+import 'package:waslny/features/driver/trips/screens/data/models/shipment_details_model.dart';
 import 'package:waslny/features/user/home/data/models/get_home_model.dart';
 
 GetDriverHomeModel getDriverHomeModelFromJson(String str) =>
@@ -17,16 +17,13 @@ class GetDriverHomeModel {
   Data? data;
   String? msg;
   int? status;
-
   GetDriverHomeModel({this.data, this.msg, this.status});
-
   factory GetDriverHomeModel.fromJson(Map<String, dynamic> json) =>
       GetDriverHomeModel(
         data: json["data"] == null ? null : Data.fromJson(json["data"]),
         msg: json["msg"],
         status: json["status"],
       );
-
   Map<String, dynamic> toJson() => {
     "data": data?.toJson(),
     "msg": msg,
@@ -35,50 +32,65 @@ class GetDriverHomeModel {
 }
 
 class Data {
-  bool? hasShipment;
-  int? notifications;
-  int? totalDrivers;
-  int? totalShipments;
-  bool? driverDocumentsUploaded;
-  ShipmentDetailsDriverData? currentDriverShipment;
-  List<ShipmentDriverModel>? shipments;
-
-  Data({
-    this.hasShipment,
-    this.notifications,
-    this.totalDrivers,
-    this.totalShipments,
-    this.driverDocumentsUploaded,
-    this.currentDriverShipment,
-    this.shipments,
-  });
-
+  User? user;
+  ScheduleTrip? scheduleTrip;
+  dynamic currentTrip;
+  Data({this.user, this.scheduleTrip, this.currentTrip});
   factory Data.fromJson(Map<String, dynamic> json) => Data(
-    hasShipment: json["hasShipment"],
-    notifications: json["notifications"],
-    totalDrivers: json["total_drivers"],
-    totalShipments: json["total_shipments"],
-    driverDocumentsUploaded: json["driver_documents_uploaded"],
-    currentDriverShipment: json["currentDriverShipment"] == null
+    user: json["user"] == null ? null : User.fromJson(json["user"]),
+    scheduleTrip: json["schedule_trip"] == null
         ? null
-        : ShipmentDetailsDriverData.fromJson(json["currentDriverShipment"]),
-    shipments: json["shipments"] == null
-        ? []
-        : List<ShipmentDriverModel>.from(
-            json["shipments"]!.map((x) => ShipmentDriverModel.fromJson(x)),
-          ),
+        : ScheduleTrip.fromJson(json["schedule_trip"]),
+    currentTrip: json["current_trip"],
+  );
+  Map<String, dynamic> toJson() => {
+    "user": user?.toJson(),
+    "schedule_trip": scheduleTrip?.toJson(),
+    "current_trip": currentTrip,
+  };
+}
+
+class ScheduleTrip {
+  int? id;
+  DateTime? day;
+  String? time;
+  String? type;
+
+  ScheduleTrip({this.id, this.day, this.time, this.type});
+
+  factory ScheduleTrip.fromJson(Map<String, dynamic> json) => ScheduleTrip(
+    id: json["id"],
+    day: json["day"] == null ? null : DateTime.parse(json["day"]),
+    time: json["time"],
+    type: json["type"],
   );
 
   Map<String, dynamic> toJson() => {
-    "hasShipment": hasShipment,
-    "notifications": notifications,
-    "total_drivers": totalDrivers,
-    "total_shipments": totalShipments,
-    "driver_documents_uploaded": driverDocumentsUploaded,
-    "currentDriverShipment": currentDriverShipment?.toJson(),
-    "shipments": shipments == null
-        ? []
-        : List<dynamic>.from(shipments!.map((x) => x.toJson())),
+    "id": id,
+    "day":
+        "${day!.year.toString().padLeft(4, '0')}-${day!.month.toString().padLeft(2, '0')}-${day!.day.toString().padLeft(2, '0')}",
+    "time": time,
+    "type": type,
+  };
+}
+
+class User {
+  int? isActive;
+  int? isVerified;
+  int? isDataUploaded;
+
+  User({this.isActive, this.isVerified, this.isDataUploaded});
+
+  factory User.fromJson(Map<String, dynamic> json) => User(
+    isActive: json["is_active"],
+    isVerified: json["is_verified"],
+    isDataUploaded: json["is_data_uploaded"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "is_active": isActive,
+    "is_verified": isVerified,
+    "is_data_uploaded": isDataUploaded,
   };
 }
 
