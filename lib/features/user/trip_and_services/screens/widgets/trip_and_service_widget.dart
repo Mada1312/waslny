@@ -1,6 +1,6 @@
 import 'package:waslny/core/exports.dart';
 import 'package:waslny/core/widgets/custom_divider.dart';
-import 'package:waslny/extention.dart';
+import 'package:waslny/features/user/home/cubit/cubit.dart';
 
 import 'package:waslny/features/user/home/data/models/get_home_model.dart';
 import 'package:waslny/features/user/trip_and_services/cubit/cubit.dart';
@@ -221,7 +221,7 @@ class _TripOrServiceItemWidgetState extends State<TripOrServiceItemWidget> {
                         ),
                       ],
                     ),
-                  
+
                     10.h.verticalSpace,
                     CustomFromToWidget(
                       from: widget.tripOrService?.from,
@@ -234,6 +234,26 @@ class _TripOrServiceItemWidgetState extends State<TripOrServiceItemWidget> {
                     ),
                     (widget.tripOrService?.driver != null)
                         ? CustomDriverInfo(
+                            onTapToCancelTrip: () {
+                              warningDialog(
+                                context,
+                                btnOkText: 'confirm'.tr(),
+                                title:
+                                    'are_you_sure_you_want_to_cancel_the_trip'
+                                        .tr(),
+                                onPressedOk: () {
+                                  context
+                                      .read<UserTripAndServicesCubit>()
+                                      .cancelTrip(
+                                        widget.tripOrService?.id.toString() ??
+                                            '',
+                                      );
+                                  context.read<UserHomeCubit>().getHome(
+                                    context,
+                                  );
+                                },
+                              );
+                            },
                             driver: widget.tripOrService?.driver,
                             roomToken: null,
                             shipmentCode: widget.tripOrService?.code,

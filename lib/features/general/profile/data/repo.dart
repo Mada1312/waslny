@@ -3,7 +3,7 @@ import 'package:waslny/features/user/home/data/models/get_home_model.dart';
 
 import '../../../../core/exports.dart';
 import '../../../../core/preferences/preferences.dart';
-import 'models/fav_ecporter_model.dart';
+
 import 'models/main_settings_model.dart';
 
 class ProfileRepo {

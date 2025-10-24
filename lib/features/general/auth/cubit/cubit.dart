@@ -295,6 +295,7 @@ class LoginCubit extends Cubit<LoginState> {
       emit(PickImageFromGallaryState());
     }
   }
+
   File? pickedUserCardProfileImage;
   File? pickedDeliveryFrontImage;
   File? pickedDeliveryBackImage;

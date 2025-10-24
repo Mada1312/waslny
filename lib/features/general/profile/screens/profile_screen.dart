@@ -9,7 +9,7 @@ import '../../../../core/utils/restart_app_class.dart';
 import '../../auth/cubit/state.dart';
 import '../cubit/cubit.dart';
 import '../cubit/state.dart';
-import 'exporter_fav_driver.dart';
+import 'favourit_trips.dart';
 import 'privacy_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -168,15 +168,9 @@ class ProfileScreen extends StatelessWidget {
                                 if (!isDriver)
                                   CustomProfileRow(
                                     onTap: () {
-                                      context
-                                          .read<UserTripAndServicesCubit>()
-                                          .changeSelectedStatus(
-                                            ShipmentsStatusEnum.delivered,
-                                          );
-
                                       Navigator.pushNamed(
                                         context,
-                                        Routes.userShipmentsRoute,
+                                        Routes.userTripsAndServicesRoute,
                                       );
 
                                       //!
@@ -254,6 +248,16 @@ class ProfileScreen extends StatelessWidget {
                                     Navigator.pushNamed(
                                       context,
                                       Routes.contactUsScreen,
+                                    );
+                                  },
+                                ),
+                                CustomProfileRow(
+                                  title: 'change_password',
+                                  path: AppIcons.changePass,
+                                  onTap: () {
+                                    Navigator.pushNamed(
+                                      context,
+                                      Routes.changePasswordScreen,
                                     );
                                   },
                                 ),

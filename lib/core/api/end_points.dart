@@ -68,4 +68,7 @@ class EndPoints {
   static const String getDriverDetailsUrl = '${baseUrl}get-driver-details/';
   static const String sendMessageNotificationUrl =
       '${baseUrl}send-message-notification';
+  static const String updatePassword = '${baseUrl}update-password';
+  static const String getMyTrips = '${baseUrl}get-my-trips?filter_by=';
+  static const String cancelTrip = '${baseUrl}cancel-trip';
 }

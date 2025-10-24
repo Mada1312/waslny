@@ -7,7 +7,7 @@ class DriverDetailsInit extends DriverDetailsState {}
 class DriverDetailsLoading extends DriverDetailsState {}
 
 class DriverDetailsLoaded extends DriverDetailsState {
-  final DriverDetailsModel? driver;
+  final DriverProfileMainModel? driver;
   DriverDetailsLoaded(this.driver);
 }
 

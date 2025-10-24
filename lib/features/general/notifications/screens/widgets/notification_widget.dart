@@ -37,7 +37,8 @@ class CustomNotificationCard extends StatelessWidget {
                   context,
                   Routes.driverShipmentDetailsRoute,
                   arguments: DriverSHipmentsArgs(
-                      shipmentId: notificationModel.referenceId.toString()),
+                    shipmentId: notificationModel.referenceId.toString(),
+                  ),
                 );
               } else {
                 showDialog(
@@ -45,14 +46,17 @@ class CustomNotificationCard extends StatelessWidget {
                   builder: (BuildContext context) {
                     return AlertDialog(
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.r)),
+                        borderRadius: BorderRadius.circular(10.r),
+                      ),
                       title: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
                             "notification_details".tr(),
                             style: TextStyle(
-                                fontSize: 18.sp, fontWeight: FontWeight.bold),
+                              fontSize: 18.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           IconButton(
                             icon: Icon(Icons.close, color: Colors.black),
@@ -72,13 +76,13 @@ class CustomNotificationCard extends StatelessWidget {
               }
             }
           } else {
-            Navigator.pushNamed(
-              context,
-              Routes.userShipmentDetailsRoute,
-              arguments: UserShipmentDetailsArgs(
-                shipmentId: notificationModel.referenceId.toString(),
-              ),
-            );
+            // Navigator.pushNamed(
+            //   context,
+            //   Routes.userShipmentDetailsRoute,
+            //   arguments: UserShipmentDetailsArgs(
+            //     shipmentId: notificationModel.referenceId.toString(),
+            //   ),
+            // );
           }
         } else {
           showDialog(
@@ -86,14 +90,17 @@ class CustomNotificationCard extends StatelessWidget {
             builder: (BuildContext context) {
               return AlertDialog(
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.r)),
+                  borderRadius: BorderRadius.circular(10.r),
+                ),
                 title: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
                       "notification_details".tr(),
                       style: TextStyle(
-                          fontSize: 18.sp, fontWeight: FontWeight.bold),
+                        fontSize: 18.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     IconButton(
                       icon: Icon(Icons.close, color: Colors.black),
@@ -148,7 +155,9 @@ class CustomNotificationCard extends StatelessWidget {
                       Text(
                         notificationModel.createdAt ?? '',
                         style: getBoldStyle(
-                            color: AppColors.secondPrimary, fontSize: 12.sp),
+                          color: AppColors.secondPrimary,
+                          fontSize: 12.sp,
+                        ),
                       ),
                     ],
                   ),
@@ -156,7 +165,8 @@ class CustomNotificationCard extends StatelessWidget {
                   Text(
                     notificationModel.body ?? '',
                     style: getRegularStyle(
-                      color: notificationModel.body != null &&
+                      color:
+                          notificationModel.body != null &&
                               (notificationModel.body!.contains('قبول') ||
                                   notificationModel.body!.contains('accepted'))
                           ? AppColors.green
@@ -173,4 +183,5 @@ class CustomNotificationCard extends StatelessWidget {
     );
   }
 }
+
 //1024791856

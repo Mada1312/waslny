@@ -85,7 +85,6 @@ class DriverTripPrServiceItemWidget extends StatelessWidget {
                       Flexible(
                         child: AutoSizeText(
                           "10:00 AM",
-
                           maxLines: 1,
                           style: getRegularStyle(),
                         ),
@@ -153,7 +152,7 @@ class DriverTripPrServiceItemWidget extends StatelessWidget {
             //   shipmentCode: trip?.code,
             //   tripId: trip?.id.toString(),
             // ),
-             ],
+          ],
         ),
       ),
     );

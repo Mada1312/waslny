@@ -1,110 +1,165 @@
-class DriverDetailsModel {
-  DriverDetailsModelData? data;
+class DriverProfileMainModel {
+  DriverProfileMainModelData? data;
   String? msg;
   int? status;
 
-  DriverDetailsModel({
-    this.data,
-    this.msg,
-    this.status,
-  });
+  DriverProfileMainModel({this.data, this.msg, this.status});
 
-  factory DriverDetailsModel.fromJson(Map<String, dynamic> json) =>
-      DriverDetailsModel(
-        data: (json["data"] == null || json["status"] != 200)
+  factory DriverProfileMainModel.fromJson(Map<String, dynamic> json) =>
+      DriverProfileMainModel(
+        data: json["data"] == null
             ? null
-            : DriverDetailsModelData.fromJson(json["data"]),
+            : DriverProfileMainModelData.fromJson(json["data"]),
         msg: json["msg"],
         status: json["status"],
       );
 
   Map<String, dynamic> toJson() => {
-        "data": data?.toJson(),
-        "msg": msg,
-        "status": status,
-      };
+    "data": data?.toJson(),
+    "msg": msg,
+    "status": status,
+  };
 }
 
-class DriverDetailsModelData {
+class DriverProfileMainModelData {
   int? id;
   String? name;
   String? phone;
+  String? status;
   String? image;
+  String? frontVehicleLicense;
+  String? backVehicleLicense;
+  String? drivingLicense;
+  String? frontNationalId;
+  String? backNationalId;
+  int? userType;
+  int? isActive;
+  String? vehiclePlateNumber;
+  String? vehicleModel;
+  String? vehicleColor;
+  int? gender;
+  String? genderName;
   int? isVerified;
-  int? status;
-  int? totalRates;
-  String? averageRates;
-  TruckType? truckType;
-  int? totalShipments;
-  List<TruckType>? countries;
+  int? trips;
+  dynamic avgRate;
+  dynamic percentage;
+  List<RateModel>? rates;
 
-  DriverDetailsModelData({
+  DriverProfileMainModelData({
     this.id,
     this.name,
     this.phone,
-    this.image,
-    this.isVerified,
     this.status,
-    this.totalRates,
-    this.averageRates,
-    this.truckType,
-    this.totalShipments,
-    this.countries,
+    this.image,
+    this.frontVehicleLicense,
+    this.backVehicleLicense,
+    this.drivingLicense,
+    this.frontNationalId,
+    this.backNationalId,
+    this.userType,
+    this.isActive,
+    this.vehiclePlateNumber,
+    this.vehicleModel,
+    this.vehicleColor,
+    this.gender,
+    this.genderName,
+    this.isVerified,
+    this.trips,
+    this.avgRate,
+    this.percentage,
+    this.rates,
   });
 
-  factory DriverDetailsModelData.fromJson(Map<String, dynamic> json) =>
-      DriverDetailsModelData(
+  factory DriverProfileMainModelData.fromJson(Map<String, dynamic> json) =>
+      DriverProfileMainModelData(
         id: json["id"],
         name: json["name"],
         phone: json["phone"],
-        image: json["image"],
-        isVerified: json["is_verified"],
         status: json["status"],
-        totalRates: json["total_rates"],
-        averageRates: json["average_rates"],
-        truckType: json["truck_type"] == null
-            ? null
-            : TruckType.fromJson(json["truck_type"]),
-        totalShipments: json["total_shipments"],
-        countries: json["countries"] == null
+        image: json["image"],
+        frontVehicleLicense: json["front_vehicle_license"],
+        backVehicleLicense: json["back_vehicle_license"],
+        drivingLicense: json["driving_license"],
+        frontNationalId: json["front_national_id"],
+        backNationalId: json["back_national_id"],
+        userType: json["user_type"],
+        isActive: json["is_active"],
+        vehiclePlateNumber: json["vehicle_plate_number"],
+        vehicleModel: json["vehicle_model"],
+        vehicleColor: json["vehicle_color"],
+        gender: json["gender"],
+        genderName: json["gender_name"],
+        isVerified: json["is_verified"],
+        trips: json["trips"],
+        avgRate: json["avg_rate"],
+        percentage: json["percentage"],
+        rates: json["rates"] == null
             ? []
-            : List<TruckType>.from(
-                json["countries"]!.map((x) => TruckType.fromJson(x))),
+            : List<RateModel>.from(
+                json["rates"]!.map((x) => RateModel.fromJson(x)),
+              ),
       );
 
   Map<String, dynamic> toJson() => {
-        "id": id,
-        "name": name,
-        "phone": phone,
-        "image": image,
-        "is_verified": isVerified,
-        "status": status,
-        "total_rates": totalRates,
-        "average_rates": averageRates,
-        "truck_type": truckType?.toJson(),
-        "total_shipments": totalShipments,
-        "countries": countries == null
-            ? []
-            : List<dynamic>.from(countries!.map((x) => x.toJson())),
-      };
+    "id": id,
+    "name": name,
+    "phone": phone,
+    "status": status,
+    "image": image,
+    "front_vehicle_license": frontVehicleLicense,
+    "back_vehicle_license": backVehicleLicense,
+    "driving_license": drivingLicense,
+    "front_national_id": frontNationalId,
+    "back_national_id": backNationalId,
+    "user_type": userType,
+    "is_active": isActive,
+    "vehicle_plate_number": vehiclePlateNumber,
+    "vehicle_model": vehicleModel,
+    "vehicle_color": vehicleColor,
+    "gender": gender,
+    "gender_name": genderName,
+    "is_verified": isVerified,
+    "trips": trips,
+    "avg_rate": avgRate,
+    "percentage": percentage,
+    "rates": rates == null
+        ? []
+        : List<dynamic>.from(rates!.map((x) => x.toJson())),
+  };
 }
 
-class TruckType {
+class RateModel {
   int? id;
-  String? name;
+  String? user;
+  String? image;
+  String? rate;
+  String? comment;
+  String? createdAt;
 
-  TruckType({
+  RateModel({
     this.id,
-    this.name,
+    this.user,
+    this.image,
+    this.rate,
+    this.comment,
+    this.createdAt,
   });
 
-  factory TruckType.fromJson(Map<String, dynamic> json) => TruckType(
-        id: json["id"],
-        name: json["name"],
-      );
+  factory RateModel.fromJson(Map<String, dynamic> json) => RateModel(
+    id: json["id"],
+    user: json["user"],
+    image: json["image"],
+    rate: json["rate"],
+    comment: json["comment"],
+    createdAt: json["created_at"],
+  );
 
   Map<String, dynamic> toJson() => {
-        "id": id,
-        "name": name,
-      };
+    "id": id,
+    "user": user,
+    "image": image,
+    "rate": rate,
+    "comment": comment,
+    "created_at": createdAt,
+  };
 }
