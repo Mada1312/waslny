@@ -221,7 +221,7 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
           _buildDetailRow('type'.tr(), driver?.genderName ?? 'N/A'),
           _buildDetailRow(
             'vehicle_type'.tr(),
-            driver?.vehicleModel ?? '',
+            driver?.vehicleType ?? '',
           ), // دي كانت Hardcoded في التصميم
           _buildDetailRow(
             'details'.tr(),
