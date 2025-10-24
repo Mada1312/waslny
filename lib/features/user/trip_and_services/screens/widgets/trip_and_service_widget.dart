@@ -221,6 +221,7 @@ class _TripOrServiceItemWidgetState extends State<TripOrServiceItemWidget> {
                         ),
                       ],
                     ),
+                  
                     10.h.verticalSpace,
                     CustomFromToWidget(
                       from: widget.tripOrService?.from,

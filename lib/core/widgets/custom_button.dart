@@ -10,16 +10,17 @@ class CustomButton extends StatelessWidget {
   final double? radius;
   final EdgeInsetsGeometry? padding;
 
-  const CustomButton(
-      {super.key,
-      this.onPressed,
-      required this.title,
-      this.isDisabled = false,
-      this.radius,
-      this.padding,
-      this.btnColor,
-      this.textColor,
-      this.width});
+  const CustomButton({
+    super.key,
+    this.onPressed,
+    required this.title,
+    this.isDisabled = false,
+    this.radius,
+    this.padding,
+    this.btnColor,
+    this.textColor,
+    this.width,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -32,15 +33,15 @@ class CustomButton extends StatelessWidget {
         padding: padding ?? EdgeInsets.all(15.sp),
         decoration: BoxDecoration(
           color: isDisabled
-              ? AppColors.primary.withOpacity(0.6)
+              ? AppColors.primary.withOpacity(0.3)
               : btnColor ?? AppColors.primary,
-          borderRadius: BorderRadius.circular(radius ?? 30.sp),
+          borderRadius: BorderRadius.circular(radius ?? 10.sp),
         ),
-        child: Text(
+        child: AutoSizeText(
           title,
-          style: getSemiBoldStyle(
+          style: getBoldStyle(
             color: textColor ?? AppColors.secondPrimary,
-            fontSize: 18.sp,
+            fontSize: 16.sp,
           ),
         ),
       ),
