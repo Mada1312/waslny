@@ -29,7 +29,7 @@ class DriverHomeCubit extends Cubit<DriverHomeState> {
         if (homeModel?.data?.user?.isDataUploaded != 1) {
           Navigator.pushNamed(context, Routes.driverDataRoute);
         }
-        if (homeModel?.data?.user?.isVerified != 1) {
+       else if (homeModel?.data?.user?.isVerified != 1) {
           completeDialog(
             context,
             btnOkText: 'done'.tr(),

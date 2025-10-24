@@ -15,8 +15,8 @@ class DriverHomeScreen extends StatefulWidget {
 class _DriverHomeScreenState extends State<DriverHomeScreen> {
   @override
   void initState() {
-    if (context.read<DriverHomeCubit>().homeModel == null)
-      context.read<DriverHomeCubit>().getDriverHomeData(context);
+    // if (context.read<DriverHomeCubit>().homeModel == null)
+    context.read<DriverHomeCubit>().getDriverHomeData(context);
 
     // FirebaseMessaging.onMessage.listen((message) async {
     //   if (message.data['reference_table'] == "shipments" &&

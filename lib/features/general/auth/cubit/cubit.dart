@@ -147,9 +147,9 @@ class LoginCubit extends Cubit<LoginState> {
       isDriver: isDriver,
       name: nameController.text,
       gender: gender?.name == Gender.male.name ? '0' : '1',
-      vehicleType: vehicleType?.name == Gender.male.name
+      vehicleType: vehicleType?.name == VehicleType.car.name
           ? 'car'
-          : 'Moto', //TODO get it from List
+          : 'scooter', //TODO get it from List
       otp: pinController.text,
       phone: fullPhoneNumber ?? '',
       password: passwordController.text,
@@ -295,6 +295,7 @@ class LoginCubit extends Cubit<LoginState> {
       emit(PickImageFromGallaryState());
     }
   }
+
   File? pickedUserCardProfileImage;
   File? pickedDeliveryFrontImage;
   File? pickedDeliveryBackImage;
