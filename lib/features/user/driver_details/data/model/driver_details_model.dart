@@ -39,6 +39,7 @@ class DriverProfileMainModelData {
   String? vehicleColor;
   int? gender;
   String? genderName;
+  String? vehicleType;
   int? isVerified;
   int? trips;
   dynamic avgRate;
@@ -67,6 +68,7 @@ class DriverProfileMainModelData {
     this.trips,
     this.avgRate,
     this.percentage,
+    this.vehicleType,
     this.rates,
   });
 
@@ -91,6 +93,7 @@ class DriverProfileMainModelData {
         genderName: json["gender_name"],
         isVerified: json["is_verified"],
         trips: json["trips"],
+        vehicleType: json["vehicle_type"],
         avgRate: json["avg_rate"],
         percentage: json["percentage"],
         rates: json["rates"] == null
@@ -116,6 +119,7 @@ class DriverProfileMainModelData {
     "vehicle_plate_number": vehiclePlateNumber,
     "vehicle_model": vehicleModel,
     "vehicle_color": vehicleColor,
+    "vehicle_type": vehicleType,
     "gender": gender,
     "gender_name": genderName,
     "is_verified": isVerified,
