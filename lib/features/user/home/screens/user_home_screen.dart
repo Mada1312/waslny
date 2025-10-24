@@ -131,16 +131,10 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                               Expanded(
                                 child: InkWell(
                                   onTap: () {
-                                    // context
-                                    //     .read<UserShipmentsCubit>()
-                                    //     .changeSelectedStatus(
-                                    //       ShipmentsStatusEnum
-                                    //           .newShipments,
-                                    //     );
-                                    // Navigator.pushNamed(
-                                    //   context,
-                                    //   Routes.userShipmentsRoute,
-                                    // );
+                                    Navigator.pushNamed(
+                                      context,
+                                      Routes.allTripsScreenRoute,
+                                    );
                                   },
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.end,

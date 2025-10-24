@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:waslny/core/exports.dart';
@@ -10,6 +11,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:waslny/features/user/home/cubit/cubit.dart';
 import 'package:waslny/features/user/home/data/models/get_home_model.dart';
+import 'package:waslny/features/user/trip_and_services/cubit/cubit.dart';
 import '../data/models/fav_ecporter_model.dart';
 import '../data/models/main_settings_model.dart';
 import '../data/repo.dart';
@@ -235,6 +237,9 @@ class ProfileCubit extends Cubit<ProfileState> {
   actionFav(
     String id, {
     bool isFavScreen = true,
+    bool isCompleteScreen = false,
+
+    TripAndServiceModel? model,
     required BuildContext context,
   }) async {
     try {
@@ -258,6 +263,12 @@ class ProfileCubit extends Cubit<ProfileState> {
                 );
               }
 
+              emit(LoadedContactUsState());
+            }
+
+            if (isCompleteScreen) {
+              model?.isFav = !(model.isFav ?? false);
+              log(model?.isFav.toString() ?? 'no');
               emit(LoadedContactUsState());
             } else {
               emit(ErrorContactUsState());

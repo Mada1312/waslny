@@ -1,8 +1,10 @@
 import 'package:waslny/core/exports.dart';
 
 class CustomDivider extends StatelessWidget {
-  const CustomDivider({super.key});
-
+  const CustomDivider({super.key, this.color, this.endIndent, this.indent});
+  final Color? color;
+  final double? endIndent;
+  final double? indent;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -10,9 +12,9 @@ class CustomDivider extends StatelessWidget {
       child: Divider(
         height: 3,
         thickness: 1,
-        endIndent: 10,
-        indent: 10,
-        color: AppColors.second3Primary,
+        endIndent: endIndent ?? 10,
+        indent: indent ?? 10,
+        color: color ?? AppColors.second3Primary,
       ),
     );
   }

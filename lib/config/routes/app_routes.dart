@@ -1,8 +1,10 @@
 import 'package:waslny/features/driver/home/screens/driver_data_screen.dart';
 import 'package:waslny/features/driver/trips/screens/details/shipment_details_screen.dart';
 import 'package:waslny/features/driver/trips/screens/trips_screen.dart';
+import 'package:waslny/features/general/change_password/screen/change_password.dart';
+import 'package:waslny/features/user/home/screens/all_trips_and_services.dart';
 import 'package:waslny/features/user/trip_and_services/screens/details/shipment_details_screen.dart';
-import 'package:waslny/features/user/trip_and_services/screens/shipments_screen.dart';
+import 'package:waslny/features/user/trip_and_services/screens/trips_and_services.dart';
 import 'package:waslny/features/main/screens/main_screen.dart';
 import 'package:waslny/features/general/auth/screens/choose_login_screen.dart';
 import 'package:waslny/features/general/on_boarding/screen/onboarding_screen.dart';
@@ -31,7 +33,7 @@ class Routes {
   static const String verifyCodeScreen = '/VerifyCodeScreen';
   static const String newPasswordScreen = '/newPasswordScreen';
   static const String onboardingRoute = '/onBoarding';
-  static const String userShipmentsRoute = '/userShipmentsRoute';
+  static const String userTripsAndServicesRoute = '/userTripsAndServicesRoute';
   static const String userShipmentDetailsRoute = '/userShipmentDetailsRoute';
   static const String driverShipmentDetailsRoute = '/driverShipmentDetails';
   static const String addNewTripRoute = '/addNewTrip';
@@ -43,6 +45,8 @@ class Routes {
   static const String messageRoute = '/messageRoute';
   static const String driverDataRoute = '/driverDataRoute';
   static const String driverTripsRoute = '/driverTripsRoute';
+  static const String changePasswordScreen = '/ChangePasswordScreen';
+  static const String allTripsScreenRoute = '/allTripsScreenRoute';
 }
 
 class AppRoutes {
@@ -125,22 +129,22 @@ class AppRoutes {
           alignment: Alignment.center,
           duration: const Duration(milliseconds: 800),
         );
-      case Routes.userShipmentsRoute:
+      case Routes.userTripsAndServicesRoute:
         return PageTransition(
-          child: const UserShipmentsScreen(),
+          child: const UserTripsAndServicesScreen(),
           type: PageTransitionType.fade,
           alignment: Alignment.center,
           duration: const Duration(milliseconds: 800),
         );
-      case Routes.userShipmentDetailsRoute:
-        UserShipmentDetailsArgs args =
-            settings.arguments as UserShipmentDetailsArgs;
-        return PageTransition(
-          child: UserShipmentDetailsScreen(args: args),
-          type: PageTransitionType.fade,
-          alignment: Alignment.center,
-          duration: const Duration(milliseconds: 800),
-        );
+      // case Routes.userShipmentDetailsRoute:
+      //   UserShipmentDetailsArgs args =
+      //       settings.arguments as UserShipmentDetailsArgs;
+      //   return PageTransition(
+      //     child: UserShipmentDetailsScreen(args: args),
+      //     type: PageTransitionType.fade,
+      //     alignment: Alignment.center,
+      //     duration: const Duration(milliseconds: 800),
+      //   );
       case Routes.driverShipmentDetailsRoute:
         DriverSHipmentsArgs args = settings.arguments as DriverSHipmentsArgs;
         return PageTransition(
@@ -199,6 +203,20 @@ class AppRoutes {
       case Routes.driverTripsRoute:
         return PageTransition(
           child: DriverTripsScreen(),
+          type: PageTransitionType.fade,
+          alignment: Alignment.center,
+          duration: const Duration(milliseconds: 800),
+        );
+      case Routes.changePasswordScreen:
+        return PageTransition(
+          child: ChangePasswordScreen(),
+          type: PageTransitionType.fade,
+          alignment: Alignment.center,
+          duration: const Duration(milliseconds: 800),
+        );
+      case Routes.allTripsScreenRoute:
+        return PageTransition(
+          child: AllTripsScreenRoute(),
           type: PageTransitionType.fade,
           alignment: Alignment.center,
           duration: const Duration(milliseconds: 800),

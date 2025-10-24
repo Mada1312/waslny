@@ -61,22 +61,25 @@ class NotificationService {
       if (message.data['reference_table'] == "shipments") {
         if (message.data['user_type'].toString() == "0") {
           // User
-          navigatorKey.currentState?.pushNamed(Routes.userShipmentDetailsRoute,
-              arguments: UserShipmentDetailsArgs(
-                shipmentId: message.data['reference_id'].toString(),
-              ));
+          // navigatorKey.currentState?.pushNamed(Routes.userShipmentDetailsRoute,
+          //     arguments: UserShipmentDetailsArgs(
+          //       shipmentId: message.data['reference_id'].toString(),
+          //     ));
         } else {
           // Driver
 
           if (message.data['is_current'].toString() == "1") {
-            navigatorKey.currentState
-                ?.pushNamed(Routes.mainRoute, arguments: true);
+            navigatorKey.currentState?.pushNamed(
+              Routes.mainRoute,
+              arguments: true,
+            );
           } else {
-            navigatorKey.currentState
-                ?.pushNamed(Routes.driverShipmentDetailsRoute,
-                    arguments: DriverSHipmentsArgs(
-                      shipmentId: message.data['reference_id'].toString(),
-                    ));
+            navigatorKey.currentState?.pushNamed(
+              Routes.driverShipmentDetailsRoute,
+              arguments: DriverSHipmentsArgs(
+                shipmentId: message.data['reference_id'].toString(),
+              ),
+            );
           }
         }
       } else if (message.data['reference_table'] == "chat_rooms") {
@@ -138,7 +141,7 @@ class NotificationService {
     );
     print('User granted permission: ${settings.authorizationStatus}');
 
-//! [Forground ]
+    //! [Forground ]
     FirebaseMessaging.onMessage.listen((message) async {
       print("Foreground Message Received: ${message.notification?.title}");
       print("Message Data: ${message.data}");
@@ -165,7 +168,9 @@ class NotificationService {
             // await BackgroundLocationService.startService();
           } else {
             // Optionally log or handle the denied state
-            log("Location permission not granted; cannot start background service.");
+            log(
+              "Location permission not granted; cannot start background service.",
+            );
           }
         } catch (e) {
           log("Error starting background location service: $e");
@@ -185,7 +190,8 @@ class NotificationService {
 
   /// **Handles Background Notifications**
   static Future<void> _firebaseMessagingBackgroundHandler(
-      RemoteMessage message) async {
+    RemoteMessage message,
+  ) async {
     initialMessageRcieved = message;
     if (message.data['reference_table'] == "shipments" &&
         message.data['user_type'].toString() == "1" &&
@@ -196,7 +202,9 @@ class NotificationService {
           // await BackgroundLocationService.startService();
         } else {
           // Optionally log or handle the denied state
-          log("Location permission not granted; cannot start background service.");
+          log(
+            "Location permission not granted; cannot start background service.",
+          );
         }
       } catch (e) {
         log("Error starting background location service: $e");
@@ -239,10 +247,10 @@ class NotificationService {
 
     final DarwinInitializationSettings iosSettings =
         DarwinInitializationSettings(
-      requestAlertPermission: true,
-      requestBadgePermission: true,
-      requestSoundPermission: true,
-    );
+          requestAlertPermission: true,
+          requestBadgePermission: true,
+          requestSoundPermission: true,
+        );
 
     final InitializationSettings initSettings = InitializationSettings(
       android: androidSettings,
@@ -269,22 +277,26 @@ class NotificationService {
             if (message['reference_table'] == "shipments") {
               if (message['user_type'].toString() == "0") {
                 // User
-                navigatorKey.currentState
-                    ?.pushNamed(Routes.userShipmentDetailsRoute,
-                        arguments: UserShipmentDetailsArgs(
-                          shipmentId: message['reference_id'].toString(),
-                        ));
+                // navigatorKey.currentState?.pushNamed(
+                //   Routes.userShipmentDetailsRoute,
+                //   arguments: UserShipmentDetailsArgs(
+                //     shipmentId: message['reference_id'].toString(),
+                //   ),
+                // );
               } else {
                 // Driver
                 if (message['is_current'].toString() == "1") {
-                  navigatorKey.currentState
-                      ?.pushNamed(Routes.mainRoute, arguments: true);
+                  navigatorKey.currentState?.pushNamed(
+                    Routes.mainRoute,
+                    arguments: true,
+                  );
                 } else {
-                  navigatorKey.currentState
-                      ?.pushNamed(Routes.driverShipmentDetailsRoute,
-                          arguments: DriverSHipmentsArgs(
-                            shipmentId: message['reference_id'].toString(),
-                          ));
+                  navigatorKey.currentState?.pushNamed(
+                    Routes.driverShipmentDetailsRoute,
+                    arguments: DriverSHipmentsArgs(
+                      shipmentId: message['reference_id'].toString(),
+                    ),
+                  );
                 }
               }
             } else if (message['reference_table'] == "chat_rooms") {
@@ -326,14 +338,16 @@ class NotificationService {
     if (Platform.isAndroid) {
       await _flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>()
+            AndroidFlutterLocalNotificationsPlugin
+          >()
           ?.requestNotificationsPermission();
     }
 
     if (Platform.isIOS) {
       await _flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
-              IOSFlutterLocalNotificationsPlugin>()
+            IOSFlutterLocalNotificationsPlugin
+          >()
           ?.requestPermissions(alert: true, badge: true, sound: true);
     }
   }
@@ -354,12 +368,17 @@ class NotificationService {
     required String body,
     String? payload,
   }) async {
-    NotificationDetails notificationDetails =
-        NotificationDetails(android: androidDetails);
+    NotificationDetails notificationDetails = NotificationDetails(
+      android: androidDetails,
+    );
 
     await _flutterLocalNotificationsPlugin.show(
-        _notificationCounter++, title, body, notificationDetails,
-        payload: payload);
+      _notificationCounter++,
+      title,
+      body,
+      notificationDetails,
+      payload: payload,
+    );
   }
 
   Future<void> cancelNotification(int id) async {

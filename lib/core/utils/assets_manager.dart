@@ -90,4 +90,5 @@ class AppIcons {
   static const String menu = '$iconsPath/menu.svg';
   static const String upload = '$iconsPath/upload.svg';
   static const String backButton = '$iconsPath/back_button.svg';
+  static const String changePass = '$iconsPath/change_pass.svg';
 }

@@ -1,3 +1,5 @@
+import 'package:waslny/extention.dart';
+
 import 'package:waslny/features/user/add_new_trip/cubit/cubit.dart';
 import 'package:easy_debounce/easy_debounce.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -85,28 +87,6 @@ class _FullScreenMapState extends State<FullScreenMap>
                 Navigator.pop(context);
               },
             ),
-            actions: [
-              MaterialButton(
-                onPressed: () {
-                  if (widget.isTo == true) {
-                    context.read<AddNewTripCubit>().toAddressController.text =
-                        cubit.address;
-                    context.read<AddNewTripCubit>().toSelectedLocation =
-                        cubit.selectedLocation;
-                  } else {
-                    context.read<AddNewTripCubit>().fromAddressController.text =
-                        cubit.address;
-                    context.read<AddNewTripCubit>().fromSelectedLocation =
-                        cubit.selectedLocation;
-                  }
-                  Navigator.pop(context);
-                },
-                child: Text(
-                  'confirm'.tr(),
-                  style: getBoldStyle(color: AppColors.primary),
-                ),
-              ),
-            ],
           ),
           body: BlocBuilder<LocationCubit, LocationState>(
             builder: (context, state) {
@@ -286,6 +266,44 @@ class _FullScreenMapState extends State<FullScreenMap>
                             ),
                           ),
                       ],
+                    ),
+                  ),
+
+                  PositionedDirectional(
+                    bottom: 10,
+                    width: context.w,
+                    child: Center(
+                      child: SizedBox(
+                        width: context.w / 2,
+                        child: CustomButton(
+                          padding: EdgeInsets.all(8),
+                          onPressed: () {
+                            if (widget.isTo == true) {
+                              context
+                                      .read<AddNewTripCubit>()
+                                      .toAddressController
+                                      .text =
+                                  cubit.address;
+                              context
+                                      .read<AddNewTripCubit>()
+                                      .toSelectedLocation =
+                                  cubit.selectedLocation;
+                            } else {
+                              context
+                                      .read<AddNewTripCubit>()
+                                      .fromAddressController
+                                      .text =
+                                  cubit.address;
+                              context
+                                      .read<AddNewTripCubit>()
+                                      .fromSelectedLocation =
+                                  cubit.selectedLocation;
+                            }
+                            Navigator.pop(context);
+                          },
+                          title: 'confirm_destination'.tr(),
+                        ),
+                      ),
                     ),
                   ),
                 ],

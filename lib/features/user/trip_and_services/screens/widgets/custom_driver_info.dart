@@ -4,6 +4,7 @@ import 'package:waslny/core/exports.dart';
 
 import 'package:waslny/core/widgets/network_image.dart';
 import 'package:waslny/features/user/home/data/models/get_home_model.dart';
+import 'package:waslny/features/user/trip_and_services/cubit/cubit.dart';
 
 import '../../../driver_details/screens/driver_details.dart';
 import 'call_message.dart';
@@ -17,6 +18,7 @@ class CustomDriverInfo extends StatefulWidget {
     this.roomToken,
     this.tripId,
     this.isFavWidget,
+    this.onTapToCancelTrip,
   });
   final String? hint;
   final String? shipmentCode;
@@ -24,7 +26,7 @@ class CustomDriverInfo extends StatefulWidget {
   final String? roomToken;
   final Driver? driver;
   final bool? isFavWidget;
-
+  final void Function()? onTapToCancelTrip;
   @override
   State<CustomDriverInfo> createState() => _CustomDriverInfoState();
 }
@@ -34,7 +36,12 @@ class _CustomDriverInfoState extends State<CustomDriverInfo> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        CustomDriverCardInfo(driver: widget.driver),
+        CustomDriverCardInfo(
+          driver: widget.driver,
+
+          shipmentCode: widget.shipmentCode,
+          tripId: widget.tripId,
+        ),
 
         10.w.horizontalSpace,
         Row(
@@ -47,10 +54,7 @@ class _CustomDriverInfoState extends State<CustomDriverInfo> {
                   borderRadius: BorderRadius.circular(10.r),
                 ),
                 child: GestureDetector(
-                  onTap: () {
-                    //! cancel Trip and service
-                    log('Cancel Trip');
-                  },
+                  onTap: widget.onTapToCancelTrip,
                   child: Center(
                     child: Text(
                       'cancel_trip'.tr(),
@@ -79,8 +83,15 @@ class _CustomDriverInfoState extends State<CustomDriverInfo> {
 }
 
 class CustomDriverCardInfo extends StatelessWidget {
-  const CustomDriverCardInfo({super.key, this.driver});
+  const CustomDriverCardInfo({
+    super.key,
+    this.driver,
+    this.tripId,
+    this.shipmentCode,
+  });
   final Driver? driver;
+  final String? tripId;
+  final String? shipmentCode;
 
   @override
   Widget build(BuildContext context) {
@@ -91,8 +102,11 @@ class CustomDriverCardInfo extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => DriverDetailsScreenById(
+              builder: (context) => DriverProfileScreen(
                 driverId: driver?.id.toString() ?? '',
+
+                tripId: tripId,
+                shipmentCode: shipmentCode,
               ),
             ),
           );

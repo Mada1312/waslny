@@ -175,6 +175,18 @@
     "offline": "Offline",
     "online": "Online",
     "end_trip": "End Trip",
+    "change_password": "Change Password",
+    "new_password_required": "Your new password",
+    "pass_validation": "Password must be at least 6 characters",
+    "current_password": "Current Password",
+    "are_you_sure_you_want_to_cancel_the_trip": "Are you sure you want to cancel the trip?",
+    "confirm_destination": "Confirm Destination",
+    "details": "Details",
+    "color": "Color",
+    "vehicle_plate_number": "Vehicle Plate Number",
+    "trips_no": "Trips No.",
+    "rates": "Ratings",
+    "no_rates": "There are no reviews to display.",
     "": "",
     "**": "**"
 }
