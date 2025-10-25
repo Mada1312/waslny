@@ -16,7 +16,7 @@ class DriverTripPrServiceItemWidget extends StatelessWidget {
   // final Shipment shipment;
 
   final bool withContactWidget;
-  final ShipmentDriverModel? trip;
+  final DriverTripModel? trip;
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +62,7 @@ class DriverTripPrServiceItemWidget extends StatelessWidget {
                       10.w.horizontalSpace,
                       Flexible(
                         child: AutoSizeText(
-                          "30/10/2023",
+                          trip?.day ?? "",
 
                           maxLines: 1,
                           style: getRegularStyle(),
@@ -84,7 +84,7 @@ class DriverTripPrServiceItemWidget extends StatelessWidget {
                       10.w.horizontalSpace,
                       Flexible(
                         child: AutoSizeText(
-                          "10:00 AM",
+                          trip?.time ?? "",
 
                           maxLines: 1,
                           style: getRegularStyle(),
@@ -99,11 +99,11 @@ class DriverTripPrServiceItemWidget extends StatelessWidget {
             10.h.verticalSpace,
             CustomFromToWidget(
               from: trip?.from,
-              to: trip?.toCountry?.name,
-              fromLat: trip?.lat,
-              fromLng: trip?.long,
-              toLat: null,
-              toLng: null,
+              to: trip?.to,
+              fromLat: trip?.fromLat,
+              fromLng: trip?.fromLong,
+              toLat: trip?.toLat,
+              toLng: trip?.toLong,
             ),
             // 10.h.verticalSpace,
             Padding(
@@ -153,7 +153,7 @@ class DriverTripPrServiceItemWidget extends StatelessWidget {
             //   shipmentCode: trip?.code,
             //   tripId: trip?.id.toString(),
             // ),
-             ],
+          ],
         ),
       ),
     );

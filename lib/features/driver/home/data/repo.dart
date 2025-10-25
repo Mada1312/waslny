@@ -28,12 +28,13 @@ class DriverHomeRepo {
     }
   }
 
-  Future<Either<Failure, DefaultPostModel>> cancleCurrentShipment({
-    required String id,
+  Future<Either<Failure, DefaultPostModel>> cancleTrip({
+    required int id,
   }) async {
     try {
-      final response = await api.get(
-        EndPoints.driverCancelCurrentShipmentUrl + id,
+      final response = await api.post(
+        EndPoints.driverCancelTripUrl,
+        body: {"trip_id": id},
       );
       return Right(DefaultPostModel.fromJson(response));
     } on ServerException {

@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:waslny/core/exports.dart';
-import 'package:waslny/features/driver/trips/screens/data/models/get_shipments_model.dart';
+import 'package:waslny/features/driver/trips/screens/data/models/get_trips_model.dart';
 import 'package:waslny/features/driver/trips/screens/data/models/shipment_details_model.dart';
 import '../screens/data/repo.dart';
 import 'state.dart';
@@ -32,13 +32,13 @@ class DriverTripsCubit extends Cubit<DriverTripsState> {
   }
   //// API Calls ////
 
-  GetDriverShipmentsModel? shipmentsModel;
+  GetDriverTripsModel? getTripsModel;
   Future<void> getTrips() async {
     emit(GetTripsLoadingState());
     try {
-      var response = await api.getDriverShipments();
+      var response = await api.getDriverScheduleTrips();
       response.fold((failure) => emit(GetTripsErrorState()), (shipments) {
-        shipmentsModel = shipments;
+        getTripsModel = shipments;
         emit(GetTripsSuccessState());
       });
     } catch (e) {

@@ -175,7 +175,12 @@
   "offline": "غير متصل",
   "online": "متصل",
   "end_trip":"انهاء الرحلة",
-  "":"",
+  "are_you_sure_you_want_to_reject_trip": "هل انت متاكد من رفض الرحلة؟",
+  "are_you_sure_you_want_to_cancel_trip" : "تم جدولة هذه الرحل هل حقا تريد الالغاء؟",
+  "are_you_sure_you_want_to_end_trip" : "وصلت لوجهتك وتريد انهاء الرحلة؟",
+  "are_you_sure_you_want_to_start_trip" : "هل انت متاكد من بدء الرحلة؟",
+
+   "":"",
  
   "**": "**"
 }

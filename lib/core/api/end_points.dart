@@ -31,12 +31,11 @@ class EndPoints {
   static const String driverHomeUrl = '${baseUrl}driver/get-home';
   static const String driverShipmnetDetailsUrl =
       '${baseUrl}driver/get-shipment/';
-  static const String driverShipmentsUrl =
-      '${baseUrl}driver/get-complete-shipments';
+  static const String driverScheduleTripsUrl =
+      '${baseUrl}driver/get-my-schedule-trips';
   static const String driverCompleteShipmentUrl =
       '${baseUrl}driver/mark-shipment-complete/';
-  static const String driverCancelCurrentShipmentUrl =
-      '${baseUrl}driver/cancel-current-shipment/';
+  static const String driverCancelTripUrl = '${baseUrl}cancel-trip';
   static const String addShipmentLocationUrl =
       '${baseUrl}add-shipment-location';
   static const String addRateUrl = '${baseUrl}add-rate';

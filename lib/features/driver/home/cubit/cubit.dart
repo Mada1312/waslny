@@ -28,8 +28,7 @@ class DriverHomeCubit extends Cubit<DriverHomeState> {
         isDataVerifided = homeModel?.data?.user?.isVerified == 1;
         if (homeModel?.data?.user?.isDataUploaded != 1) {
           Navigator.pushNamed(context, Routes.driverDataRoute);
-        }
-       else if (homeModel?.data?.user?.isVerified != 1) {
+        } else if (homeModel?.data?.user?.isVerified != 1) {
           completeDialog(
             context,
             btnOkText: 'done'.tr(),
@@ -81,33 +80,33 @@ class DriverHomeCubit extends Cubit<DriverHomeState> {
   }
 
   Future<void> cancleCurrentShipment({
-    required String shipmentId,
+    required int tripId,
     required BuildContext context,
   }) async {
     AppWidget.createProgressDialog(context, msg: "...");
-    emit(CancelShipmentLoadingState());
+    emit(CancelTripLoadingState());
     try {
-      final response = await api.cancleCurrentShipment(id: shipmentId);
+      final response = await api.cancleTrip(id: tripId);
       response.fold(
         (failure) {
           Navigator.pop(context); // Close the progress dialog
-          emit(CancelShipmentErrorState());
+          emit(CancelTripErrorState());
         },
         (response) {
           Navigator.pop(context); // Close the progress dialog
           if (response.status == 200 || response.status == 201) {
-            emit(CancelShipmentSuccessState());
-            successGetBar(response.msg ?? "Shipment cancelled successfully");
+            emit(CancelTripSuccessState());
+            successGetBar(response.msg ?? "Trip cancelled successfully");
             Navigator.pushNamed(context, Routes.mainRoute, arguments: true);
             getDriverHomeData(context);
           } else {
-            errorGetBar(response.msg ?? "Failed to cancel shipment");
+            errorGetBar(response.msg ?? "Failed to cancel trip");
           }
         },
       );
     } catch (e) {
       log("Error in cancelShipment: $e");
-      emit(CancelShipmentErrorState());
+      emit(CancelTripErrorState());
     }
   }
 
