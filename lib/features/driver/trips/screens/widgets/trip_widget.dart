@@ -154,7 +154,7 @@ class DriverTripPrServiceItemWidget extends StatelessWidget {
             //   tripId: trip?.id.toString(),
             // ),
           ],
-          ],
+        
         ),
       ),
     );
