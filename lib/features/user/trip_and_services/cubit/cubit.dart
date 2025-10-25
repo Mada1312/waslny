@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:waslny/core/exports.dart';
+import 'package:waslny/core/utils/general_enum.dart';
 import 'package:waslny/features/user/home/cubit/cubit.dart';
 import 'package:waslny/features/user/home/data/models/get_home_model.dart';
 import 'package:waslny/features/user/trip_and_services/data/models/get_shipments.dart';
@@ -53,13 +54,6 @@ class UserTripAndServicesCubit extends Cubit<UserTripAndServicesState> {
 
   //!TRIP AND SERVICES
 
-  void changeSelectedStatus(ShipmentsStatusEnum status) {
-    selectedStatus = status;
-
-    emit(ChangeShipmentsStatusState());
-    getShipments();
-  }
-
   Driver? selectedDriver;
   void changeSelectedDriver(Driver? driver) {
     if (driver == selectedDriver) {
@@ -84,24 +78,6 @@ class UserTripAndServicesCubit extends Cubit<UserTripAndServicesState> {
   void changeRateValue(double value) {
     rateValue = value;
     emit(ChangeRateValueState());
-  }
-
-  //// API Calls  ////
-  GetShipmentsModel? shipmentsModel;
-  Future<void> getShipments() async {
-    emit(ShipmentsLoadingState());
-    try {
-      final response = await api.getShipments(
-        status: selectedStatus.index.toString(),
-      );
-      response.fold((failure) => emit(ShipmentsErrorState()), (shipments) {
-        shipmentsModel = shipments;
-        emit(ShipmentsLoadedState());
-      });
-    } catch (e) {
-      log("Error in getShipments: $e");
-      emit(ShipmentsErrorState());
-    }
   }
 
   GetUserShipmentDetailsModel? shipmentDetailsModel;
@@ -343,6 +319,39 @@ class UserTripAndServicesCubit extends Cubit<UserTripAndServicesState> {
 
     Share.shareXFiles([XFile(file.path)], text: "مشاركة الشحنة");
     emit(ScreenshootState());
+  }
+
+  GetUserHomeModel? completedTripsModel;
+  getCompletedTripsAndServices(ServicesType serviceType) async {
+    emit(LoadingCompletedTripAndServiceState());
+    final res = await api.getCompletedTripsAndServices(
+      type: serviceType.name == ServicesType.trips.name ? '0' : '1',
+    );
+    res.fold(
+      (failure) {
+        log("Error in getCompletedTripsAndServices");
+        emit(ErrorCompletedTripAndServiceState());
+      },
+      (r) {
+        completedTripsModel = r;
+        emit(LoadedCompletedTripAndServiceState());
+      },
+    );
+  }
+
+  Future<void> cancelTrip(String tripId) async {
+    emit(LoadingCancelTripAndServiceState());
+    final res = await api.cancelTrip(tripId: tripId);
+    res.fold(
+      (failure) {
+        log("Error in getCompletedTripsAndServices");
+        emit(ErrorCancelTripAndServiceState());
+      },
+      (r) {
+        successGetBar(r.msg ?? "تم إلغاء الرحلة بنجاح");
+        emit(LoadedCancelTripAndServiceState());
+      },
+    );
   }
 }
 

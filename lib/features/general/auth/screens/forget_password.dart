@@ -47,17 +47,37 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                           title: 'phone_number'.tr(),
                           isRequired: true,
                           controller: cubit.phoneNumberForgetController,
-                          onChanged: (p0) {
+                          onChanged: (phone) {
                             setState(() {
-                              cubit.fullPhoneNumber = p0.completeNumber
-                                  .replaceAll('+', '');
+                              String nationalNumber = phone.number;
+
+                              if (phone.countryISOCode == 'EG' &&
+                                  nationalNumber.startsWith('0') &&
+                                  nationalNumber.length == 11) {
+                                // If it's an 11-digit EG number, remove the leading '0'
+                                // "01012345678" -> "1012345678"
+                                nationalNumber = nationalNumber.substring(1);
+                              }
+
+                              // Get the country code without the '+' (e.g., "+20" -> "20")
+                              String countryCode = phone.countryCode.replaceAll(
+                                '+',
+                                '',
+                              );
+
+                              // Combine them to get the full number your Cubit/API expects
+                              // "20" + "1012345678" = "201012345678"
+                              cubit.fullPhoneNumber =
+                                  "$countryCode$nationalNumber";
                             });
-                            log('Phone completeNumber ${p0.completeNumber}');
-                            log(
-                              'Phone fullPhoneNumber ${cubit.fullPhoneNumber}',
-                            );
-                            log('Phone countryCode ${p0.countryCode}');
-                            log('Phone number ${p0.number}');
+                            // setState(() {
+                            //   cubit.fullPhoneNumber =
+                            //       p0.completeNumber.replaceAll('+', '');
+                            // });
+                            // log('Phone completeNumber ${p0.completeNumber}');
+                            // log('Phone fullPhoneNumber ${cubit.fullPhoneNumber}');
+                            // log('Phone countryCode ${p0.countryCode}');
+                            // log('Phone number ${p0.number}');
                           },
                         ),
                         32.h.verticalSpace,

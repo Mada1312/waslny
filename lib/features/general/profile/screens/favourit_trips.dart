@@ -103,8 +103,8 @@ class _UserFavTripsAndServicesState extends State<UserFavTripsAndServices> {
                                           .serviceType
                                           ?.name ==
                                       ServicesType.trips.name)
-                                  ? cubit.mainFavModel!.data!.trips!.length
-                                  : cubit.mainFavModel!.data!.services!.length,
+                                  ? cubit.mainFavModel?.data!.trips!.length
+                                  : cubit.mainFavModel?.data!.services!.length,
 
                               itemBuilder: (context, index) {
                                 var trip =
@@ -229,18 +229,22 @@ class _UserFavTripsAndServicesState extends State<UserFavTripsAndServices> {
 
                                             InkWell(
                                               onTap: () {
-                                                warningDialog(
-                                                  context,
-                                                  btnOkText: 'delete'.tr(),
+                                                if (trip.isFav == true) {
+                                                  warningDialog(
+                                                    context,
+                                                    btnOkText: 'delete'.tr(),
 
-                                                  title: 'remove_from_fav'.tr(),
-                                                  onPressedOk: () {
-                                                    cubit.actionFav(
-                                                      trip.id?.toString() ?? '',
-                                                      context: context,
-                                                    );
-                                                  },
-                                                );
+                                                    title: 'remove_from_fav'
+                                                        .tr(),
+                                                    onPressedOk: () {
+                                                      cubit.actionFav(
+                                                        trip.id?.toString() ??
+                                                            '',
+                                                        context: context,
+                                                      );
+                                                    },
+                                                  );
+                                                }
                                                 //! remove form fav
                                               },
                                               child: Container(

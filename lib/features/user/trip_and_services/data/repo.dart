@@ -1,6 +1,7 @@
 import 'package:waslny/core/exports.dart';
 import 'package:waslny/core/preferences/preferences.dart';
 import 'package:waslny/features/general/auth/data/model/validate_data.dart';
+import 'package:waslny/features/user/home/data/models/get_home_model.dart';
 import 'package:waslny/features/user/trip_and_services/data/models/get_shipments.dart';
 
 import 'models/shipment_details.dart';
@@ -22,22 +23,47 @@ class UserShipmentsRepo {
 
   //!
 
-  Future<Either<Failure, GetShipmentsModel>> getShipments({
-    required String status,
+  // Future<Either<Failure, GetShipmentsModel>> getShipments({
+  //   required String status,
+  // }) async {
+  //   try {
+  //     final userModel = await Preferences.instance.getUserModel();
+  //     String? userId = userModel.data?.id.toString();
+
+  //     final response = await api.get(
+  //       EndPoints.mainGetDataUrl,
+  //       queryParameters: {
+  //         "model": "Shipment",
+  //         "where[0]": "status,$status",
+  //         if (userId != null) "where[1]": "user_id,$userId",
+  //       },
+  //     );
+  //     return Right(GetShipmentsModel.fromJson(response));
+  //   } on ServerException {
+  //     return Left(ServerFailure());
+  //   }
+  // }
+
+  Future<Either<Failure, GetUserHomeModel>> getCompletedTripsAndServices({
+    required String type,
   }) async {
     try {
-      final userModel = await Preferences.instance.getUserModel();
-      String? userId = userModel.data?.id.toString();
+      final response = await api.get('${EndPoints.getMyTrips}$type');
+      return Right(GetUserHomeModel.fromJson(response));
+    } on ServerException {
+      return Left(ServerFailure());
+    }
+  }
 
-      final response = await api.get(
-        EndPoints.mainGetDataUrl,
-        queryParameters: {
-          "model": "Shipment",
-          "where[0]": "status,$status",
-          if (userId != null) "where[1]": "user_id,$userId",
-        },
+  Future<Either<Failure, DefaultMainModel>> cancelTrip({
+    required String tripId,
+  }) async {
+    try {
+      final response = await api.post(
+        EndPoints.cancelTrip,
+        body: {"trip_id": tripId},
       );
-      return Right(GetShipmentsModel.fromJson(response));
+      return Right(DefaultMainModel.fromJson(response));
     } on ServerException {
       return Left(ServerFailure());
     }
