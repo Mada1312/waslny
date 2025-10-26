@@ -1,7 +1,12 @@
 import 'dart:io';
 
+import 'package:url_launcher/url_launcher.dart';
 import 'package:waslny/core/utils/general_enum.dart';
+import 'package:waslny/features/driver/home/cubit/cubit.dart';
+import 'package:waslny/features/driver/my_profile/cubit/cubit.dart';
+import 'package:waslny/features/general/profile/cubit/cubit.dart';
 import 'package:waslny/features/user/add_new_trip/cubit/cubit.dart';
+import 'package:waslny/features/user/home/cubit/cubit.dart';
 
 import '../../../../core/exports.dart';
 import '../../../../core/preferences/preferences.dart';
@@ -17,6 +22,9 @@ class LoginCubit extends Cubit<LoginState> {
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
   TextEditingController nameController = TextEditingController();
+  TextEditingController vehicleModelController = TextEditingController();
+  TextEditingController vehicleNumberController = TextEditingController();
+  TextEditingController vehicleColorController = TextEditingController();
   TextEditingController pinController = TextEditingController();
   TextEditingController phoneNumberForgetController = TextEditingController();
   String? fullPhoneNumber;
@@ -90,53 +98,81 @@ class LoginCubit extends Cubit<LoginState> {
     confirmNewPasswordController.clear();
     phoneNumberForgetController.clear();
   }
+  // Future<void> valudateData(BuildContext context, bool isDriver) async {
+  //   try {
+  //     AppWidget.createProgressDialog(context, msg: 'loading'.tr());
+  //     emit(LoadingValidateDataState());
+  //     final res = await api.validateData(
+  //       isDriver: isDriver,
+  //       name: nameController.text,
+  //       gender: gender?.name == Gender.male.name ? '0' : '1',
+  //       vehicleType: vehicleType?.name == VehicleType.car.name
+  //           ? 'car'
+  //           : 'scooter', //TODO get it from List
+  //       phone: fullPhoneNumber ?? '',
+  //       password: passwordController.text,
+  //       vehicleModel: vehicleModelController.text,
+  //       vehicleNumber: vehicleNumberController.text,
+  //       vehicleColor: vehicleColorController.text,
+  //     );
+  //     res.fold(
+  //       (l) {
+  //         emit(ErrorValidateDataState());
+  //         Navigator.pop(context);
+  //         errorGetBar(l.toString()); //!
+  //       },
+  //       (r) async {
+  //         //! Nav to Main Screen
+  //         emit(LoadedValidateDataState());
+  //         if (r.status == 200) {
+  //           successGetBar(r.msg);
+  //           Navigator.pop(context);
 
-  Future<void> valudateData(BuildContext context, bool isDriver) async {
-    try {
-      AppWidget.createProgressDialog(context, msg: 'loading'.tr());
-      emit(LoadingValidateDataState());
-      final res = await api.validateData(
-        isDriver: isDriver,
-        name: nameController.text,
-        gender: gender?.name == Gender.male.name ? '0' : '1',
-        vehicleType: vehicleType?.name == VehicleType.car.name
-            ? 'car'
-            : 'scooter', //TODO get it from List
-        phone: fullPhoneNumber ?? '',
-        password: passwordController.text,
+  //           Navigator.pushReplacementNamed(
+  //             context,
+  //             Routes.verifyCodeScreen,
+  //             arguments: [isDriver, false],
+  //           );
+  //         } else {
+  //           Navigator.pop(context);
+
+  //           errorGetBar(r.msg ?? '');
+  //           emit(ErrorValidateDataState());
+  //         }
+  //         //!
+  //       },
+  //     );
+  //   } catch (e) {
+  //     Navigator.pop(context);
+  //     errorGetBar(e.toString()); //!
+  //     emit(ErrorValidateDataState());
+  //   }
+  // }
+
+  Future<void> _launchWhatsApp(BuildContext context) async {
+    Future<void> _launch(String? phone) async {
+      if (phone == null || phone.isEmpty) {
+        throw 'Phone number is not available';
+      }
+      final message = "Hello i want be partner in baraddy app";
+      final Uri whatsappUri = Uri(
+        scheme: 'https',
+        host: 'wa.me',
+        path: phone,
+        queryParameters: {'text': message},
       );
-      res.fold(
-        (l) {
-          emit(ErrorValidateDataState());
-          Navigator.pop(context);
-          errorGetBar(l.toString()); //!
-        },
-        (r) async {
-          //! Nav to Main Screen
-          emit(LoadedValidateDataState());
-          if (r.status == 200) {
-            successGetBar(r.msg);
-            Navigator.pop(context);
 
-            Navigator.pushReplacementNamed(
-              context,
-              Routes.verifyCodeScreen,
-              arguments: [isDriver, false],
-            );
-          } else {
-            Navigator.pop(context);
+      if (!await launchUrl(whatsappUri)) {
+        throw 'Could not launch $whatsappUri';
+      }
+    }
 
-            errorGetBar(r.msg ?? '');
-            emit(ErrorValidateDataState());
-          }
-
-          //!
-        },
-      );
-    } catch (e) {
-      Navigator.pop(context);
-      errorGetBar(e.toString()); //!
-      emit(ErrorValidateDataState());
+    final profileCubit = context.read<ProfileCubit>();
+    if (profileCubit.settings != null) {
+      await _launch(profileCubit.settings?.data?.waapiPhone);
+    } else {
+      await profileCubit.getSettings(context);
+      await _launch(profileCubit.settings?.data?.waapiPhone);
     }
   }
 
@@ -150,9 +186,12 @@ class LoginCubit extends Cubit<LoginState> {
       vehicleType: vehicleType?.name == VehicleType.car.name
           ? 'car'
           : 'scooter', //TODO get it from List
-      otp: pinController.text,
+      // otp: pinController.text,
       phone: fullPhoneNumber ?? '',
       password: passwordController.text,
+      vehicleModel: vehicleModelController.text,
+      vehicleNumber: vehicleNumberController.text,
+      vehicleColor: vehicleColorController.text,
     );
     res.fold(
       (l) {
@@ -166,8 +205,10 @@ class LoginCubit extends Cubit<LoginState> {
         emit(LoadedLoginState());
         if (r.status == 200) {
           await Preferences.instance.setUser(r);
-
+          await _launchWhatsApp(context);
           successGetBar(r.msg);
+               context.read<DriverHomeCubit>().homeModel = null;
+        context.read<UserHomeCubit>().homeModel = null;
           Navigator.pushNamedAndRemoveUntil(
             context,
             Routes.mainRoute,
@@ -187,7 +228,6 @@ class LoginCubit extends Cubit<LoginState> {
   }
 
   //! Login Method
-
   Future<void> forgetPasswordRequest(
     BuildContext context,
     bool isDriver,
@@ -228,10 +268,8 @@ class LoginCubit extends Cubit<LoginState> {
   }
 
   //!
-
   TextEditingController newPasswordController = TextEditingController();
   TextEditingController confirmNewPasswordController = TextEditingController();
-
   Future<void> resetPassword(BuildContext context, bool isDriver) async {
     try {
       AppWidget.createProgressDialog(context, msg: 'loading'.tr());
@@ -299,7 +337,6 @@ class LoginCubit extends Cubit<LoginState> {
   File? pickedUserCardProfileImage;
   File? pickedDeliveryFrontImage;
   File? pickedDeliveryBackImage;
-
   Future<void> pickUserCardImageFromGallery({
     bool isBackImage = false,
     bool isDeliveryBackImage = false,
@@ -310,7 +347,6 @@ class LoginCubit extends Cubit<LoginState> {
         final XFile? image = await picker.pickImage(
           source: ImageSource.gallery,
         );
-
         if (image != null) {
           pickedDeliveryBackImage = File(image.path);
           emit(PickImageFromGallaryState());
@@ -323,7 +359,6 @@ class LoginCubit extends Cubit<LoginState> {
         final XFile? image = await picker.pickImage(
           source: ImageSource.gallery,
         );
-
         if (image != null) {
           pickedDeliveryFrontImage = File(image.path);
           emit(PickImageFromGallaryState());
@@ -349,6 +384,9 @@ class LoginCubit extends Cubit<LoginState> {
   TextEditingController updateNameController = TextEditingController();
   TextEditingController updateAddressController = TextEditingController();
   TextEditingController updatePhoneNumberController = TextEditingController();
+  TextEditingController updateVehicleModelController = TextEditingController();
+  TextEditingController updateVehicleNumberController = TextEditingController();
+  TextEditingController updateVehicleColorController = TextEditingController();
 
   LoginModel? authData;
   onTapToEdit(BuildContext context, {bool isDeriver = false}) async {
@@ -498,12 +536,6 @@ class LoginCubit extends Cubit<LoginState> {
       final res = await api.updateDeliveryProfile(
         name: updateNameController.text,
         image: pickedProfileImage,
-        backDriverCard: pickedDeliveryBackImage,
-        frontDriverCard: pickedDeliveryFrontImage,
-        countries:
-            context.read<AddNewTripCubit>().selectedCountriesAtEditProfile ??
-            [],
-        truckTypeId: null,
       );
 
       res.fold(
@@ -517,6 +549,7 @@ class LoginCubit extends Cubit<LoginState> {
             successGetBar(r.msg.toString());
             Navigator.pop(context);
             getAuthData(context);
+            context.read<DriverProfileCubit>().getDriverDetails();
             emit(LoadedUpadteProfileState());
           } else {
             errorGetBar(r.msg.toString());

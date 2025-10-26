@@ -4,7 +4,9 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:waslny/core/exports.dart';
 import 'package:waslny/features/driver/home/data/models/driver_home_model.dart';
+import 'package:waslny/features/general/chat/screens/message_screen.dart';
 import 'package:waslny/features/general/location/cubit/location_cubit.dart';
+import 'package:waslny/features/general/profile/screens/profile_screen.dart';
 
 import '../cubit/cubit.dart';
 import '../cubit/state.dart';
@@ -179,10 +181,16 @@ class DriverHomeUI extends StatelessWidget {
                                   12.w.horizontalSpace,
                                   GestureDetector(
                                     onTap: () {
-                                      // Navigator.pushReplacementNamed(
-                                      //   context,
-                                      //   Routes.driverDataRoute,
-                                      // );
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) {
+                                            return ProfileScreen(
+                                              isDriver: true,
+                                            );
+                                          },
+                                        ),
+                                      );
                                     },
                                     child: Container(
                                       decoration: BoxDecoration(
@@ -458,49 +466,92 @@ class CustomsSheduledTripWidet extends StatelessWidget {
                 ),
               ],
               20.h.verticalSpace,
-              Row(
-                children: [
-                  Flexible(
-                    flex: 2,
-                    child: CustomButton(title: "chat_with_client".tr()),
-                  ),
-                  20.w.horizontalSpace,
-                  Flexible(
-                    flex: 1,
-                    child: CustomButton(
-                      title: "reject".tr(),
-                      btnColor: AppColors.secondPrimary,
-                      textColor: AppColors.primary,
+              trip?.status == 0
+                  ? Row(
+                      children: [
+                        Flexible(
+                          flex: 2,
+                          child: CustomButton(
+                            title: "chat_with_client".tr(),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => MessageScreen(
+                                    model: MainUserAndRoomChatModel(
+                                      driverId: trip?.driverId.toString(),
+                                      receiverId: trip?.userId.toString(),
+                                      tripId: trip?.id.toString(),
+                                      chatId: trip?.roomToken,
+                                      isDriver: true,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                        20.w.horizontalSpace,
+                        Flexible(
+                          flex: 1,
+                          child: CustomButton(
+                            title: "reject".tr(),
+                            btnColor: AppColors.secondPrimary,
+                            textColor: AppColors.primary,
+                            onPressed: () {
+                              warningDialog(
+                                context,
+                                title: "are_you_sure_you_want_to_reject_trip"
+                                    .tr(),
+                                onPressedOk: () {
+                                  context.read<DriverHomeCubit>().cancleTrip(
+                                    tripId: trip?.id ?? 0,
+                                    context: context,
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    )
+                  : trip?.status == 1
+                  ? CustomButton(
+                      title: "start_trip".tr(),
                       onPressed: () {
                         warningDialog(
                           context,
-                          title: "are_you_sure_you_want_to_reject_trip".tr(),
+                          title: "are_you_sure_you_want_to_start_trip".tr(),
                           onPressedOk: () {
-                            context
-                                .read<DriverHomeCubit>()
-                                .cancleCurrentShipment(
-                                  tripId: trip?.id ?? 0,
-                                  context: context,
-                                );
+                            context.read<DriverHomeCubit>().cancleTrip(
+                              tripId: trip?.id ?? 0,
+                              context: context,
+                            );
                           },
                         );
                       },
-                    ),
-                  ),
-                ],
-              ),
-
-              CustomButton(
-                title: "start_trip".tr(),
-                // btnColor: AppColors.secondPrimary,
-                // textColor: AppColors.primary,
-              ),
-
-              CustomButton(
-                title: "end_trip".tr(),
-                btnColor: AppColors.red,
-                textColor: AppColors.white,
-              ),
+                      // btnColor: AppColors.secondPrimary,
+                      // textColor: AppColors.primary,
+                    )
+                  : trip?.status == 2
+                  ? CustomButton(
+                      title: "end_trip".tr(),
+                      btnColor: AppColors.red,
+                      textColor: AppColors.white,
+                      onPressed: () {
+                        warningDialog(
+                          context,
+                          title: "are_you_sure_you_want_to_end_trip".tr(),
+                          onPressedOk: () {
+                            context.read<DriverHomeCubit>().endTrip(
+                              tripId: trip?.id ?? 0,
+                              context: context,
+                            );
+                          },
+                        );
+                      },
+                    )
+                  : Container(),
 
               80.h.verticalSpace,
             ],

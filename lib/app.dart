@@ -1,7 +1,7 @@
 import 'package:waslny/core/notification_services/notification_service.dart';
 import 'package:waslny/features/driver/home/cubit/cubit.dart';
+import 'package:waslny/features/driver/my_profile/cubit/cubit.dart';
 import 'package:waslny/features/driver/trips/cubit/cubit.dart';
-import 'package:waslny/features/driver/trips/screens/details/shipment_details_screen.dart';
 import 'package:waslny/features/general/change_password/cubit/change_password_cubit.dart';
 import 'package:waslny/features/user/home/cubit/cubit.dart';
 import 'package:waslny/features/user/trip_and_services/cubit/cubit.dart';
@@ -76,6 +76,9 @@ class _MyAppState extends State<MyApp> {
         BlocProvider(
           create: (_) => injector.serviceLocator<ChangePasswordCubit>(),
         ),
+        BlocProvider(
+          create: (_) => injector.serviceLocator<DriverProfileCubit>(),
+        ),
       ],
       child: GetMaterialApp(
         supportedLocales: context.supportedLocales,
@@ -91,7 +94,8 @@ class _MyAppState extends State<MyApp> {
         onGenerateRoute: AppRoutes.onGenerateRoute,
         routes: {
           '/': (context) => initialMessageRcieved != null
-              ? initialMessageRcieved?.data['reference_table'] == "shipments"
+              ?
+               initialMessageRcieved?.data['reference_table'] == "shipments"
                     ?
                       //  initialMessageRcieved?.data['user_type'].toString() == "0"
                       //       ? UserShipmentDetailsScreen(
@@ -105,19 +109,22 @@ class _MyAppState extends State<MyApp> {
                       //         )
                       //       :
                       // is driver
-                      initialMessageRcieved?.data['is_current'].toString() ==
-                              "1"
-                          ? MainScreen(isDriver: true)
-                          : DriverShipmentDetailsScreen(
-                              args: DriverSHipmentsArgs(
-                                shipmentId:
-                                    initialMessageRcieved?.data['reference_id']
-                                        .toString() ??
-                                    "",
-                                isNotification: true,
-                              ),
-                            )
-                    : (initialMessageRcieved?.data['reference_table'] ==
+                      // initialMessageRcieved?.data['is_current'].toString() ==
+                      //         "1"
+                      //     ? 
+                          MainScreen(isDriver: true)
+                          // :
+                          //  DriverShipmentDetailsScreen(
+                          //     args: DriverSHipmentsArgs(
+                          //       shipmentId:
+                          //           initialMessageRcieved?.data['reference_id']
+                          //               .toString() ??
+                          //           "",
+                          //       isNotification: true,
+                          //     ),
+                          //   )
+                    :
+                     (initialMessageRcieved?.data['reference_table'] ==
                           "chat_rooms")
                     ? MessageScreen(
                         model: MainUserAndRoomChatModel(

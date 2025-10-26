@@ -39,6 +39,9 @@ class ImageAssets {
   static const String loaderIcon = '$imagePath/dialog_logo.png';
   // static const String loaderIcon = '$imagePath/loader.png';
   static const String noData = '$imagePath/no_data.png';
+  static const String driverBack = '$imagePath/driver_back.png';
+  static const String driverEdit = '$imagePath/driver_edit.png';
+  static const String driverDone = '$imagePath/driver_done.png';
 
   //Lottie
 
@@ -91,4 +94,6 @@ class AppIcons {
   static const String upload = '$iconsPath/upload.svg';
   static const String backButton = '$iconsPath/back_button.svg';
   static const String changePass = '$iconsPath/change_pass.svg';
+  static const String percentage = '$iconsPath/percentage.svg';
+  static const String rate = '$iconsPath/rate.svg';
 }

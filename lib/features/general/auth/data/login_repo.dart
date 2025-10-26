@@ -46,6 +46,9 @@ class LoginRepo {
     required String name,
     String? gender,
     String? vehicleType,
+    String? vehicleModel,
+    String? vehicleNumber,
+    String? vehicleColor,
     required bool isDriver,
   }) async {
     try {
@@ -61,6 +64,9 @@ class LoginRepo {
           'user_type': isDriver ? '1' : '0',
           if (isDriver) 'vehicle_type': vehicleType,
           if (isDriver) 'gender': gender,
+          if (isDriver) 'vehicle_color': vehicleColor,
+          if (isDriver) 'vehicle_plate_number': vehicleNumber,
+          if (isDriver) 'vehicle_model': vehicleModel,
         },
       );
       log('validateData Response: ${response.toString()}');
@@ -75,10 +81,13 @@ class LoginRepo {
     required String phone,
     required String password,
     required String name,
-    required String otp,
+    // required String otp,
     required bool isDriver,
     required String gender,
     required String vehicleType,
+    required String vehicleModel,
+    required String vehicleNumber,
+    required String vehicleColor,
   }) async {
     try {
       var response = await dio.post(
@@ -93,10 +102,13 @@ class LoginRepo {
           'name': name,
           'password': password,
           'user_type': isDriver ? '1' : '0',
-          "otp": otp,
+          // "otp": otp,
 
           if (isDriver) 'vehicle_type': vehicleType,
           if (isDriver) 'gender': gender,
+          if (isDriver) 'vehicle_color': vehicleColor,
+          if (isDriver) 'vehicle_plate_number': vehicleNumber,
+          if (isDriver) 'vehicle_model': vehicleModel,
         },
       );
 
@@ -203,11 +215,9 @@ class LoginRepo {
 
   Future<Either<Failure, LoginModel>> updateDeliveryProfile({
     String? name,
-    File? frontDriverCard,
-    File? backDriverCard,
+    
     File? image,
-    List<GetCountriesAndTruckTypeModelData>? countries,
-    GetCountriesAndTruckTypeModelData? truckTypeId,
+   
   }) async {
     try {
       var response = await dio.post(
@@ -215,24 +225,13 @@ class LoginRepo {
         formDataIsEnabled: true,
         body: {
           'name': name,
-          for (int i = 0; i < countries!.length; i++)
-            'countries[$i]': countries[i].id.toString(),
-          if (truckTypeId != null) 'truck_type_id': truckTypeId.id.toString(),
+      
           if (image != null)
             'image': MultipartFile.fromFileSync(
               image.path,
               filename: image.path.split('/').last,
             ),
-          if (frontDriverCard != null)
-            'front_driver_card': MultipartFile.fromFileSync(
-              frontDriverCard.path,
-              filename: frontDriverCard.path.split('/').last,
-            ),
-          if (backDriverCard != null)
-            'back_driver_card': MultipartFile.fromFileSync(
-              backDriverCard.path,
-              filename: backDriverCard.path.split('/').last,
-            ),
+         
         },
       );
 

@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:waslny/features/driver/trips/screens/data/models/shipment_details_model.dart';
+import 'package:waslny/features/driver/trips/data/models/shipment_details_model.dart';
 import 'package:waslny/features/user/add_new_trip/data/models/countries_and_types_model.dart';
 import 'package:waslny/features/user/home/data/models/get_home_model.dart';
 

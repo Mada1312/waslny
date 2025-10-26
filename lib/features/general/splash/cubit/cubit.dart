@@ -10,7 +10,7 @@ class SplashCubit extends Cubit<SplashState> {
   SplashCubit() : super(SplashInitial()) {
     checkUserStatus();
   }
-//test branch
+  //test branch
   Future<void> checkUserStatus() async {
     await Future.delayed(const Duration(seconds: 3)); // mimic splash delay
     SharedPreferences prefs = await SharedPreferences.getInstance();

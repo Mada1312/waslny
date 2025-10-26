@@ -28,9 +28,11 @@ class CustomButton extends StatelessWidget {
       onTap: isDisabled ? null : onPressed,
       // borderRadius: BorderRadius.circular(30.sp),
       child: Container(
+        height: 50.h,
         width: width ?? double.infinity,
         alignment: Alignment.center,
-        padding: padding ?? EdgeInsets.all(15.sp),
+        padding: padding ?? EdgeInsets.symmetric(horizontal: 5.w),
+        // padding: padding ?? EdgeInsets.all(15.sp),
         decoration: BoxDecoration(
           color: isDisabled
               ? AppColors.primary.withOpacity(0.3)
@@ -39,6 +41,7 @@ class CustomButton extends StatelessWidget {
         ),
         child: AutoSizeText(
           title,
+          maxLines: 1,
           style: getBoldStyle(
             color: textColor ?? AppColors.secondPrimary,
             fontSize: 16.sp,

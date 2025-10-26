@@ -87,10 +87,10 @@ class CustomTheUserInfo extends StatelessWidget {
                 )
               : InkWell(
                   onTap: () {
-                    cubit.requestShipment(
-                      shipmentId: tripId ?? "",
-                      context: context,
-                    );
+                    // cubit.requestShipment(
+                    //   shipmentId: tripId ?? "",
+                    //   context: context,
+                    // );
                   },
                   child: CircleAvatar(
                     radius: 20.r,
@@ -110,10 +110,10 @@ class CustomTheUserInfo extends StatelessWidget {
                   context,
                   title: "delete_shipment_sure".tr(),
                   onPressedOk: () {
-                    cubit.cancelRequestShipment(
-                      shipmentId: tripId ?? "",
-                      context: context,
-                    );
+                    // cubit.cancelRequestShipment(
+                    //   shipmentId: tripId ?? "",
+                    //   context: context,
+                    // );
                   },
                 );
               },

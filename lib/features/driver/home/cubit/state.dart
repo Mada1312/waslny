@@ -14,11 +14,11 @@ class CompleteShipmentSuccessState extends DriverHomeState {}
 
 class CompleteShipmentLoadingState extends DriverHomeState {}
 
-class CancelTripErrorState extends DriverHomeState {}
+class UpdateTripStatusErrorState extends DriverHomeState {}
 
-class CancelTripSuccessState extends DriverHomeState {}
+class UpdateTripStatusSuccessState extends DriverHomeState {}
 
-class CancelTripLoadingState extends DriverHomeState {}
+class UpdateTripStatusLoadingState extends DriverHomeState {}
 
 class BackgroundLocationUpdated extends DriverHomeState {}
 

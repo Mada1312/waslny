@@ -1,7 +1,7 @@
 import 'package:waslny/features/driver/home/screens/driver_data_screen.dart';
-import 'package:waslny/features/driver/trips/screens/details/shipment_details_screen.dart';
 import 'package:waslny/features/driver/trips/screens/trips_screen.dart';
 import 'package:waslny/features/general/change_password/screen/change_password.dart';
+import 'package:waslny/features/general/not_verified_user.dart';
 import 'package:waslny/features/user/home/screens/all_trips_and_services.dart';
 import 'package:waslny/features/user/trip_and_services/screens/details/shipment_details_screen.dart';
 import 'package:waslny/features/user/trip_and_services/screens/trips_and_services.dart';
@@ -47,6 +47,8 @@ class Routes {
   static const String driverTripsRoute = '/driverTripsRoute';
   static const String changePasswordScreen = '/ChangePasswordScreen';
   static const String allTripsScreenRoute = '/allTripsScreenRoute';
+    static const String notVerifiedUserRoute = '/notVerifiedUserRoute';
+
 }
 
 class AppRoutes {
@@ -57,14 +59,14 @@ class AppRoutes {
       case Routes.initialRoute:
         return MaterialPageRoute(builder: (context) => const SplashScreen());
 
-      // case Routes.detailsRoute:
-      //   final service = settings.arguments as ServicesModel;
-      //   return MaterialPageRoute(
-      //     // Extract the service model argument from the settings arguments map
-      //
-      //     builder: (context) => Details(service: service),
-      //   );
-      //
+ case Routes.notVerifiedUserRoute:
+        bool isDriver = settings.arguments as bool;
+        return PageTransition(
+          child: NotVerifiedUserScreen(isDriver: isDriver),
+          type: PageTransitionType.fade,
+          alignment: Alignment.center,
+          duration: const Duration(milliseconds: 800),
+        );
       case Routes.loginRoute:
         bool isDriver = settings.arguments as bool;
         return PageTransition(
@@ -145,14 +147,14 @@ class AppRoutes {
       //     alignment: Alignment.center,
       //     duration: const Duration(milliseconds: 800),
       //   );
-      case Routes.driverShipmentDetailsRoute:
-        DriverSHipmentsArgs args = settings.arguments as DriverSHipmentsArgs;
-        return PageTransition(
-          child: DriverShipmentDetailsScreen(args: args),
-          type: PageTransitionType.fade,
-          alignment: Alignment.center,
-          duration: const Duration(milliseconds: 800),
-        );
+      // case Routes.driverShipmentDetailsRoute:
+      //   DriverSHipmentsArgs args = settings.arguments as DriverSHipmentsArgs;
+      //   return PageTransition(
+      //     child: DriverShipmentDetailsScreen(args: args),
+      //     type: PageTransitionType.fade,
+      //     alignment: Alignment.center,
+      //     duration: const Duration(milliseconds: 800),
+      //   );
 
       case Routes.addNewTripRoute:
         AddTripArgs args = settings.arguments as AddTripArgs;

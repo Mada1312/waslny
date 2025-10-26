@@ -1,7 +1,9 @@
 import 'package:waslny/features/driver/home/cubit/cubit.dart';
 import 'package:waslny/features/driver/home/data/repo.dart';
+import 'package:waslny/features/driver/my_profile/cubit/cubit.dart';
+import 'package:waslny/features/driver/my_profile/data/repo.dart';
 import 'package:waslny/features/driver/trips/cubit/cubit.dart';
-import 'package:waslny/features/driver/trips/screens/data/repo.dart';
+import 'package:waslny/features/driver/trips/data/repo.dart';
 import 'package:waslny/features/general/change_password/cubit/change_password_cubit.dart';
 import 'package:waslny/features/general/change_password/data/change_password_repo.dart';
 import 'package:waslny/features/user/home/cubit/cubit.dart';
@@ -54,6 +56,7 @@ Future<void> setupCubit() async {
   serviceLocator.registerFactory(() => NotificationsCubit(serviceLocator()));
   serviceLocator.registerFactory(() => DriverDetailsCubit(serviceLocator()));
   serviceLocator.registerFactory(() => ChangePasswordCubit(serviceLocator()));
+  serviceLocator.registerFactory(() => DriverProfileCubit(serviceLocator()));
 }
 
 Future<void> setupRepo() async {
@@ -80,6 +83,9 @@ Future<void> setupRepo() async {
   );
   serviceLocator.registerLazySingleton(
     () => ChangePasswordRepo(serviceLocator()),
+  );
+  serviceLocator.registerLazySingleton(
+    () => DriverProfileRepo(serviceLocator()),
   );
 }
 

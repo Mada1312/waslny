@@ -17,11 +17,24 @@ class DriverHomeRepo {
     }
   }
 
-  Future<Either<Failure, DefaultPostModel>> completeShipment({
-    required String id,
-  }) async {
+  Future<Either<Failure, DefaultPostModel>> startTrip({required int id}) async {
     try {
-      final response = await api.get(EndPoints.driverCompleteShipmentUrl + id);
+      final response = await api.post(
+        EndPoints.driverStartTripUrl,
+        body: {"trip_id": id},
+      );
+      return Right(DefaultPostModel.fromJson(response));
+    } on ServerException {
+      return Left(ServerFailure());
+    }
+  }
+
+  Future<Either<Failure, DefaultPostModel>> endTrip({required int id}) async {
+    try {
+      final response = await api.post(
+        EndPoints.driverEndTripUrl,
+        body: {"trip_id": id},
+      );
       return Right(DefaultPostModel.fromJson(response));
     } on ServerException {
       return Left(ServerFailure());
@@ -35,24 +48,6 @@ class DriverHomeRepo {
       final response = await api.post(
         EndPoints.driverCancelTripUrl,
         body: {"trip_id": id},
-      );
-      return Right(DefaultPostModel.fromJson(response));
-    } on ServerException {
-      return Left(ServerFailure());
-    }
-  }
-
-  Future<Either<Failure, DefaultPostModel>> addShipmemntLocation({
-    required String id,
-  }) async {
-    try {
-      final response = await api.post(
-        EndPoints.addShipmentLocationUrl,
-        body: {
-          "shipment_id": id,
-          "location": "test location",
-          "key": "addShipmentLocation",
-        },
       );
       return Right(DefaultPostModel.fromJson(response));
     } on ServerException {

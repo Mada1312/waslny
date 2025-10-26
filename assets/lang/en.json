@@ -191,6 +191,20 @@
     "are_you_sure_you_want_to_cancel_trip" : "This trip is already scheduled, are you sure you want to cancel it?",
     "are_you_sure_you_want_to_end_trip" : "You have reached the destination, do you want to end the trip?",
     "are_you_sure_you_want_to_start_trip" : "Are you sure you want to start the trip?",
+    "past": "Past",
+    "yesterday": "Yesterday",
+    "today": "Today",
+    "vehicle_color": "Vehicle Color",
+    "vehicle_model": "Vehicle Model",
+    "enter" : "Enter ",
+    "accept_trip": "Accept Trip",
+    "another_trip": "Another Trip",
+    "change_captain": "Change Captain",
+    "accept": "Accept",
+    "arrived": "Arrived",
+  
+
+    
     "": "",
     "**": "**"
 }

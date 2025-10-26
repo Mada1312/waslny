@@ -39,7 +39,7 @@ class MainSettingModelData {
   String? whatsappNumber;
   String? facebookLink;
   String? instaLink;
-
+String? waapiPhone;
   MainSettingModelData({
     this.appName,
     this.logo,
@@ -54,6 +54,7 @@ class MainSettingModelData {
     this.whatsappNumber,
     this.privacy,
     this.instaLink,
+    this.waapiPhone
   });
 
   factory MainSettingModelData.fromJson(Map<String, dynamic> json) =>
@@ -71,6 +72,7 @@ class MainSettingModelData {
         iosAppVersion: json["ios_app_version"],
         liveLocationHours: json["live_location_hours"],
         privacy: json["privacy"],
+         waapiPhone: json["waapi_phone"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -87,5 +89,6 @@ class MainSettingModelData {
         "ios_app_version": iosAppVersion,
         "live_location_hours": liveLocationHours,
         "privacy": privacy,
+        "waapi_phone": waapiPhone,
       };
 }

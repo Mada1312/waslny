@@ -17,7 +17,7 @@ class DriverDataScreen extends StatefulWidget {
 class _DriverDataScreenState extends State<DriverDataScreen> {
   @override
   void initState() {
-    context.read<DriverHomeCubit>().changeSelectedIndex(1);
+    context.read<DriverHomeCubit>().changeSelectedStep(1);
 
     super.initState();
   }
@@ -38,7 +38,7 @@ class _DriverDataScreenState extends State<DriverDataScreen> {
           child: Scaffold(
             appBar: customAppBar(
               context,
-              leading: cubit.selectedIndex != 1
+              leading: cubit.selectedStep != 1
                   ? IconButton(
                       icon: Icon(
                         Icons.arrow_back_rounded,
@@ -46,7 +46,7 @@ class _DriverDataScreenState extends State<DriverDataScreen> {
                       ),
                       padding: EdgeInsets.zero,
                       onPressed: () =>
-                          cubit.changeSelectedIndex(cubit.selectedIndex - 1),
+                          cubit.changeSelectedStep(cubit.selectedStep - 1),
                     )
                   : Container(),
               title: 'fill_data_to_start'.tr(),
@@ -61,7 +61,7 @@ class _DriverDataScreenState extends State<DriverDataScreen> {
                     for (int i = 0; i < DriverDataSteps.values.length; i++) ...[
                       CustomStepNumber(
                         step: i + 1,
-                        isSelected: cubit.selectedIndex == i + 1,
+                        isSelected: cubit.selectedStep == i + 1,
                       ),
                       if (i != DriverDataSteps.values.length)
                         20.w.horizontalSpace, // space between items
@@ -73,7 +73,7 @@ class _DriverDataScreenState extends State<DriverDataScreen> {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20.0),
                     child: IndexedStack(
-                      index: cubit.selectedIndex - 1,
+                      index: cubit.selectedStep - 1,
                       children: const [
                         CustomVehicleInfo(),
                         DriverLicenseStep(),
@@ -88,13 +88,13 @@ class _DriverDataScreenState extends State<DriverDataScreen> {
                   padding: const EdgeInsets.all(20.0),
                   child: CustomButton(
                     isDisabled: cubit.isNextButtonDisabled(
-                      DriverDataSteps.values[cubit.selectedIndex - 1],
+                      DriverDataSteps.values[cubit.selectedStep - 1],
                     ),
                     title: 'next'.tr(),
                     onPressed: () =>
-                        cubit.selectedIndex + 1 > DriverDataSteps.values.length
+                        cubit.selectedStep + 1 > DriverDataSteps.values.length
                         ? cubit.updateDeliveryProfile(context)
-                        : cubit.changeSelectedIndex(cubit.selectedIndex + 1),
+                        : cubit.changeSelectedStep(cubit.selectedStep + 1),
                   ),
                 ),
                 20.h.verticalSpace,
