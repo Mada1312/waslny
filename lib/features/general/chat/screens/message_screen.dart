@@ -164,43 +164,158 @@ class _MessageScreenState extends State<MessageScreen> {
                                 // Input Field
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: Container(
-                                          padding: EdgeInsets.symmetric(
-                                            horizontal: 10.w,
-                                            vertical: 8.h,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color: AppColors.white,
-                                            borderRadius: BorderRadius.circular(
-                                              30.sp,
+                                  child: IntrinsicHeight(
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.stretch,
+                                      children: [
+                                        Expanded(
+                                          child: Container(
+                                            padding: EdgeInsets.symmetric(
+                                              horizontal: 10.w,
+                                              vertical: 8.h,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color: AppColors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(30.sp),
+                                            ),
+                                            child: Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                IconButton(
+                                                  onPressed: () {
+                                                    _showBottomSheet(
+                                                      context,
+                                                      cubit,
+                                                    );
+                                                  },
+                                                  icon: Icon(
+                                                    Icons
+                                                        .emoji_emotions_outlined,
+                                                    color: AppColors.gray,
+                                                    size: 24.sp,
+                                                  ),
+                                                ),
+                                                Expanded(
+                                                  child: TextField(
+                                                    onSubmitted: (value) {
+                                                      cubit.sendMessage(
+                                                        receiverId: widget
+                                                            .model
+                                                            .receiverId,
+
+                                                        chatId:
+                                                            widget
+                                                                .model
+                                                                .chatId ??
+                                                            cubit
+                                                                .createChatRoomModel
+                                                                ?.data
+                                                                ?.roomToken ??
+                                                            '',
+                                                      );
+                                                    },
+                                                    controller:
+                                                        cubit.messageController,
+                                                    decoration: InputDecoration(
+                                                      hintText: "write_msg"
+                                                          .tr(),
+                                                      hintStyle: TextStyle(
+                                                        color: AppColors.gray,
+                                                      ),
+                                                      contentPadding:
+                                                          EdgeInsets.symmetric(
+                                                            horizontal: 5.w,
+                                                            vertical: 5.h,
+                                                          ),
+                                                      border: OutlineInputBorder(
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                              20.sp,
+                                                            ),
+                                                        borderSide:
+                                                            BorderSide.none,
+                                                      ),
+                                                      filled: true,
+                                                      fillColor: AppColors.gray
+                                                          .withOpacity(0.1),
+                                                    ),
+                                                  ),
+                                                ),
+
+                                                // IconButton(
+                                                //   onPressed: () {
+                                                //     showModalBottomSheet(
+                                                //       isScrollControlled: true,
+                                                //       context: context,
+                                                //       enableDrag: true,
+                                                //       builder: (context) {
+                                                //         return Container(
+                                                //           width: double.infinity,
+                                                //           child: Column(
+                                                //             mainAxisSize: MainAxisSize.min,
+                                                //             children: [
+                                                //               TextButton(
+                                                //                   onPressed: () {
+                                                //                     cubit.pickImage(
+                                                //                       context,
+                                                //                       isGallery: false,
+                                                //                       chatId: widget.model.chatId ??
+                                                //                           cubit.createChatRoomModel
+                                                //                               ?.data?.uuid ??
+                                                //                           '',
+                                                //                     );
+                                                //                   },
+                                                //                   child: Text('Camera')),
+                                                //               TextButton(
+                                                //                   onPressed: () {
+                                                //                     cubit.pickImage(
+                                                //                       context,
+                                                //                       isGallery: true,
+                                                //                       chatId: widget.model.chatId ??
+                                                //                           cubit.createChatRoomModel
+                                                //                               ?.data?.uuid ??
+                                                //                           '',
+                                                //                     );
+                                                //                   },
+                                                //                   child: Text('Gallary')),
+                                                //             ],
+                                                //           ),
+                                                //         );
+                                                //       },
+                                                //     );
+                                                //   },
+                                                //   icon: Padding(
+                                                //     padding: const EdgeInsets.all(4.0),
+                                                //     child: SvgPicture.asset(
+                                                //       ImageAssets.attachIcon,
+                                                //       color: AppColors.gray,
+                                                //     ),
+                                                //   ),
+                                                // ),
+                                              ],
                                             ),
                                           ),
-                                          child: Row(
-                                            children: [
-                                              IconButton(
-                                                onPressed: () {
-                                                  _showBottomSheet(
-                                                    context,
-                                                    cubit,
-                                                  );
-                                                },
-                                                icon: Icon(
-                                                  Icons.emoji_emotions_outlined,
-                                                  color: AppColors.gray,
-                                                  size: 24.sp,
-                                                ),
-                                              ),
-                                              Expanded(
-                                                child: TextField(
-                                                  onSubmitted: (value) {
+                                        ),
+                                        SizedBox(width: 8.w),
+                                        GestureDetector(
+                                          onTap:
+                                              (state
+                                                      is LoadingCreateChatRoomState ||
+                                                  state
+                                                      is LoadingCreate2ChatRoomState)
+                                              ? () {}
+                                              : () {
+                                                  if (cubit
+                                                      .messageController
+                                                      .text
+                                                      .isNotEmpty) {
                                                     cubit.sendMessage(
                                                       receiverId: widget
                                                           .model
                                                           .receiverId,
-
                                                       chatId:
                                                           widget.model.chatId ??
                                                           cubit
@@ -209,128 +324,23 @@ class _MessageScreenState extends State<MessageScreen> {
                                                               ?.roomToken ??
                                                           '',
                                                     );
-                                                  },
-                                                  controller:
-                                                      cubit.messageController,
-                                                  decoration: InputDecoration(
-                                                    hintText: "write_msg".tr(),
-                                                    hintStyle: TextStyle(
-                                                      color: AppColors.gray,
-                                                    ),
-                                                    contentPadding:
-                                                        EdgeInsets.symmetric(
-                                                          horizontal: 5.w,
-                                                          vertical: 5.h,
-                                                        ),
-                                                    border: OutlineInputBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                            20.sp,
-                                                          ),
-                                                      borderSide:
-                                                          BorderSide.none,
-                                                    ),
-                                                    filled: true,
-                                                    fillColor: AppColors.gray
-                                                        .withOpacity(0.1),
-                                                  ),
-                                                ),
-                                              ),
-
-                                              // IconButton(
-                                              //   onPressed: () {
-                                              //     showModalBottomSheet(
-                                              //       isScrollControlled: true,
-                                              //       context: context,
-                                              //       enableDrag: true,
-                                              //       builder: (context) {
-                                              //         return Container(
-                                              //           width: double.infinity,
-                                              //           child: Column(
-                                              //             mainAxisSize: MainAxisSize.min,
-                                              //             children: [
-                                              //               TextButton(
-                                              //                   onPressed: () {
-                                              //                     cubit.pickImage(
-                                              //                       context,
-                                              //                       isGallery: false,
-                                              //                       chatId: widget.model.chatId ??
-                                              //                           cubit.createChatRoomModel
-                                              //                               ?.data?.uuid ??
-                                              //                           '',
-                                              //                     );
-                                              //                   },
-                                              //                   child: Text('Camera')),
-                                              //               TextButton(
-                                              //                   onPressed: () {
-                                              //                     cubit.pickImage(
-                                              //                       context,
-                                              //                       isGallery: true,
-                                              //                       chatId: widget.model.chatId ??
-                                              //                           cubit.createChatRoomModel
-                                              //                               ?.data?.uuid ??
-                                              //                           '',
-                                              //                     );
-                                              //                   },
-                                              //                   child: Text('Gallary')),
-                                              //             ],
-                                              //           ),
-                                              //         );
-                                              //       },
-                                              //     );
-                                              //   },
-                                              //   icon: Padding(
-                                              //     padding: const EdgeInsets.all(4.0),
-                                              //     child: SvgPicture.asset(
-                                              //       ImageAssets.attachIcon,
-                                              //       color: AppColors.gray,
-                                              //     ),
-                                              //   ),
-                                              // ),
-                                            ],
+                                                  }
+                                                },
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: AppColors.primary,
+                                            ),
+                                            padding: EdgeInsets.all(22.sp),
+                                            child: SvgPicture.asset(
+                                              AppIcons.sendIcon,
+                                              width: 24.w,
+                                              height: 24.h,
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      SizedBox(width: 8.w),
-                                      GestureDetector(
-                                        onTap:
-                                            (state
-                                                    is LoadingCreateChatRoomState ||
-                                                state
-                                                    is LoadingCreate2ChatRoomState)
-                                            ? () {}
-                                            : () {
-                                                if (cubit
-                                                    .messageController
-                                                    .text
-                                                    .isNotEmpty) {
-                                                  cubit.sendMessage(
-                                                    receiverId:
-                                                        widget.model.receiverId,
-                                                    chatId:
-                                                        widget.model.chatId ??
-                                                        cubit
-                                                            .createChatRoomModel
-                                                            ?.data
-                                                            ?.roomToken ??
-                                                        '',
-                                                  );
-                                                }
-                                              },
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: AppColors.primary,
-                                          ),
-                                          padding: EdgeInsets.all(22.sp),
-                                          child: SvgPicture.asset(
-                                            AppIcons.sendIcon,
-                                            width: 24.w,
-                                            height: 24.h,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ],
@@ -534,7 +544,7 @@ class CustomChatHeader extends StatelessWidget {
                     Flexible(
                       flex: 1,
                       child: CustomButton(
-                        title: "accept".tr() * 5,
+                        title: "accept".tr(),
                         onPressed: () {},
                       ),
                     ),
