@@ -276,27 +276,27 @@ Future<void> warningDialog(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.all(20),
-                      child: Image.asset(
-                        ImageAssets.dialogLogo,
-                        width: 80,
-                        height: 80,
-                      ),
-                    ),
+                    // Padding(
+                    //   padding: const EdgeInsets.all(20),
+                    //   child: Image.asset(
+                    //     ImageAssets.dialogLogo,
+                    //     width: 80,
+                    //     height: 80,
+                    //   ),
+                    // ),
                     Text(
                       title ?? "warning".tr(),
                       textAlign: TextAlign.center,
                       style: getRegularStyle(fontSize: 16.sp),
                     ),
-                    const SizedBox(height: 10),
+                    if (desc != null) const SizedBox(height: 10),
                     if (desc != null)
                       Text(
                         desc,
                         textAlign: TextAlign.center,
                         style: getMediumStyle(fontSize: 14.sp),
                       ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 15),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Row(
@@ -304,8 +304,8 @@ Future<void> warningDialog(
                           Expanded(
                             child: ElevatedButton(
                               onPressed: () {
-                                if (onPressedOk != null) onPressedOk();
                                 Navigator.of(context).pop();
+                                if (onPressedOk != null) onPressedOk();
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: AppColors.secondPrimary,

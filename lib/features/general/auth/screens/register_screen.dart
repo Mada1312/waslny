@@ -89,50 +89,78 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             // log('Phone number ${p0.number}');
                           },
                         ),
-                        if (widget.isDriver) 10.h.verticalSpace,
                         if (widget.isDriver)
-                          Row(
-                            children: [
-                              Expanded(
-                                child: CustomDropdownButtonFormField<Gender>(
-                                  value: cubit.gender,
-                                  title: 'type'.tr(),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      cubit.gender = value;
-                                    });
-                                  },
-                                  items: Gender.values,
-                                  validationMessage: 'type'.tr(),
-                                  validator: (value) {
-                                    if (value == null) {
-                                      return 'type'.tr();
-                                    }
-                                    return null;
-                                  },
-                                  itemBuilder: (item) => item.displayValue,
+                          if (widget.isDriver) ...[
+                            10.h.verticalSpace,
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: CustomDropdownButtonFormField<Gender>(
+                                    value: cubit.gender,
+                                    title: 'type'.tr(),
+                                    onChanged: (value) {
+                                      setState(() {
+                                        cubit.gender = value;
+                                      });
+                                    },
+                                    items: Gender.values,
+                                    validationMessage: 'type'.tr(),
+                                    validator: (value) {
+                                      if (value == null) {
+                                        return 'type'.tr();
+                                      }
+                                      return null;
+                                    },
+                                    itemBuilder: (item) => item.displayValue,
+                                  ),
                                 ),
-                              ),
-                              10.w.horizontalSpace,
-
-                              Expanded(
-                                child:
-                                    CustomDropdownButtonFormField<VehicleType>(
-                                      value: cubit.vehicleType,
-                                      title: 'vehicle_type'.tr(),
-                                      onChanged: (value) {
-                                        setState(() {
-                                          cubit.vehicleType = value;
-                                        });
-                                      },
-                                      validationMessage: 'vehicle_type'.tr(),
-                                      items: VehicleType.values,
-                                      itemBuilder: (item) => item.displayValue,
-                                    ),
-                              ),
-                            ],
-                          ),
-                        10.h.verticalSpace,
+                                10.w.horizontalSpace,
+                                Expanded(
+                                  child:
+                                      CustomDropdownButtonFormField<
+                                        VehicleType
+                                      >(
+                                        value: cubit.vehicleType,
+                                        title: 'vehicle_type'.tr(),
+                                        onChanged: (value) {
+                                          setState(() {
+                                            cubit.vehicleType = value;
+                                          });
+                                        },
+                                        validationMessage: 'vehicle_type'.tr(),
+                                        items: VehicleType.values,
+                                        itemBuilder: (item) =>
+                                            item.displayValue,
+                                      ),
+                                ),
+                              ],
+                            ),
+                            CustomTextField(
+                              title: 'vehicle_model'.tr(),
+                              keyboardType: TextInputType.name,
+                              controller: cubit.vehicleModelController,
+                              hintText: 'enter'.tr() + "vehicle_model".tr(),
+                              validationMessage:
+                                  'enter'.tr() + "vehicle_model".tr(),
+                            ),
+                            CustomTextField(
+                              title: 'vehicle_color'.tr(),
+                              keyboardType: TextInputType.name,
+                              controller: cubit.vehicleColorController,
+                              hintText: 'enter'.tr() + "vehicle_color".tr(),
+                              validationMessage:
+                                  'enter'.tr() + "vehicle_color".tr(),
+                            ),
+                            CustomTextField(
+                              title: 'vehicle_plate_number'.tr(),
+                              keyboardType: TextInputType.name,
+                              controller: cubit.vehicleNumberController,
+                              hintText:
+                                  'enter'.tr() + "vehicle_plate_number".tr(),
+                              validationMessage:
+                                  'enter'.tr() + "vehicle_plate_number".tr(),
+                            ),
+                          ],
                         CustomTextField(
                           title: 'password'.tr(),
                           isPassword: true,
@@ -220,14 +248,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 cubit.acceptTermsAndConditions == true) {
                               if (cubit.passwordController.text ==
                                   cubit.confirmPasswordController.text) {
-                                cubit.valudateData(context, widget.isDriver);
+                                cubit.register(context, widget.isDriver);
                               } else {
                                 errorGetBar('not_identical_password'.tr());
                               }
                             }
                           },
                         ),
-
                         80.h.verticalSpace,
                         Padding(
                           padding: EdgeInsets.only(top: 5.0.h),
@@ -265,6 +292,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             ],
                           ),
                         ),
+                        50.h.verticalSpace,
                         // Center(child: ShowLoadingIndicator()),
                       ],
                     ),

@@ -31,37 +31,39 @@ class _DriverTripsScreenState extends State<DriverTripsScreen> {
             isDriverBackIcon: true,
           ),
           body: Center(
-            child:
-                //  state is GetTripsErrorState
-                //     ? CustomNoDataWidget(
-                //         message: 'error_happened'.tr(),
-                //         onTap: () {
-                //           cubit.getTrips();
-                //         },
-                //       )
-                //     : state is GetTripsLoadingState ||
-                //           cubit.shipmentsModel?.data == null
-                //     ? const CustomLoadingIndicator()
-                //     : cubit.shipmentsModel?.data?.isEmpty ?? true
-                //     ? CustomNoDataWidget(message: 'no_trips'.tr())
-                //     :
-                ListView.separated(
-                  itemBuilder: (context, index) => Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: getHorizontalPadding(context),
-                      vertical: 3.h,
-                    ),
-                    child: DriverTripPrServiceItemWidget(
-                      withContactWidget: true,
-                      trip: cubit.shipmentsModel?.data?[index],
+            child: state is GetTripsErrorState
+                ? CustomNoDataWidget(
+                    message: 'error_happened'.tr(),
+                    onTap: () {
+                      cubit.getTrips();
+                    },
+                  )
+                : state is GetTripsLoadingState ||
+                      cubit.getTripsModel?.data == null
+                ? const CustomLoadingIndicator()
+                : cubit.getTripsModel?.data?.isEmpty ?? true
+                ? CustomNoDataWidget(message: 'no_trips_yet'.tr())
+                : RefreshIndicator(
+                    onRefresh: () async {
+                      await cubit.getTrips();
+                    },
+                    child: ListView.separated(
+                  
+                      itemBuilder: (context, index) => Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: getHorizontalPadding(context),
+                          vertical: 3.h,
+                        ),
+                        child: DriverTripPrServiceItemWidget(
+                          withContactWidget: true,
+                          trip: cubit.getTripsModel?.data?[index],
+                        ),
+                      ),
+                      separatorBuilder: (context, index) => 20.h.verticalSpace,
 
-                      // shipment: cubit.shipments[index],
+                      itemCount: cubit.getTripsModel?.data?.length ?? 0,
                     ),
                   ),
-                  separatorBuilder: (context, index) => 20.h.verticalSpace,
-                  itemCount: 2,
-                  // itemCount: cubit.shipmentsModel?.data?.length ?? 0,
-                ),
           ),
         );
       },

@@ -25,8 +25,6 @@ class ProfileScreen extends StatelessWidget {
         return SafeArea(
           top: false,
           child: Scaffold(
-            // appBar: customAppBar(context,
-            //     title: 'my_account'.tr(), leading: SizedBox()),
             body: Column(
               children: [
                 Stack(
@@ -64,20 +62,31 @@ class ProfileScreen extends StatelessWidget {
                           PositionedDirectional(
                             start: 16.w,
                             top: 20.h,
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 16.w,
-                                vertical: 20.h,
-                              ),
-                              child: AutoSizeText(
-                                'my_account'.tr(),
-                                maxLines: 1,
-                                style: getRegularStyle(
-                                  color: AppColors.white,
-                                  fontSize: 16.sp,
-                                ),
-                              ),
-                            ),
+                            child: isDriver
+                                ? GestureDetector(
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: Image.asset(
+                                      ImageAssets.driverBack,
+                                      height: 80.sp,
+                                      width: 80.sp,
+                                    ),
+                                  )
+                                : Padding(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 16.w,
+                                      vertical: 20.h,
+                                    ),
+                                    child: AutoSizeText(
+                                      'my_account'.tr(),
+                                      maxLines: 1,
+                                      style: getRegularStyle(
+                                        color: AppColors.white,
+                                        fontSize: 16.sp,
+                                      ),
+                                    ),
+                                  ),
                           ),
                           Positioned(
                             bottom: -50.h,
@@ -194,24 +203,24 @@ class ProfileScreen extends StatelessWidget {
                                     },
                                   ),
 
-                                //TODO
-                                CustomProfileRow(
-                                  title: 'edit_account',
-                                  path: AppIcons.editProfile,
-                                  onTap: () {
-                                    if (isDriver) {
-                                      Navigator.pushNamed(
-                                        context,
-                                        Routes.editDeliveryProfileRoute,
-                                      );
-                                    } else {
-                                      Navigator.pushNamed(
-                                        context,
-                                        Routes.editUserProfileRoute,
-                                      );
-                                    }
-                                  },
-                                ),
+                                if (!isDriver)
+                                  CustomProfileRow(
+                                    title: 'edit_account',
+                                    path: AppIcons.editProfile,
+                                    onTap: () {
+                                      if (isDriver) {
+                                        Navigator.pushNamed(
+                                          context,
+                                          Routes.editDeliveryProfileRoute,
+                                        );
+                                      } else {
+                                        Navigator.pushNamed(
+                                          context,
+                                          Routes.editUserProfileRoute,
+                                        );
+                                      }
+                                    },
+                                  ),
                                 CustomProfileRow(
                                   title: 'change_langauge'.tr(),
                                   path: AppIcons.lang,
@@ -251,16 +260,17 @@ class ProfileScreen extends StatelessWidget {
                                     );
                                   },
                                 ),
-                                CustomProfileRow(
-                                  title: 'change_password',
-                                  path: AppIcons.changePass,
-                                  onTap: () {
-                                    Navigator.pushNamed(
-                                      context,
-                                      Routes.changePasswordScreen,
-                                    );
-                                  },
-                                ),
+                                if (!isDriver)
+                                  CustomProfileRow(
+                                    title: 'change_password',
+                                    path: AppIcons.changePass,
+                                    onTap: () {
+                                      Navigator.pushNamed(
+                                        context,
+                                        Routes.changePasswordScreen,
+                                      );
+                                    },
+                                  ),
 
                                 //TODO
                                 CustomProfileRow(

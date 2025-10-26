@@ -31,12 +31,13 @@ class EndPoints {
   static const String driverHomeUrl = '${baseUrl}driver/get-home';
   static const String driverShipmnetDetailsUrl =
       '${baseUrl}driver/get-shipment/';
-  static const String driverShipmentsUrl =
-      '${baseUrl}driver/get-complete-shipments';
+  static const String driverScheduleTripsUrl =
+      '${baseUrl}driver/get-my-schedule-trips';
   static const String driverCompleteShipmentUrl =
       '${baseUrl}driver/mark-shipment-complete/';
-  static const String driverCancelCurrentShipmentUrl =
-      '${baseUrl}driver/cancel-current-shipment/';
+  static const String driverCancelTripUrl = '${baseUrl}cancel-trip';
+  static const String driverStartTripUrl = '${baseUrl}driver/start-trip';
+  static const String driverEndTripUrl = '${baseUrl}driver/end-trip';
   static const String addShipmentLocationUrl =
       '${baseUrl}add-shipment-location';
   static const String addRateUrl = '${baseUrl}add-rate';
@@ -66,9 +67,11 @@ class EndPoints {
   static const String searchOnMapUrl =
       'https://nominatim.openstreetmap.org/search';
   static const String getDriverDetailsUrl = '${baseUrl}get-driver-details/';
+  static const String getMyDriverDetailsUrl = '${baseUrl}driver/get-driver-data';
   static const String sendMessageNotificationUrl =
       '${baseUrl}send-message-notification';
   static const String updatePassword = '${baseUrl}update-password';
   static const String getMyTrips = '${baseUrl}get-my-trips?filter_by=';
   static const String cancelTrip = '${baseUrl}cancel-trip';
 }
+

@@ -183,10 +183,27 @@
   "confirm_destination": "تأكيد الوجهة",
   "details": "تفاصيل",
   "color": "اللون",
-  "vehicle_plate_number": "رقم السيارة",
+  "vehicle_plate_number": "رقم لوحة المركبة",
   "trips_no": "عدد الرحلات",
   "rates": "التقييمات",
   "no_rates": "لا توجد تقييمات لعرضها.",
+  "are_you_sure_you_want_to_reject_trip": "هل انت متاكد من رفض الرحلة؟",
+  "are_you_sure_you_want_to_cancel_trip" : "تم جدولة هذه الرحل هل حقا تريد الالغاء؟",
+  "are_you_sure_you_want_to_end_trip" : "وصلت لوجهتك وتريد انهاء الرحلة؟",
+  "are_you_sure_you_want_to_start_trip" : "هل انت متاكد من بدء الرحلة؟",
+  "past": "سابقاً",
+  "yesterday": "أمس",
+  "today": "اليوم",
+  "vehicle_color": "لون المركبة",
+  "vehicle_model": "موديل المركبة",
+  "enter" : "ادخل ",
+  "accept_trip": "قبول الرحلة",
+  "another_trip": "رحلة اخري",
+  "change_captain": "تغيير الكابتن",
+  "accept": "قبول",
+  "arrived": "وصلت",
+  
   "": "",
+ 
   "**": "**"
 }

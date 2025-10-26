@@ -48,21 +48,24 @@ class _ChatBubbleState extends State<ChatBubble> {
 
     urlRegExp.allMatches(message).forEach((match) {
       if (match.start > start) {
-        spans.add(TextSpan(
-            text: message.substring(start, match.start), style: style));
+        spans.add(
+          TextSpan(text: message.substring(start, match.start), style: style),
+        );
       }
       final String url = message.substring(match.start, match.end);
-      spans.add(TextSpan(
-        text: url,
-        style: style.copyWith(color: AppColors.secondPrimary),
-        recognizer: TapGestureRecognizer()
-          ..onTap = () async {
-            final Uri uri = Uri.parse(url);
-            if (await canLaunchUrl(uri)) {
-              await launchUrl(uri);
-            }
-          },
-      ));
+      spans.add(
+        TextSpan(
+          text: url,
+          style: style.copyWith(color: AppColors.secondPrimary),
+          recognizer: TapGestureRecognizer()
+            ..onTap = () async {
+              final Uri uri = Uri.parse(url);
+              if (await canLaunchUrl(uri)) {
+                await launchUrl(uri);
+              }
+            },
+        ),
+      );
       start = match.end;
     });
 
@@ -79,15 +82,22 @@ class _ChatBubbleState extends State<ChatBubble> {
     print('555 ${uri!.host.isNotEmpty}');
     return InkWell(
       onLongPress: () {
-        warningDialog(context, title: 'delete_message'.tr(), onPressedOk: () {
-          context.read<ChatCubit>().deleteMessage(
-              chatId: widget.chatId ?? '', messageId: widget.messageId ?? '');
-        });
+        warningDialog(
+          context,
+          title: 'delete_message'.tr(),
+          onPressedOk: () {
+            context.read<ChatCubit>().deleteMessage(
+              chatId: widget.chatId ?? '',
+              messageId: widget.messageId ?? '',
+            );
+          },
+        );
       },
       child: SizedBox(
         child: Align(
-          alignment:
-              widget.isSender ? Alignment.centerRight : Alignment.centerLeft,
+          alignment: widget.isSender
+              ? Alignment.centerRight
+              : Alignment.centerLeft,
           child: Column(
             crossAxisAlignment: widget.isSender
                 ? CrossAxisAlignment.end
@@ -96,58 +106,52 @@ class _ChatBubbleState extends State<ChatBubble> {
               (uri.host.isNotEmpty)
                   ? ConstrainedBox(
                       constraints: BoxConstraints(
-                          maxWidth: MediaQuery.of(context).size.width / 1.4),
+                        maxWidth: MediaQuery.of(context).size.width / 1.4,
+                      ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          CachedNetworkImage(imageUrl: widget.image!),
-                        ],
+                        children: [CachedNetworkImage(imageUrl: widget.image!)],
                       ),
                     )
                   : widget.message == null
-                      ? Container()
-                      : ConstrainedBox(
-                          constraints: BoxConstraints(
-                              maxWidth:
-                                  MediaQuery.of(context).size.width / 1.4),
-                          child: Container(
-                            clipBehavior: Clip.antiAliasWithSaveLayer,
-                            margin: EdgeInsets.symmetric(vertical: 5.h),
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 12.w, vertical: 10.h),
-                            decoration: BoxDecoration(
-                              color: widget.isSender
-                                  ? AppColors.primary
-                                  : AppColors.gray.withOpacity(0.2),
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(
-                                  10.sp,
-                                ),
-                                topRight: Radius.circular(
-                                  10.sp,
-                                ),
-                                bottomLeft: widget.isSender
-                                    ? Radius.circular(
-                                        10.sp,
-                                      )
-                                    : Radius.zero,
-                                bottomRight: widget.isSender
-                                    ? Radius.zero
-                                    : Radius.circular(
-                                        10.sp,
-                                      ),
-                              ),
-                            ),
-                            child: buildMessageWithLinks(
-                                widget.message ?? '',
-                                getRegularStyle(
-                                  fontSize: 14.sp,
-                                  color: widget.isSender
-                                      ? AppColors.white
-                                      : AppColors.black,
-                                )),
+                  ? Container()
+                  : ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxWidth: MediaQuery.of(context).size.width / 1.4,
+                      ),
+                      child: Container(
+                        clipBehavior: Clip.antiAliasWithSaveLayer,
+                        margin: EdgeInsets.symmetric(vertical: 5.h),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 12.w,
+                          vertical: 10.h,
+                        ),
+                        decoration: BoxDecoration(
+                          color: widget.isSender
+                              ? AppColors.secondPrimary
+                              : AppColors.white,
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(10.sp),
+                            bottomRight: Radius.circular(10.sp),
+                            topLeft: widget.isSender
+                                ? Radius.circular(10.sp)
+                                : Radius.zero,
+                            topRight: widget.isSender
+                                ? Radius.zero
+                                : Radius.circular(10.sp),
                           ),
                         ),
+                        child: buildMessageWithLinks(
+                          widget.message ?? '',
+                          getRegularStyle(
+                            fontSize: 14.sp,
+                            color: widget.isSender
+                                ? AppColors.white
+                                : AppColors.secondPrimary,
+                          ),
+                        ),
+                      ),
+                    ),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 8.w),
                 child: Text(

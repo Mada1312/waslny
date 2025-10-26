@@ -83,13 +83,13 @@ void showAddRateBottomSheet(
                     title: "send".tr(),
                     onPressed: () {
                       if (isDriver) {
-                        context.read<DriverTripsCubit>().addRateForUser(
-                          shipmentId: shipmentId,
-                          context: context,
-                          comment: cubit.rateCommentController.text,
-                          userId: participantId,
-                          rate: cubit.rateValue,
-                        );
+                        // context.read<DriverTripsCubit>().addRateForUser(
+                        //   shipmentId: shipmentId,
+                        //   context: context,
+                        //   comment: cubit.rateCommentController.text,
+                        //   userId: participantId,
+                        //   rate: cubit.rateValue,
+                        // );
                       } else {
                         context
                             .read<UserTripAndServicesCubit>()

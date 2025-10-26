@@ -2,6 +2,7 @@
 
 import 'package:waslny/core/exports.dart';
 import 'package:waslny/features/driver/home/screens/driver_home_screen.dart';
+import 'package:waslny/features/driver/my_profile/screens/driver_details.dart';
 import 'package:waslny/features/driver/trips/screens/trips_screen.dart';
 import 'package:waslny/features/user/home/screens/user_home_screen.dart';
 import 'package:waslny/features/general/notifications/screens/notifications_screen.dart';
@@ -26,7 +27,8 @@ class MainCubit extends Cubit<MainState> {
     DriverHomeScreen(),
     NotificationsScreen(isDriver: true),
     AllRoomScreen(),
-    ProfileScreen(isDriver: true),
+    DriverDetailsScreen(),
+    // ProfileScreen(isDriver: true),
   ];
 
   List<Widget> userScreens = [

@@ -19,25 +19,38 @@ class DriverHomeCubit extends Cubit<DriverHomeState> {
   DriverHomeRepo api;
   bool isDataVerifided = false;
   GetDriverHomeModel? homeModel;
-  Future<void> getDriverHomeData(BuildContext context) async {
+  Future<void> getDriverHomeData(
+    BuildContext context, {
+    bool? isVerify = false,
+  }) async {
     emit(DriverHomeLoading());
     try {
       final result = await api.getHome();
       result.fold((failure) => emit(DriverHomeError()), (data) {
         homeModel = data;
-        isDataVerifided = homeModel?.data?.user?.isVerified == 1;
-        if (homeModel?.data?.user?.isDataUploaded != 1) {
-          Navigator.pushNamed(context, Routes.driverDataRoute);
-        }
-        if (homeModel?.data?.user?.isVerified != 1) {
-          completeDialog(
-            context,
-            btnOkText: 'done'.tr(),
-            title: 'reviewing_data'.tr(),
-            onPressedOk: () {
-              showExitDialog(context);
-            },
-          );
+        log('6666666666666 ${data.data?.isWebhookVerified}');
+        if (!(isVerify == true) || data.data?.isWebhookVerified == 1) {
+          if (data.data?.isWebhookVerified == 0) {
+            Navigator.pushReplacementNamed(
+              context,
+              Routes.notVerifiedUserRoute,
+              arguments: true,
+            );
+          } else {
+            isDataVerifided = homeModel?.data?.user?.isVerified == 1;
+            if (homeModel?.data?.user?.isDataUploaded != 1) {
+              Navigator.pushNamed(context, Routes.driverDataRoute);
+            } else if (homeModel?.data?.user?.isVerified != 1) {
+              completeDialog(
+                context,
+                btnOkText: 'done'.tr(),
+                title: 'reviewing_data'.tr(),
+                onPressedOk: () {
+                  showExitDialog(context);
+                },
+              );
+            }
+          }
         }
 
         emit(DriverHomeLoaded());
@@ -48,66 +61,95 @@ class DriverHomeCubit extends Cubit<DriverHomeState> {
     }
   }
 
-  Future<void> completeShipment({
-    required String shipmentId,
+  Future<void> startTrip({
+    required int tripId,
     required BuildContext context,
   }) async {
     AppWidget.createProgressDialog(context, msg: "...");
-    emit(CompleteShipmentLoadingState());
+    emit(UpdateTripStatusLoadingState());
     try {
-      final response = await api.completeShipment(id: shipmentId);
+      final response = await api.startTrip(id: tripId);
       response.fold(
         (failure) {
           Navigator.pop(context); // Close the progress dialog
-          emit(CompleteShipmentErrorState());
+          emit(UpdateTripStatusErrorState());
         },
         (response) {
           Navigator.pop(context); // Close the progress dialog
           if (response.status == 200 || response.status == 201) {
-            emit(CompleteShipmentSuccessState());
-            // stopLocationService();
-            successGetBar(response.msg ?? "Shipment completed successfully");
-            Navigator.pushNamed(context, Routes.mainRoute, arguments: true);
+            emit(UpdateTripStatusSuccessState());
+            successGetBar(response.msg ?? "Trip started successfully");
             getDriverHomeData(context);
           } else {
-            errorGetBar(response.msg ?? "Failed to complete shipment");
+            errorGetBar(response.msg ?? "Failed to start trip");
           }
         },
       );
     } catch (e) {
-      log("Error in completeShipment: $e");
-      emit(CompleteShipmentErrorState());
+      log("Error in startTrip: $e");
+      emit(UpdateTripStatusErrorState());
     }
   }
 
-  Future<void> cancleCurrentShipment({
-    required String shipmentId,
+  Future<void> endTrip({
+    required int tripId,
     required BuildContext context,
   }) async {
     AppWidget.createProgressDialog(context, msg: "...");
-    emit(CancelShipmentLoadingState());
+    emit(UpdateTripStatusLoadingState());
     try {
-      final response = await api.cancleCurrentShipment(id: shipmentId);
+      final response = await api.endTrip(id: tripId);
       response.fold(
         (failure) {
           Navigator.pop(context); // Close the progress dialog
-          emit(CancelShipmentErrorState());
+          emit(UpdateTripStatusErrorState());
         },
         (response) {
           Navigator.pop(context); // Close the progress dialog
           if (response.status == 200 || response.status == 201) {
-            emit(CancelShipmentSuccessState());
-            successGetBar(response.msg ?? "Shipment cancelled successfully");
+            emit(UpdateTripStatusSuccessState());
+            successGetBar(response.msg ?? "Trip ended successfully");
             Navigator.pushNamed(context, Routes.mainRoute, arguments: true);
             getDriverHomeData(context);
           } else {
-            errorGetBar(response.msg ?? "Failed to cancel shipment");
+            errorGetBar(response.msg ?? "Failed to end trip");
+          }
+        },
+      );
+    } catch (e) {
+      log("Error in endTrip: $e");
+      emit(UpdateTripStatusErrorState());
+    }
+  }
+
+  Future<void> cancleTrip({
+    required int tripId,
+    required BuildContext context,
+  }) async {
+    AppWidget.createProgressDialog(context, msg: "...");
+    emit(UpdateTripStatusLoadingState());
+    try {
+      final response = await api.cancleTrip(id: tripId);
+      response.fold(
+        (failure) {
+          Navigator.pop(context); // Close the progress dialog
+          emit(UpdateTripStatusErrorState());
+        },
+        (response) {
+          Navigator.pop(context); // Close the progress dialog
+          if (response.status == 200 || response.status == 201) {
+            emit(UpdateTripStatusSuccessState());
+            successGetBar(response.msg ?? "Trip cancelled successfully");
+            Navigator.pushNamed(context, Routes.mainRoute, arguments: true);
+            getDriverHomeData(context);
+          } else {
+            errorGetBar(response.msg ?? "Failed to cancel trip");
           }
         },
       );
     } catch (e) {
       log("Error in cancelShipment: $e");
-      emit(CancelShipmentErrorState());
+      emit(UpdateTripStatusErrorState());
     }
   }
 
@@ -126,10 +168,10 @@ class DriverHomeCubit extends Cubit<DriverHomeState> {
     });
   }
 
-  int selectedIndex = 1;
+  int selectedStep = 1;
 
-  changeSelectedIndex(int index) {
-    selectedIndex = index;
+  changeSelectedStep(int index) {
+    selectedStep = index;
     emit(ChangeSelectedIndexState());
   }
 

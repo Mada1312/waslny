@@ -1,7 +1,12 @@
+import 'dart:developer' show log;
 import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:waslny/core/exports.dart';
+import 'package:waslny/features/driver/home/data/models/driver_home_model.dart';
+import 'package:waslny/features/general/chat/screens/message_screen.dart';
+import 'package:waslny/features/general/location/cubit/location_cubit.dart';
+import 'package:waslny/features/general/profile/screens/profile_screen.dart';
 
 import '../cubit/cubit.dart';
 import '../cubit/state.dart';
@@ -15,8 +20,8 @@ class DriverHomeScreen extends StatefulWidget {
 class _DriverHomeScreenState extends State<DriverHomeScreen> {
   @override
   void initState() {
-    if (context.read<DriverHomeCubit>().homeModel == null)
-      context.read<DriverHomeCubit>().getDriverHomeData(context);
+    // if (context.read<DriverHomeCubit>().homeModel == null)
+    context.read<DriverHomeCubit>().getDriverHomeData(context);
 
     // FirebaseMessaging.onMessage.listen((message) async {
     //   if (message.data['reference_table'] == "shipments" &&
@@ -76,231 +81,321 @@ class DriverHomeUI extends StatelessWidget {
     var cubit = context.read<DriverHomeCubit>();
     return BlocBuilder<DriverHomeCubit, DriverHomeState>(
       builder: (context, state) {
-        return Column(
-          children: [
-            SafeArea(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 15.h),
-                child: IntrinsicHeight(
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Expanded(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: AppColors.white,
-                            borderRadius: BorderRadius.circular(16.r),
-                            boxShadow: [
-                              BoxShadow(
-                                color: AppColors.grey.withOpacity(0.3),
-                                blurRadius: 2,
-                                offset: const Offset(0, 3),
-                              ),
-                              BoxShadow(
-                                color: AppColors.grey.withOpacity(0.3),
-                                blurRadius: 2,
-                                offset: const Offset(0, -3),
-                              ),
-                            ],
-                          ),
-                          padding: EdgeInsets.symmetric(
-                            // vertical: 8.h,
-                            horizontal: 15.w,
-                          ),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  cubit.homeModel?.data?.user?.isActive == 1
-                                      ? "online".tr()
-                                      : "offline".tr(),
-                                  style: getBoldStyle(fontSize: 18.sp),
-                                ),
-                              ),
-                              CupertinoSwitch(
-                                value:
-                                    cubit.homeModel?.data?.user?.isActive == 1,
-
-                                activeTrackColor: AppColors.secondPrimary,
-
-                                inactiveThumbColor: AppColors.white,
-                                thumbColor: AppColors.primary,
-                                onChanged: (value) {
-                                  cubit.changeActiveStatus();
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      12.w.horizontalSpace,
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.pushReplacementNamed(
-                            context,
-                            Routes.driverDataRoute,
-                          );
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: AppColors.white,
-                            borderRadius: BorderRadius.circular(16.r),
-                            boxShadow: [
-                              BoxShadow(
-                                color: AppColors.grey.withOpacity(0.3),
-                                blurRadius: 2,
-                                offset: const Offset(0, 3),
-                              ),
-                              BoxShadow(
-                                color: AppColors.grey.withOpacity(0.3),
-                                blurRadius: 2,
-                                offset: const Offset(0, -3),
-                              ),
-                            ],
-                          ),
-                          padding: EdgeInsets.symmetric(
-                            vertical: 15.sp,
-                            horizontal: 15.sp,
-                          ),
-                          child: MySvgWidget(
-                            path: AppIcons.menu,
-                            height: 25.sp,
-                            width: 25.sp,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-
-            if (cubit.homeModel?.data?.user?.isActive == 1 &&
-                cubit.homeModel?.data?.currentTrip != null)
-              Spacer(),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.w),
-
-              child: IntrinsicHeight(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    if (cubit.homeModel?.data?.scheduleTrip == null)
-                      Expanded(child: Container())
-                    else
-                      Expanded(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: AppColors.white,
-                            borderRadius: BorderRadius.circular(16.r),
-                            boxShadow: [
-                              BoxShadow(
-                                color: AppColors.grey.withOpacity(0.3),
-                                blurRadius: 2,
-                                offset: const Offset(0, 3),
-                              ),
-                              BoxShadow(
-                                color: AppColors.grey.withOpacity(0.3),
-                                blurRadius: 2,
-                                offset: const Offset(0, -3),
-                              ),
-                            ],
-                          ),
-                          padding: EdgeInsets.symmetric(horizontal: 15.w),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Flexible(
-                                child: Text(
-                                  "scheduled".tr(),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: getBoldStyle(fontSize: 14.sp),
-                                ),
-                              ),
-
-                              Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  MySvgWidget(
-                                    path: AppIcons.date,
-                                    height: 24.h,
-                                  ),
-                                  6.w.horizontalSpace,
-                                  Text(
-                                    DateFormat(
-                                      'yyyy-MM-dd',
-                                    ).format(DateTime.now()),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: getRegularStyle(),
-                                  ),
-                                ],
-                              ),
-
-                              // 10.w.horizontalSpace,
-                              Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  MySvgWidget(
-                                    path: AppIcons.dateTime,
-                                    height: 24.h,
-                                  ),
-                                  6.w.horizontalSpace,
-                                  Text(
-                                    '10:00',
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: getRegularStyle(),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-
-                    12.w.horizontalSpace,
-
-                    GestureDetector(
+        return RefreshIndicator(
+          onRefresh: () async {
+            await cubit.getDriverHomeData(context);
+          },
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: SizedBox(
+              height: getHeightSize(context),
+              width: getWidthSize(context),
+              child: state is DriverHomeError
+                  ? CustomNoDataWidget(
+                      message: 'error_happened'.tr(),
                       onTap: () {
-                        Navigator.pushNamed(context, Routes.driverTripsRoute);
+                        cubit.getDriverHomeData(context);
                       },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: AppColors.primary,
-                          borderRadius: BorderRadius.circular(16.r),
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.grey.withOpacity(0.3),
-                              blurRadius: 2,
-                              offset: const Offset(0, 3),
+                    )
+                  : state is DriverHomeLoading || cubit.homeModel?.data == null
+                  ? const Center(child: CustomLoadingIndicator())
+                  : Column(
+                      children: [
+                        SafeArea(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 20.w,
+                              vertical: 15.h,
                             ),
-                            BoxShadow(
-                              color: AppColors.grey.withOpacity(0.3),
-                              blurRadius: 2,
-                              offset: const Offset(0, -3),
+                            child: IntrinsicHeight(
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  Expanded(
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: AppColors.white,
+                                        borderRadius: BorderRadius.circular(
+                                          16.r,
+                                        ),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: AppColors.grey.withOpacity(
+                                              0.3,
+                                            ),
+                                            blurRadius: 2,
+                                            offset: const Offset(0, 3),
+                                          ),
+                                          BoxShadow(
+                                            color: AppColors.grey.withOpacity(
+                                              0.3,
+                                            ),
+                                            blurRadius: 2,
+                                            offset: const Offset(0, -3),
+                                          ),
+                                        ],
+                                      ),
+                                      padding: EdgeInsets.symmetric(
+                                        // vertical: 8.h,
+                                        horizontal: 15.w,
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Expanded(
+                                            child: Text(
+                                              cubit
+                                                          .homeModel
+                                                          ?.data
+                                                          ?.user
+                                                          ?.isActive ==
+                                                      1
+                                                  ? "online".tr()
+                                                  : "offline".tr(),
+                                              style: getBoldStyle(
+                                                fontSize: 18.sp,
+                                              ),
+                                            ),
+                                          ),
+                                          CupertinoSwitch(
+                                            value:
+                                                cubit
+                                                    .homeModel
+                                                    ?.data
+                                                    ?.user
+                                                    ?.isActive ==
+                                                1,
+
+                                            activeTrackColor:
+                                                AppColors.secondPrimary,
+
+                                            inactiveThumbColor: AppColors.white,
+                                            thumbColor: AppColors.primary,
+                                            onChanged: (value) {
+                                              cubit.changeActiveStatus();
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  12.w.horizontalSpace,
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) {
+                                            return ProfileScreen(
+                                              isDriver: true,
+                                            );
+                                          },
+                                        ),
+                                      );
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: AppColors.white,
+                                        borderRadius: BorderRadius.circular(
+                                          16.r,
+                                        ),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: AppColors.grey.withOpacity(
+                                              0.3,
+                                            ),
+                                            blurRadius: 2,
+                                            offset: const Offset(0, 3),
+                                          ),
+                                          BoxShadow(
+                                            color: AppColors.grey.withOpacity(
+                                              0.3,
+                                            ),
+                                            blurRadius: 2,
+                                            offset: const Offset(0, -3),
+                                          ),
+                                        ],
+                                      ),
+                                      padding: EdgeInsets.symmetric(
+                                        vertical: 15.sp,
+                                        horizontal: 15.sp,
+                                      ),
+                                      child: MySvgWidget(
+                                        path: AppIcons.menu,
+                                        height: 25.sp,
+                                        width: 25.sp,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ],
+                          ),
                         ),
-                        padding: EdgeInsets.all(15.sp),
-                        child: MySvgWidget(
-                          path: AppIcons.dateTrip,
-                          height: 25.sp,
-                          width: 25.sp,
+
+                        if (cubit.homeModel?.data?.user?.isActive == 1 &&
+                            cubit.homeModel?.data?.currentTrip != null)
+                          Spacer(),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 20.w),
+
+                          child: IntrinsicHeight(
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                if (cubit.homeModel?.data?.currentTrip == null)
+                                  Expanded(child: Container())
+                                else
+                                  Expanded(
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: AppColors.white,
+                                        borderRadius: BorderRadius.circular(
+                                          16.r,
+                                        ),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: AppColors.grey.withOpacity(
+                                              0.3,
+                                            ),
+                                            blurRadius: 2,
+                                            offset: const Offset(0, 3),
+                                          ),
+                                          BoxShadow(
+                                            color: AppColors.grey.withOpacity(
+                                              0.3,
+                                            ),
+                                            blurRadius: 2,
+                                            offset: const Offset(0, -3),
+                                          ),
+                                        ],
+                                      ),
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 15.w,
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          Flexible(
+                                            child: Text(
+                                              cubit
+                                                      .homeModel
+                                                      ?.data
+                                                      ?.currentTrip
+                                                      ?.type ??
+                                                  "",
+                                              // "scheduled".tr(),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: getBoldStyle(
+                                                fontSize: 14.sp,
+                                              ),
+                                            ),
+                                          ),
+
+                                          Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              MySvgWidget(
+                                                path: AppIcons.date,
+                                                height: 24.h,
+                                              ),
+                                              6.w.horizontalSpace,
+                                              Text(
+                                                cubit
+                                                        .homeModel
+                                                        ?.data
+                                                        ?.currentTrip
+                                                        ?.day ??
+                                                    '',
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: getRegularStyle(),
+                                              ),
+                                            ],
+                                          ),
+
+                                          // 10.w.horizontalSpace,
+                                          Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              MySvgWidget(
+                                                path: AppIcons.dateTime,
+                                                height: 24.h,
+                                              ),
+                                              6.w.horizontalSpace,
+                                              Text(
+                                                cubit
+                                                        .homeModel
+                                                        ?.data
+                                                        ?.currentTrip
+                                                        ?.time ??
+                                                    '',
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: getRegularStyle(),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+
+                                12.w.horizontalSpace,
+
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.pushNamed(
+                                      context,
+                                      Routes.driverTripsRoute,
+                                    );
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: AppColors.primary,
+                                      borderRadius: BorderRadius.circular(16.r),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: AppColors.grey.withOpacity(
+                                            0.3,
+                                          ),
+                                          blurRadius: 2,
+                                          offset: const Offset(0, 3),
+                                        ),
+                                        BoxShadow(
+                                          color: AppColors.grey.withOpacity(
+                                            0.3,
+                                          ),
+                                          blurRadius: 2,
+                                          offset: const Offset(0, -3),
+                                        ),
+                                      ],
+                                    ),
+                                    padding: EdgeInsets.all(15.sp),
+                                    child: MySvgWidget(
+                                      path: AppIcons.dateTrip,
+                                      height: 25.sp,
+                                      width: 25.sp,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
-                      ),
+                        if (cubit.homeModel?.data?.user?.isActive == 1 &&
+                            cubit.homeModel?.data?.currentTrip != null) ...[
+                          CustomsSheduledTripWidet(
+                            trip: cubit.homeModel?.data?.currentTrip,
+                          ),
+                        ],
+                      ],
                     ),
-                  ],
-                ),
-              ),
             ),
-            if (cubit.homeModel?.data?.user?.isActive == 1 &&
-                cubit.homeModel?.data?.currentTrip != null) ...[
-              CustomsSheduledTripWidet(),
-            ],
-          ],
+          ),
         );
       },
     );
@@ -308,8 +403,8 @@ class DriverHomeUI extends StatelessWidget {
 }
 
 class CustomsSheduledTripWidet extends StatelessWidget {
-  const CustomsSheduledTripWidet({super.key});
-
+  const CustomsSheduledTripWidet({super.key, this.trip});
+  final DriverTripModel? trip;
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -340,53 +435,123 @@ class CustomsSheduledTripWidet extends StatelessWidget {
           padding: EdgeInsets.all(15.sp),
           child: Column(
             children: [
-              FromToContainer(),
+              FromToContainer(
+                isFrom: true,
+                address: trip?.from,
+                lat: trip?.fromLat,
+                lng: trip?.fromLong,
+              ),
 
               8.h.verticalSpace,
-              FromToContainer(),
-              12.h.verticalSpace,
-              Container(
-                decoration: BoxDecoration(
-                  color: AppColors.second3Primary,
-                  borderRadius: BorderRadius.circular(10.r),
-                ),
-                padding: EdgeInsets.all(12.sp),
-                width: double.infinity,
-                child: Text(
-                  "detaislss " * 50,
-                  style: getMediumStyle(fontSize: 12.sp),
-                ),
+              FromToContainer(
+                isFrom: false,
+                address: trip?.to,
+                lat: trip?.toLat,
+                lng: trip?.toLong,
               ),
+              if (trip?.description != null &&
+                  trip!.description!.isNotEmpty) ...[
+                12.h.verticalSpace,
+                Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.second3Primary,
+                    borderRadius: BorderRadius.circular(10.r),
+                  ),
+                  padding: EdgeInsets.all(12.sp),
+                  width: double.infinity,
+                  child: Text(
+                    trip?.description ?? "",
+                    style: getMediumStyle(fontSize: 12.sp),
+                  ),
+                ),
+              ],
               20.h.verticalSpace,
-              Row(
-                children: [
-                  Flexible(
-                    flex: 2,
-                    child: CustomButton(title: "chat_with_client".tr()),
-                  ),
-                  20.w.horizontalSpace,
-                  Flexible(
-                    flex: 1,
-                    child: CustomButton(
+              trip?.status == 0
+                  ? Row(
+                      children: [
+                        Flexible(
+                          flex: 2,
+                          child: CustomButton(
+                            title: "chat_with_client".tr(),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => MessageScreen(
+                                    model: MainUserAndRoomChatModel(
+                                      driverId: trip?.driverId.toString(),
+                                      receiverId: trip?.userId.toString(),
+                                      tripId: trip?.id.toString(),
+                                      chatId: trip?.roomToken,
+                                      isDriver: true,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                        20.w.horizontalSpace,
+                        Flexible(
+                          flex: 1,
+                          child: CustomButton(
+                            title: "reject".tr(),
+                            btnColor: AppColors.secondPrimary,
+                            textColor: AppColors.primary,
+                            onPressed: () {
+                              warningDialog(
+                                context,
+                                title: "are_you_sure_you_want_to_reject_trip"
+                                    .tr(),
+                                onPressedOk: () {
+                                  context.read<DriverHomeCubit>().cancleTrip(
+                                    tripId: trip?.id ?? 0,
+                                    context: context,
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    )
+                  : trip?.status == 1
+                  ? CustomButton(
                       title: "start_trip".tr(),
-                      btnColor: AppColors.secondPrimary,
-                      textColor: AppColors.primary,
-                    ),
-                  ),
-                ],
-              ),
-
-              CustomButton(
-                title: "start_trip".tr(),
-                // btnColor: AppColors.secondPrimary,
-                // textColor: AppColors.primary,
-              ),
-
-              CustomButton(
-                title: "end_trip".tr(),
-                btnColor: AppColors.red,
-                textColor: AppColors.white,
-              ),
+                      onPressed: () {
+                        warningDialog(
+                          context,
+                          title: "are_you_sure_you_want_to_start_trip".tr(),
+                          onPressedOk: () {
+                            context.read<DriverHomeCubit>().cancleTrip(
+                              tripId: trip?.id ?? 0,
+                              context: context,
+                            );
+                          },
+                        );
+                      },
+                      // btnColor: AppColors.secondPrimary,
+                      // textColor: AppColors.primary,
+                    )
+                  : trip?.status == 2
+                  ? CustomButton(
+                      title: "end_trip".tr(),
+                      btnColor: AppColors.red,
+                      textColor: AppColors.white,
+                      onPressed: () {
+                        warningDialog(
+                          context,
+                          title: "are_you_sure_you_want_to_end_trip".tr(),
+                          onPressedOk: () {
+                            context.read<DriverHomeCubit>().endTrip(
+                              tripId: trip?.id ?? 0,
+                              context: context,
+                            );
+                          },
+                        );
+                      },
+                    )
+                  : Container(),
 
               80.h.verticalSpace,
             ],
@@ -398,11 +563,30 @@ class CustomsSheduledTripWidet extends StatelessWidget {
 }
 
 class FromToContainer extends StatelessWidget {
-  const FromToContainer({super.key});
+  const FromToContainer({
+    super.key,
+    required this.isFrom,
+    this.address,
+    this.lat,
+    this.lng,
+  });
+  final bool isFrom;
+  final String? address;
+  final String? lat;
+  final String? lng;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      onTap: () {
+        log('lat: $lat, lng: $lng');
+        if (lat != null && lng != null) {
+          context.read<LocationCubit>().openGoogleMapsRoute(
+            double.tryParse(lat ?? '0') ?? 0,
+            double.tryParse(lng ?? '0') ?? 0,
+          );
+        }
+      },
       child: Container(
         decoration: BoxDecoration(
           color: AppColors.secondPrimary,
@@ -417,13 +601,11 @@ class FromToContainer extends StatelessWidget {
           text: TextSpan(
             children: [
               TextSpan(
-                text: '${'from'.tr()}: ',
+                text: isFrom ? '${'from'.tr()}: ' : '${'to'.tr()}: ',
                 style: getBoldStyle(fontSize: 16.sp, color: AppColors.primary),
               ),
               TextSpan(
-                text:
-                    'القاهرة الجديدة - التجمع الخامس - النرجس الجديدة - طريق بلا ع' *
-                    3,
+                text: address ?? "",
                 style: getMediumStyle(fontSize: 12.sp, color: AppColors.white),
               ),
             ],

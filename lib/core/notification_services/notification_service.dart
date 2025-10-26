@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'package:waslny/features/driver/background_services.dart';
-import 'package:waslny/features/driver/trips/screens/details/shipment_details_screen.dart';
 import 'package:waslny/features/user/trip_and_services/screens/details/shipment_details_screen.dart';
 import 'package:waslny/features/general/chat/screens/message_screen.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -74,12 +73,12 @@ class NotificationService {
               arguments: true,
             );
           } else {
-            navigatorKey.currentState?.pushNamed(
-              Routes.driverShipmentDetailsRoute,
-              arguments: DriverSHipmentsArgs(
-                shipmentId: message.data['reference_id'].toString(),
-              ),
-            );
+            // navigatorKey.currentState?.pushNamed(
+            //   Routes.driverShipmentDetailsRoute,
+            //   arguments: DriverSHipmentsArgs(
+            //     shipmentId: message.data['reference_id'].toString(),
+            //   ),
+            // );
           }
         }
       } else if (message.data['reference_table'] == "chat_rooms") {
@@ -291,12 +290,12 @@ class NotificationService {
                     arguments: true,
                   );
                 } else {
-                  navigatorKey.currentState?.pushNamed(
-                    Routes.driverShipmentDetailsRoute,
-                    arguments: DriverSHipmentsArgs(
-                      shipmentId: message['reference_id'].toString(),
-                    ),
-                  );
+                  // navigatorKey.currentState?.pushNamed(
+                  //   Routes.driverShipmentDetailsRoute,
+                  //   arguments: DriverSHipmentsArgs(
+                  //     shipmentId: message['reference_id'].toString(),
+                  //   ),
+                  // );
                 }
               }
             } else if (message['reference_table'] == "chat_rooms") {

@@ -34,7 +34,7 @@ class LoginModel {
 class LoginModelData {
   int? id;
   String? name;
-  int? phone;
+  dynamic? phone;
   int? userType;
   String? token;
   dynamic image;
@@ -66,7 +66,7 @@ class LoginModelData {
     return LoginModelData(
       id: json['id'] as int?,
       name: json['name'] as String?,
-      phone: json['phone'] as int?,
+      phone: json['phone'] ,
       userType: json['user_type'] as int?,
       token: json['token'] as String?,
       image: json['image'],
