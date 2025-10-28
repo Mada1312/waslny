@@ -62,11 +62,13 @@ class CustomTripsAndServicesDataList extends StatelessWidget {
     // 1. Check if the currently selected list is empty
     if (_isCurrentListEmpty) {
       // Show the "No Data" widget
-      return Padding(
-        padding: EdgeInsets.only(top: 100.h),
-        child: CustomNoDataWidget(
-          message: _noDataMessage,
-          onTap: onRefresh, // Use the callback
+      return Center(
+        child: Padding(
+          padding: EdgeInsets.only(top: 100.h),
+          child: CustomNoDataWidget(
+            message: _noDataMessage,
+            onTap: onRefresh, // Use the callback
+          ),
         ),
       );
     }

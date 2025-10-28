@@ -5,6 +5,7 @@ import 'package:waslny/core/widgets/network_image.dart';
 import 'package:waslny/features/general/auth/cubit/cubit.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:waslny/features/general/chat/screens/widgets/trip_details.dart';
 import '../cubit/chat_cubit.dart';
 import '../cubit/chat_state.dart';
 import 'widgets/chat_bubble_widget.dart';
@@ -128,6 +129,7 @@ class _MessageScreenState extends State<MessageScreen> {
                               children: [
                                 CustomChatHeader(
                                   isDriver: widget.model.isDriver ?? false,
+                                  
                                   isNotification:
                                       widget.model.isNotification ?? false,
                                 ),
@@ -459,179 +461,3 @@ class _MessageScreenState extends State<MessageScreen> {
   }
 }
 
-class CustomChatHeader extends StatelessWidget {
-  const CustomChatHeader({
-    super.key,
-    required this.isDriver,
-    required this.isNotification,
-  });
-  final bool isDriver;
-  final bool isNotification;
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          color: AppColors.white,
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 10.h),
-            decoration: BoxDecoration(
-              color: AppColors.unSeen,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(30.sp),
-                topRight: Radius.circular(30.sp),
-              ),
-            ),
-            child: Row(
-              children: [
-                IconButton(
-                  icon: Icon(
-                    Icons.arrow_back,
-                    size: 25.sp,
-                    color: AppColors.secondPrimary,
-                  ),
-                  onPressed: () {
-                    MessageStateManager().isInChatRoom("1");
-                    if (isNotification == true) {
-                      Navigator.pushReplacementNamed(
-                        context,
-                        Routes.mainRoute,
-                        arguments: isDriver == true,
-                      );
-                    } else {
-                      Navigator.pop(context);
-                    }
-                  },
-                ),
-
-                // SizedBox(width: 10.w),
-                Container(
-                  padding: EdgeInsets.all(4.sp),
-                  decoration: BoxDecoration(
-                    color: AppColors.secondPrimary,
-                    borderRadius: BorderRadius.circular(1000),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.2),
-                        spreadRadius: 1,
-                        blurRadius: 5,
-                        offset: Offset(0, 3), // changes position of shadow
-                      ),
-                    ],
-                  ),
-                  child: CustomNetworkImage(
-                    image:
-                        "https://images.ctfassets.net/xjcz23wx147q/iegram9XLv7h3GemB5vUR/0345811de2da23fafc79bd00b8e5f1c6/Max_Rehkopf_200x200.jpeg",
-                    isUser: true,
-                    height: 50.sp,
-                    width: 50.sp,
-                    borderRadius: 1000,
-                  ),
-                ),
-                12.horizontalSpace,
-                Expanded(child: Text("Max Rehkopf", style: getBoldStyle())),
-              ],
-            ),
-          ),
-        ),
-        Divider(thickness: 2.h, color: AppColors.white),
-        10.verticalSpace,
-        isDriver
-            ? Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  children: [
-                    Flexible(
-                      flex: 1,
-                      child: CustomButton(
-                        title: "accept".tr(),
-                        onPressed: () {},
-                      ),
-                    ),
-                    10.w.horizontalSpace,
-                    Flexible(
-                      flex: 1,
-                      child: CustomButton(
-                        title: "arrived".tr(),
-                        btnColor: AppColors.secondPrimary,
-                        textColor: AppColors.primary,
-                        onPressed: () {
-                          // warningDialog(
-                          //   context,
-                          //   title: "are_you_sure_you_want_to_reject_trip"
-                          //       .tr(),
-                          //   onPressedOk: () {
-                          //     context.read<DriverHomeCubit>().cancleTrip(
-                          //       tripId: trip?.id ?? 0,
-                          //       context: context,
-                          //     );
-                          //   },
-                          // );
-                        },
-                      ),
-                    ),
-                    10.w.horizontalSpace,
-                    Flexible(
-                      flex: 1,
-                      child: CustomButton(
-                        title: "another_trip".tr(),
-                        btnColor: AppColors.secondPrimary,
-                        textColor: AppColors.primary,
-                        onPressed: () {
-                          // warningDialog(
-                          //   context,
-                          //   title: "are_you_sure_you_want_to_reject_trip"
-                          //       .tr(),
-                          //   onPressedOk: () {
-                          //     context.read<DriverHomeCubit>().cancleTrip(
-                          //       tripId: trip?.id ?? 0,
-                          //       context: context,
-                          //     );
-                          //   },
-                          // );
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              )
-            : Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  children: [
-                    Flexible(
-                      flex: 3,
-                      child: CustomButton(
-                        title: "accept_trip".tr(),
-                        onPressed: () {},
-                      ),
-                    ),
-                    10.w.horizontalSpace,
-                    Flexible(
-                      flex: 2,
-                      child: CustomButton(
-                        title: "change_captain".tr(),
-                        btnColor: AppColors.secondPrimary,
-                        textColor: AppColors.primary,
-                        onPressed: () {
-                          // warningDialog(
-                          //   context,
-                          //   title: "are_you_sure_you_want_to_reject_trip"
-                          //       .tr(),
-                          //   onPressedOk: () {
-                          //     context.read<DriverHomeCubit>().cancleTrip(
-                          //       tripId: trip?.id ?? 0,
-                          //       context: context,
-                          //     );
-                          //   },
-                          // );
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-      ],
-    );
-  }
-}

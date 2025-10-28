@@ -33,7 +33,7 @@ class GetDriverHomeModel {
 
 class Data {
   User? user;
-   int? isWebhookVerified;
+  int? isWebhookVerified;
   DriverTripModel? currentTrip;
 
   Data({this.user, this.currentTrip, this.isWebhookVerified});
@@ -71,6 +71,11 @@ class DriverTripModel {
   String? statusName;
   int? status;
   String? roomToken;
+  int? isDriverArrived;
+  int? isUserStartTrip;
+  int? isDriverStartTrip;
+  int? isUserAccept;
+  int? isDriverAccept;
 
   DriverTripModel({
     this.id,
@@ -90,6 +95,11 @@ class DriverTripModel {
     this.statusName,
     this.status,
     this.roomToken,
+    this.isDriverArrived,
+    this.isUserStartTrip,
+    this.isDriverStartTrip,
+    this.isUserAccept,
+    this.isDriverAccept,
   });
 
   factory DriverTripModel.fromJson(Map<String, dynamic> json) =>
@@ -111,6 +121,11 @@ class DriverTripModel {
         statusName: json["status_name"],
         status: json["status"],
         roomToken: json["room_token"],
+        isDriverArrived: json["is_driver_arrived"],
+        isUserStartTrip: json["is_user_start_trip"],
+        isDriverStartTrip: json["is_driver_start_trip"],
+        isUserAccept: json["is_user_accept"],
+        isDriverAccept: json["is_driver_accept"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -131,6 +146,11 @@ class DriverTripModel {
     "status_name": statusName,
     "status": status,
     "room_token": roomToken,
+    "is_driver_arrived": isDriverArrived,
+    "is_user_start_trip": isUserStartTrip,
+    "is_driver_start_trip": isDriverStartTrip,
+    "is_user_accept": isUserAccept,
+    "is_driver_accept": isDriverAccept,
   };
 }
 

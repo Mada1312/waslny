@@ -202,9 +202,14 @@
     "change_captain": "Change Captain",
     "accept": "Accept",
     "arrived": "Arrived",
+    "are_you_sure_you_want_to_decline_trip": "Are you sure you want to decline the trip?",
+    "are_you_sure_you_want_to_change_captain": "Are you sure you want to change the captain?",
+    "are_you_sure_you_want_to_confirm_arrival": "Are you sure you want to confirm the arrival?",
+    "are_you_sure_you_want_to_accept_trip": "Are you sure you want to accept the trip?",
   
-
-    
+    "calculating_route": "Calculating route...",
+    "select_from_location": "Select From Location",
+    "select_to_location": "Select To Location",
     "": "",
     "**": "**"
 }

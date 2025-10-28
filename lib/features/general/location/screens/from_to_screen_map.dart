@@ -1,11 +1,9 @@
 import 'package:waslny/extention.dart';
-
 import 'package:waslny/features/user/add_new_trip/cubit/cubit.dart';
 import 'package:easy_debounce/easy_debounce.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_animations/flutter_map_animations.dart';
 import 'package:waslny/core/exports.dart';
-
 import 'package:latlong2/latlong.dart';
 import 'package:waslny/core/utils/convert_numbers_method.dart';
 import 'package:permission_handler/permission_handler.dart' as perm;
@@ -13,29 +11,55 @@ import '../cubit/location_cubit.dart';
 import '../cubit/location_state.dart';
 import 'widgets/map_button.dart';
 
-class FullScreenMap extends StatefulWidget {
-  const FullScreenMap({super.key, this.isTo = false});
-  final bool? isTo;
+class FromToScreenMap extends StatefulWidget {
+  const FromToScreenMap({super.key, required this.isTo});
+
+  final bool isTo;
+
   @override
-  State<FullScreenMap> createState() => _FullScreenMapState();
+  State<FromToScreenMap> createState() => _FromToScreenMapState();
 }
 
-class _FullScreenMapState extends State<FullScreenMap>
+class _FromToScreenMapState extends State<FromToScreenMap>
     with TickerProviderStateMixin {
   late final AnimatedMapController animatedMapController;
   final TextEditingController _searchController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
-        if (context.read<LocationCubit>().selectedLocation == null) {
-          context.read<LocationCubit>().checkAndRequestLocationPermission(
-            context,
+        final cubit = context.read<LocationCubit>();
+
+        if (cubit.selectedLocation == null) {
+          cubit.checkAndRequestLocationPermission(context);
+        }
+
+        // Initialize from and to locations from AddNewTripCubit
+        final tripCubit = context.read<AddNewTripCubit>();
+
+        if (tripCubit.fromSelectedLocation != null) {
+          cubit.setFromLocation(
+            LatLng(
+              tripCubit.fromSelectedLocation!.latitude ?? 0.0,
+              tripCubit.fromSelectedLocation!.longitude ?? 0.0,
+            ),
+          );
+        }
+
+        if (tripCubit.toSelectedLocation != null) {
+          cubit.setToLocation(
+            LatLng(
+              tripCubit.toSelectedLocation!.latitude ?? 0.0,
+              tripCubit.toSelectedLocation!.longitude ?? 0.0,
+            ),
           );
         }
       }
     });
+
     animatedMapController = AnimatedMapController(vsync: this);
     context.read<LocationCubit>().setAnimatedMapController(
       animatedMapController,
@@ -49,18 +73,7 @@ class _FullScreenMapState extends State<FullScreenMap>
 
     return WillPopScope(
       onWillPop: () {
-        if (widget.isTo == true) {
-          context.read<AddNewTripCubit>().toAddressController.text =
-              cubit.address;
-          context.read<AddNewTripCubit>().toSelectedLocation =
-              cubit.selectedLocation;
-        } else {
-          context.read<AddNewTripCubit>().fromAddressController.text =
-              cubit.address;
-          context.read<AddNewTripCubit>().fromSelectedLocation =
-              cubit.selectedLocation;
-        }
-
+        _saveLocationToTrip(cubit);
         Navigator.pop(context);
         return Future.value(false);
       },
@@ -68,23 +81,15 @@ class _FullScreenMapState extends State<FullScreenMap>
         child: Scaffold(
           appBar: AppBar(
             title: Text(
-              "select_location".tr(),
+              widget.isTo
+                  ? "select_to_location".tr()
+                  : "select_from_location".tr(),
               style: getBoldStyle(color: AppColors.black),
             ),
             leading: IconButton(
               icon: const Icon(Icons.arrow_back),
               onPressed: () {
-                if (widget.isTo == true) {
-                  context.read<AddNewTripCubit>().toAddressController.text =
-                      cubit.address;
-                  context.read<AddNewTripCubit>().toSelectedLocation =
-                      cubit.selectedLocation;
-                } else {
-                  context.read<AddNewTripCubit>().fromAddressController.text =
-                      cubit.address;
-                  context.read<AddNewTripCubit>().fromSelectedLocation =
-                      cubit.selectedLocation;
-                }
+                _saveLocationToTrip(cubit);
                 Navigator.pop(context);
               },
             ),
@@ -125,10 +130,7 @@ class _FullScreenMapState extends State<FullScreenMap>
                     mapController: animatedMapController.mapController,
                     options: MapOptions(
                       initialZoom: 12,
-                      initialCenter: LatLng(
-                        cubit.selectedLocation!.latitude ?? 0.0,
-                        cubit.selectedLocation!.longitude ?? 0.0,
-                      ),
+                      initialCenter: _getInitialCenter(cubit),
                       onTap: (tapPosition, tappedLatLng) {
                         double lat = double.parse(
                           (replaceToEnglishNumber(
@@ -140,13 +142,19 @@ class _FullScreenMapState extends State<FullScreenMap>
                             tappedLatLng.longitude.toString(),
                           )),
                         );
-                        print(
-                          "Tapped LatLng: LatLng(latitude: $lat, longitude: $lng)",
-                        );
+
+                        LatLng newLatLng = LatLng(lat, lng);
                         cubit.updateSelectedPositionedCamera(
-                          LatLng(lat, lng),
+                          newLatLng,
                           context,
                         );
+
+                        // Update from or to based on isTo flag
+                        if (widget.isTo) {
+                          cubit.updateToLocation(newLatLng);
+                        } else {
+                          cubit.updateFromLocation(newLatLng);
+                        }
                       },
                     ),
                     children: [
@@ -156,11 +164,107 @@ class _FullScreenMapState extends State<FullScreenMap>
                         userAgentPackageName: 'com.octopus.waslny',
                       ),
 
-                      MarkerLayer(markers: cubit.positionMarkers),
-                      // Uncomment the following line if you want to add a custom marke
+                      // Route polyline
+                      if (cubit.routePoints.isNotEmpty)
+                        PolylineLayer(
+                          polylines: [
+                            Polyline(
+                              points: cubit.routePoints,
+                              strokeWidth: 4.0,
+                              color: AppColors.primary,
+                            ),
+                          ],
+                        ),
+
+                      // Markers
+                      MarkerLayer(markers: _buildMarkers(cubit)),
                     ],
                   ),
-                  // ✅ Zoom Controls
+
+                  // Loading indicator for route
+                  if (cubit.isLoadingRoute)
+                    Positioned(
+                      top: 80,
+                      left: 0,
+                      right: 0,
+                      child: Center(
+                        child: Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(8),
+                            boxShadow: const [
+                              BoxShadow(blurRadius: 4, color: Colors.black26),
+                            ],
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Text("calculating_route".tr()),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+
+                  // Distance and duration info
+                  if (cubit.routeDistance > 0 && !cubit.isLoadingRoute)
+                    Positioned(
+                      top: 80,
+                      left: 16,
+                      right: 16,
+                      child: Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(8),
+                          boxShadow: const [
+                            BoxShadow(blurRadius: 4, color: Colors.black26),
+                          ],
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.directions_car,
+                                  color: AppColors.primary,
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  cubit.getFormattedDistance(),
+                                  style: getBoldStyle(color: AppColors.black),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.access_time,
+                                  color: AppColors.primary,
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  cubit.getFormattedDuration(),
+                                  style: getBoldStyle(color: AppColors.black),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                  // Zoom Controls
                   Positioned(
                     bottom: 24,
                     right: 16,
@@ -203,7 +307,7 @@ class _FullScreenMapState extends State<FullScreenMap>
                     ),
                   ),
 
-                  // ✅ Current Location Button (Left side)
+                  // Current Location Button
                   Positioned(
                     bottom: 24,
                     left: 16,
@@ -214,7 +318,7 @@ class _FullScreenMapState extends State<FullScreenMap>
                     ),
                   ),
 
-                  // 🔍 Search box & suggestions
+                  // Search box & suggestions
                   Positioned(
                     top: 16,
                     left: 16,
@@ -243,7 +347,7 @@ class _FullScreenMapState extends State<FullScreenMap>
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(8),
-                              boxShadow: [
+                              boxShadow: const [
                                 BoxShadow(blurRadius: 4, color: Colors.black12),
                               ],
                             ),
@@ -261,6 +365,21 @@ class _FullScreenMapState extends State<FullScreenMap>
                                       suggestion.placeId ?? 0,
                                       context,
                                     );
+
+                                    // Update location after selection
+                                    if (cubit.selectedLocation != null) {
+                                      LatLng newLatLng = LatLng(
+                                        cubit.selectedLocation!.latitude ?? 0.0,
+                                        cubit.selectedLocation!.longitude ??
+                                            0.0,
+                                      );
+
+                                      if (widget.isTo) {
+                                        cubit.updateToLocation(newLatLng);
+                                      } else {
+                                        cubit.updateFromLocation(newLatLng);
+                                      }
+                                    }
                                   },
                                 );
                               },
@@ -270,6 +389,7 @@ class _FullScreenMapState extends State<FullScreenMap>
                     ),
                   ),
 
+                  // Confirm button
                   PositionedDirectional(
                     bottom: 10,
                     width: context.w,
@@ -277,29 +397,9 @@ class _FullScreenMapState extends State<FullScreenMap>
                       child: SizedBox(
                         width: context.w / 2,
                         child: CustomButton(
-                          padding: EdgeInsets.all(8),
+                          padding: const EdgeInsets.all(8),
                           onPressed: () {
-                            if (widget.isTo == true) {
-                              context
-                                      .read<AddNewTripCubit>()
-                                      .toAddressController
-                                      .text =
-                                  cubit.address;
-                              context
-                                      .read<AddNewTripCubit>()
-                                      .toSelectedLocation =
-                                  cubit.selectedLocation;
-                            } else {
-                              context
-                                      .read<AddNewTripCubit>()
-                                      .fromAddressController
-                                      .text =
-                                  cubit.address;
-                              context
-                                      .read<AddNewTripCubit>()
-                                      .fromSelectedLocation =
-                                  cubit.selectedLocation;
-                            }
+                            _saveLocationToTrip(cubit);
                             Navigator.pop(context);
                           },
                           title: 'confirm_destination'.tr(),
@@ -315,5 +415,85 @@ class _FullScreenMapState extends State<FullScreenMap>
       ),
     );
   }
-}
 
+  LatLng _getInitialCenter(LocationCubit cubit) {
+    if (widget.isTo && cubit.toLocation != null) {
+      return cubit.toLocation!;
+    } else if (!widget.isTo && cubit.fromLocation != null) {
+      return cubit.fromLocation!;
+    } else if (cubit.selectedLocation != null) {
+      return LatLng(
+        cubit.selectedLocation!.latitude ?? 0.0,
+        cubit.selectedLocation!.longitude ?? 0.0,
+      );
+    }
+    return const LatLng(0.0, 0.0);
+  }
+
+  List<Marker> _buildMarkers(LocationCubit cubit) {
+    List<Marker> markers = [];
+
+    // From marker (blue)
+    if (cubit.fromLocation != null) {
+      markers.add(
+        Marker(
+          point: cubit.fromLocation!,
+          child: MySvgWidget(
+            path: AppIcons.pin,
+            width: 50,
+            height: 50,
+            imageColor: Colors.blue,
+          ),
+        ),
+      );
+    }
+
+    // To marker (red)
+    if (cubit.toLocation != null) {
+      markers.add(
+        Marker(
+          point: cubit.toLocation!,
+          child: MySvgWidget(
+            path: AppIcons.pin,
+            width: 50,
+            height: 50,
+            imageColor: Colors.red,
+          ),
+        ),
+      );
+    }
+
+    // Current selection marker (only if different from from/to)
+    if (cubit.positionMarkers.isNotEmpty) {
+      final selectedPoint = cubit.positionMarkers.first.point;
+      final isDifferentFromFromTo =
+          (cubit.fromLocation == null || selectedPoint != cubit.fromLocation) &&
+          (cubit.toLocation == null || selectedPoint != cubit.toLocation);
+
+      if (isDifferentFromFromTo) {
+        markers.addAll(cubit.positionMarkers);
+      }
+    }
+
+    return markers;
+  }
+
+  void _saveLocationToTrip(LocationCubit cubit) {
+    if (widget.isTo) {
+      context.read<AddNewTripCubit>().toAddressController.text = cubit.address;
+      context.read<AddNewTripCubit>().toSelectedLocation =
+          cubit.selectedLocation;
+    } else {
+      context.read<AddNewTripCubit>().fromAddressController.text =
+          cubit.address;
+      context.read<AddNewTripCubit>().fromSelectedLocation =
+          cubit.selectedLocation;
+    }
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+}

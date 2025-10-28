@@ -1,5 +1,7 @@
 import 'dart:developer';
 
+import 'package:waslny/features/general/chat/cubit/chat_cubit.dart';
+
 import '../../../../../core/exports.dart';
 import '../model/create_chat_room.dart';
 import '../model/room_model.dart';
@@ -47,6 +49,26 @@ class ChatRepo {
       );
 
       return Right(MainCreateChatRoomModel.fromJson(response));
+    } on ServerException {
+      return Left(ServerFailure());
+    }
+  }
+
+  Future<Either<Failure, DefaultPostModel>> updateTripStatus({
+    required int id,
+    required TripStep step,
+  }) async {
+    try {
+      final response = await dio.post(
+        EndPoints.updateTripStepsUrl,
+        body: {
+          "trip_id": id,
+          "step": step
+              .stepValue, // is_user_accept|is_driver_accept|is_driver_arrived|is_user_start_trip|is_driver_start_trip
+          "value": 1, // 1,0
+        },
+      );
+      return Right(DefaultPostModel.fromJson(response));
     } on ServerException {
       return Left(ServerFailure());
     }

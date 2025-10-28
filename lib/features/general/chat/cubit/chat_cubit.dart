@@ -5,7 +5,9 @@ import 'package:waslny/core/preferences/preferences.dart';
 import 'package:waslny/features/general/chat/cubit/chat_state.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
+import 'package:waslny/features/user/home/cubit/cubit.dart';
 
+import '../../../driver/home/cubit/cubit.dart';
 import '../data/model/create_chat_room.dart';
 import '../data/model/message_model.dart';
 import '../data/model/room_model.dart';
@@ -209,6 +211,49 @@ class ChatCubit extends Cubit<ChatState> {
       },
     );
   }
+
+  Future<void> updateTripStatus({
+   
+    required TripStep step,
+    required bool isDriver,
+    required BuildContext context,
+  }) async {
+    AppWidget.createProgressDialog(context, msg: "...");
+    emit(UpdateTripStatusLoadingState());
+    try {
+      final response = await chatRepo.updateTripStatus(id: 4, ///TODO: get trip id from details
+       step: step);
+      response.fold(
+        (failure) {
+          Navigator.pop(context); // Close the progress dialog
+          emit(UpdateTripStatusErrorState());
+        },
+        (response) {
+          Navigator.pop(context); // Close the progress dialog
+          if (response.status == 200 || response.status == 201) {
+            emit(UpdateTripStatusSuccessState());
+            successGetBar(response.msg ?? "Trip cancelled successfully");
+
+            ///TODO :
+            ///get home data again to refresh the trips list
+            if (isDriver) {
+              DriverHomeCubit driverHomeCubit =
+                  BlocProvider.of<DriverHomeCubit>(context);
+              driverHomeCubit.getDriverHomeData(context);
+            } else {
+              UserHomeCubit homeCubit = BlocProvider.of<UserHomeCubit>(context);
+              homeCubit.getHome(context);
+            }
+          } else {
+            errorGetBar(response.msg ?? "Failed to cancel trip");
+          }
+        },
+      );
+    } catch (e) {
+      log("Error in cancelShipment: $e");
+      emit(UpdateTripStatusErrorState());
+    }
+  }
 }
 
 String extractTimeFromTimestamp(Timestamp timestamp) {
@@ -220,4 +265,30 @@ String extractTimeFromTimestamp(Timestamp timestamp) {
 
   // Return formatted time string
   return outputFormat.format(dateTime);
+}
+
+// create enum with trip steps is_user_accept|is_driver_accept|is_driver_arrived|is_user_start_trip|is_driver_start_trip
+enum TripStep {
+  isUserAccept,
+  isDriverAccept,
+  isDriverArrived,
+  isUserStartTrip,
+  isDriverStartTrip,
+}
+
+extension TripStepExtension on TripStep {
+  String get stepValue {
+    switch (this) {
+      case TripStep.isUserAccept:
+        return 'is_user_accept';
+      case TripStep.isDriverAccept:
+        return 'is_driver_accept';
+      case TripStep.isDriverArrived:
+        return 'is_driver_arrived';
+      case TripStep.isUserStartTrip:
+        return 'is_user_start_trip';
+      case TripStep.isDriverStartTrip:
+        return 'is_driver_start_trip';
+    }
+  }
 }
