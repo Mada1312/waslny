@@ -63,93 +63,99 @@ class _AllTripsScreenRouteState extends State<AllTripsScreenRoute> {
                       Flexible(
                         child: SingleChildScrollView(
                           physics: const AlwaysScrollableScrollPhysics(),
-                          child: Container(
-                            child: state is UserHomeError
-                                ? CustomNoDataWidget(
-                                    message: 'error_happened'.tr(),
-                                    onTap: () {
-                                      cubit.getHome(context);
-                                    },
-                                  )
-                                : state is UserHomeLoading ||
-                                      cubit.homeModel?.data == null
-                                ? Padding(
-                                    padding: EdgeInsets.only(top: 150.h),
-                                    child: CustomLoadingIndicator(),
-                                  )
-                                : ((cubit.homeModel?.data?.services?.isEmpty ==
-                                          true &&
-                                      cubit.serviceType?.name ==
-                                          ServicesType.services.name))
-                                ? Padding(
-                                    padding: EdgeInsets.only(top: 100.h),
-                                    child: CustomNoDataWidget(
-                                      message: 'no_serices'.tr(),
+                          child: Center(
+                            child: Container(
+                              child: state is UserHomeError
+                                  ? CustomNoDataWidget(
+                                      message: 'error_happened'.tr(),
                                       onTap: () {
                                         cubit.getHome(context);
                                       },
-                                    ),
-                                  )
-                                : (cubit.homeModel?.data?.trips?.isEmpty ==
-                                          true &&
-                                      cubit.serviceType?.name ==
-                                          ServicesType.trips.name)
-                                ? Padding(
-                                    padding: EdgeInsets.only(top: 100.h),
-                                    child: CustomNoDataWidget(
-                                      message: 'no_trips'.tr(),
-                                      onTap: () {
-                                        cubit.getHome(context);
-                                      },
-                                    ),
-                                  )
-                                : ListView.separated(
-                                    shrinkWrap: true,
-                                    padding: EdgeInsets.only(
-                                      bottom:
-                                          (kBottomNavigationBarHeight + 5).h,
-                                    ),
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    itemBuilder: (context, index) => Padding(
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: 3.w,
-                                        vertical: 3.h,
+                                    )
+                                  : state is UserHomeLoading ||
+                                        cubit.homeModel?.data == null
+                                  ? Padding(
+                                      padding: EdgeInsets.only(top: 150.h),
+                                      child: CustomLoadingIndicator(),
+                                    )
+                                  : ((cubit
+                                                .homeModel
+                                                ?.data
+                                                ?.services
+                                                ?.isEmpty ==
+                                            true &&
+                                        cubit.serviceType?.name ==
+                                            ServicesType.services.name))
+                                  ? Padding(
+                                      padding: EdgeInsets.only(top: 100.h),
+                                      child: CustomNoDataWidget(
+                                        message: 'no_serices'.tr(),
+                                        onTap: () {
+                                          cubit.getHome(context);
+                                        },
                                       ),
-                                      child: TripOrServiceItemWidget(
-                                        tripOrService:
-                                            (cubit.serviceType?.name
-                                                    .toString() ==
-                                                ServicesType.trips.name
-                                                    .toString())
-                                            ? cubit
-                                                  .homeModel!
-                                                  .data!
-                                                  .trips![index]
-                                            : cubit
-                                                  .homeModel!
-                                                  .data!
-                                                  .services?[index],
+                                    )
+                                  : (cubit.homeModel?.data?.trips?.isEmpty ==
+                                            true &&
+                                        cubit.serviceType?.name ==
+                                            ServicesType.trips.name)
+                                  ? Padding(
+                                      padding: EdgeInsets.only(top: 100.h),
+                                      child: CustomNoDataWidget(
+                                        message: 'no_trips'.tr(),
+                                        onTap: () {
+                                          cubit.getHome(context);
+                                        },
                                       ),
+                                    )
+                                  : ListView.separated(
+                                      shrinkWrap: true,
+                                      padding: EdgeInsets.only(
+                                        bottom:
+                                            (kBottomNavigationBarHeight + 5).h,
+                                      ),
+                                      physics:
+                                          const NeverScrollableScrollPhysics(),
+                                      itemBuilder: (context, index) => Padding(
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: 3.w,
+                                          vertical: 3.h,
+                                        ),
+                                        child: TripOrServiceItemWidget(
+                                          tripOrService:
+                                              (cubit.serviceType?.name
+                                                      .toString() ==
+                                                  ServicesType.trips.name
+                                                      .toString())
+                                              ? cubit
+                                                    .homeModel!
+                                                    .data!
+                                                    .trips![index]
+                                              : cubit
+                                                    .homeModel!
+                                                    .data!
+                                                    .services?[index],
+                                        ),
+                                      ),
+                                      separatorBuilder: (context, index) =>
+                                          20.h.verticalSpace,
+                                      itemCount:
+                                          (cubit.serviceType?.name ==
+                                              ServicesType.trips.name
+                                          ? (cubit
+                                                    .homeModel
+                                                    ?.data
+                                                    ?.trips
+                                                    ?.length ??
+                                                0)
+                                          : (cubit
+                                                    .homeModel
+                                                    ?.data
+                                                    ?.services
+                                                    ?.length ??
+                                                0)),
                                     ),
-                                    separatorBuilder: (context, index) =>
-                                        20.h.verticalSpace,
-                                    itemCount:
-                                        (cubit.serviceType?.name ==
-                                            ServicesType.trips.name
-                                        ? (cubit
-                                                  .homeModel
-                                                  ?.data
-                                                  ?.trips
-                                                  ?.length ??
-                                              0)
-                                        : (cubit
-                                                  .homeModel
-                                                  ?.data
-                                                  ?.services
-                                                  ?.length ??
-                                              0)),
-                                  ),
+                            ),
                           ),
                         ),
                       ),

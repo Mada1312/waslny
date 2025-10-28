@@ -2,6 +2,7 @@ import 'package:waslny/core/exports.dart';
 import 'package:waslny/core/utils/general_enum.dart';
 import 'package:waslny/core/widgets/custom_divider.dart';
 import 'package:waslny/extention.dart';
+import 'package:waslny/features/general/location/screens/from_to_screen_map.dart';
 import 'package:waslny/features/user/add_new_trip/screens/all_latest_locations_screen.dart';
 import 'package:waslny/features/user/add_new_trip/screens/widget/custom_location_widget.dart';
 import 'package:waslny/features/user/add_new_trip/screens/widget/custom_time_gender_vehicle.dart';
@@ -146,14 +147,18 @@ class _AddNewTripScreenState extends State<AddNewTripScreen> {
                     onFromTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (_) => FullScreenMap()),
+                        MaterialPageRoute(
+                          builder: (_) => (widget.args?.isService ?? false)
+                              ? FullScreenMap()
+                              : FromToScreenMap(isTo: false),
+                        ),
                       );
                     },
                     onToTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => FullScreenMap(isTo: true),
+                          builder: (_) => FromToScreenMap(isTo: true),
                         ),
                       );
                     },

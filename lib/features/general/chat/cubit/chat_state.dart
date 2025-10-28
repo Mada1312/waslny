@@ -37,3 +37,7 @@ class UpdateProfileError extends ChatState {}
 class UpdateProfileImagePicked extends ChatState {}
 
 class MessageErrorState extends ChatState {}
+class UpdateTripStatusLoadingState extends ChatState {}
+class UpdateTripStatusSuccessState extends ChatState {}
+class UpdateTripStatusErrorState extends ChatState {}
+

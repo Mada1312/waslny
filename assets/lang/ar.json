@@ -202,7 +202,14 @@
   "change_captain": "تغيير الكابتن",
   "accept": "قبول",
   "arrived": "وصلت",
+  "are_you_sure_you_want_to_decline_trip": "هل أنت متأكد من رفض الرحلة؟",
+  "are_you_sure_you_want_to_change_captain": "هل انت متاكد من تغيير الكابتن؟",
+  "are_you_sure_you_want_to_confirm_arrival": "هل انت متاكد من تأكيد الوصول؟",
+  "are_you_sure_you_want_to_accept_trip": "هل انت متاكد من قبول الرحلة؟",
   
+  "calculating_route": "جاري حساب المسار...",
+  "select_from_location": "اختر موقع الانطلاق",
+  "select_to_location": "اختر موقع الوجهة",
   "": "",
  
   "**": "**"

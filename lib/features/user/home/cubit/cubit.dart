@@ -32,6 +32,13 @@ class UserHomeCubit extends Cubit<UserHomeState> {
             arguments: false,
           );
         }
+        if (isVerify == true) {
+          Navigator.pushReplacementNamed(
+            context,
+            Routes.mainRoute,
+            arguments: false,
+          );
+        }
         //  else {
         //   Navigator.pushReplacementNamed(context, Routes.mainRoute,
         //       arguments: false);
