@@ -40,4 +40,8 @@ class MessageErrorState extends ChatState {}
 class UpdateTripStatusLoadingState extends ChatState {}
 class UpdateTripStatusSuccessState extends ChatState {}
 class UpdateTripStatusErrorState extends ChatState {}
+class GetTripStatusErrorState extends ChatState {}
+class GetTripStatusLoadingState extends ChatState {}
+class GetTripStatusSuccessState extends ChatState {}
+
 

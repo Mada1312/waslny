@@ -49,31 +49,74 @@ class _AllRoomScreenState extends State<AllRoomScreen> {
                     itemBuilder: (context, index) {
                       return GestureDetector(
                         onTap: () {
-                          // print(" ss");
-                          Navigator.pushNamed(
-                            context,
-                            Routes.messageRoute,
-                            arguments: MainUserAndRoomChatModel(
-                              driverId: cubit
-                                  .chatRoomModel
-                                  ?.data?[index]
-                                  .driver
-                                  ?.id
-                                  ?.toString(),
-                              tripId: cubit
-                                  .chatRoomModel
-                                  ?.data?[index]
-                                  .shipmentId
-                                  ?.toString(),
-                              chatId: cubit
-                                  .chatRoomModel
-                                  ?.data?[index]
-                                  .roomToken
-                                  .toString(),
-                              title:
-                                  "#${cubit.chatRoomModel?.data?[index].shipmentCode ?? ''}-${context.read<LoginCubit>().authData?.data?.userType == 0 ? (cubit.chatRoomModel?.data?[index].driver?.name ?? '') : (cubit.chatRoomModel?.data?[index].user?.name ?? '')}",
-                            ),
-                          );
+                          (context
+                                      .read<LoginCubit>()
+                                      .authData
+                                      ?.data
+                                      ?.userType ==
+                                  0)
+                              ? Navigator.pushNamed(
+                                  context,
+                                  Routes.messageRoute,
+                                  arguments: MainUserAndRoomChatModel(
+                                    driverId: cubit
+                                        .chatRoomModel
+                                        ?.data?[index]
+                                        .driver
+                                        ?.id
+                                        ?.toString(),
+                                    isDriver: false,
+                                    receiverId: cubit
+                                        .chatRoomModel
+                                        ?.data?[index]
+                                        .driver
+                                        ?.id
+                                        ?.toString(),
+                                    tripId: cubit
+                                        .chatRoomModel
+                                        ?.data?[index]
+                                        .shipmentId
+                                        ?.toString(),
+                                    chatId: cubit
+                                        .chatRoomModel
+                                        ?.data?[index]
+                                        .roomToken
+                                        .toString(),
+                                    title:
+                                        "#${cubit.chatRoomModel?.data?[index].shipmentCode ?? ''}-${context.read<LoginCubit>().authData?.data?.userType == 0 ? (cubit.chatRoomModel?.data?[index].driver?.name ?? '') : (cubit.chatRoomModel?.data?[index].user?.name ?? '')}",
+                                  ),
+                                )
+                              : Navigator.pushNamed(
+                                  context,
+                                  Routes.messageRoute,
+                                  arguments: MainUserAndRoomChatModel(
+                                    driverId: cubit
+                                        .chatRoomModel
+                                        ?.data?[index]
+                                        .driver
+                                        ?.id
+                                        ?.toString(),
+                                    isDriver: true,
+                                    receiverId: cubit
+                                        .chatRoomModel
+                                        ?.data?[index]
+                                        .user
+                                        ?.id
+                                        ?.toString(),
+                                    tripId: cubit
+                                        .chatRoomModel
+                                        ?.data?[index]
+                                        .shipmentId
+                                        ?.toString(),
+                                    chatId: cubit
+                                        .chatRoomModel
+                                        ?.data?[index]
+                                        .roomToken
+                                        .toString(),
+                                    title:
+                                        "#${cubit.chatRoomModel?.data?[index].shipmentCode ?? ''}-${context.read<LoginCubit>().authData?.data?.userType == 0 ? (cubit.chatRoomModel?.data?[index].driver?.name ?? '') : (cubit.chatRoomModel?.data?[index].user?.name ?? '')}",
+                                  ),
+                                );
                         },
                         child: Container(
                           padding: EdgeInsets.all(10.w),

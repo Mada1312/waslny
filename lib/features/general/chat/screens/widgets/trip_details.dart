@@ -52,111 +52,170 @@ class CustomChatHeader extends StatelessWidget {
                         }
                       },
                     ),
-
-                    // SizedBox(width: 10.w),
-                    Container(
-                      padding: EdgeInsets.all(4.sp),
-                      decoration: BoxDecoration(
-                        color: AppColors.secondPrimary,
-                        borderRadius: BorderRadius.circular(1000),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.2),
-                            spreadRadius: 1,
-                            blurRadius: 5,
-                            offset: Offset(0, 3), // changes position of shadow
-                          ),
-                        ],
+                    if (state is GetTripStatusLoadingState)
+                      SizedBox.shrink()
+                    else ...[
+                      Container(
+                        padding: EdgeInsets.all(4.sp),
+                        decoration: BoxDecoration(
+                          color: AppColors.secondPrimary,
+                          borderRadius: BorderRadius.circular(1000),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.2),
+                              spreadRadius: 1,
+                              blurRadius: 5,
+                              offset: Offset(
+                                0,
+                                3,
+                              ), // changes position of shadow
+                            ),
+                          ],
+                        ),
+                        child: CustomNetworkImage(
+                          image: isDriver
+                              ? cubit.getTripDetailsModel?.data?.user?.image ??
+                                    ""
+                              : cubit
+                                        .getTripDetailsModel
+                                        ?.data
+                                        ?.driver
+                                        ?.image ??
+                                    "",
+                          isUser: true,
+                          height: 50.sp,
+                          width: 50.sp,
+                          borderRadius: 1000,
+                        ),
                       ),
-                      child: CustomNetworkImage(
-                        image:
-                            "https://images.ctfassets.net/xjcz23wx147q/iegram9XLv7h3GemB5vUR/0345811de2da23fafc79bd00b8e5f1c6/Max_Rehkopf_200x200.jpeg",
-                        isUser: true,
-                        height: 50.sp,
-                        width: 50.sp,
-                        borderRadius: 1000,
+                      12.horizontalSpace,
+                      Expanded(
+                        child: Text(
+                          isDriver == true
+                              ? cubit.getTripDetailsModel?.data?.user?.name ??
+                                    ""
+                              : cubit.getTripDetailsModel?.data?.driver?.name ??
+                                    "",
+                          style: getBoldStyle(),
+                        ),
                       ),
-                    ),
-                    12.horizontalSpace,
-                    Expanded(child: Text("Max Rehkopf", style: getBoldStyle())),
+                    ],
                   ],
                 ),
               ),
             ),
             Divider(thickness: 2.h, color: AppColors.white),
             10.verticalSpace,
-            isDriver
+            (state is GetTripStatusLoadingState)
+                ? Center(
+                    child:
+                        // make it linearProgressIndicator
+                        Center(
+                          child: LinearProgressIndicator(
+                            color: AppColors.secondPrimary,
+                            backgroundColor: AppColors.grey.withOpacity(0.3),
+                          ),
+                        ),
+                  )
+                : isDriver
                 ? Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Row(
                       children: [
-                        Flexible(
-                          flex: 1,
-                          child: CustomButton(
-                            title: "accept".tr(),
-                            onPressed: () {
-                              warningDialog(
-                                context,
-                                title: "are_you_sure_you_want_to_accept_trip"
-                                    .tr(),
-                                onPressedOk: () {
-                                  cubit.updateTripStatus(
-                                    isDriver: isDriver,
-                                    step: TripStep.isDriverAccept,
-                                    context: context,
-                                  );
-                                },
-                              );
-                            },
+                        if (cubit.getTripDetailsModel?.data?.isDriverAccept ==
+                                0 &&
+                            cubit
+                                    .getTripDetailsModel
+                                    ?.data
+                                    ?.isDriverAnotherTrip ==
+                                0) ...[
+                          Flexible(
+                            flex: 1,
+                            child: CustomButton(
+                              title: "accept".tr(),
+                              onPressed: () {
+                                warningDialog(
+                                  context,
+                                  title: "are_you_sure_you_want_to_accept_trip"
+                                      .tr(),
+                                  onPressedOk: () {
+                                    cubit.updateTripStatus(
+                                      isDriver: isDriver,
+                                      step: TripStep.isDriverAccept,
+                                      context: context,
+                                    );
+                                  },
+                                );
+                              },
+                            ),
                           ),
-                        ),
-                        10.w.horizontalSpace,
-                        Flexible(
-                          flex: 1,
-                          child: CustomButton(
-                            title: "arrived".tr(),
-                            btnColor: AppColors.secondPrimary,
-                            textColor: AppColors.primary,
-                            onPressed: () {
-                              warningDialog(
-                                context,
-                                title:
-                                    "are_you_sure_you_want_to_confirm_arrival"
-                                        .tr(),
-                                onPressedOk: () {
-                                  cubit.updateTripStatus(
-                                    isDriver: isDriver,
-                                    step: TripStep.isDriverArrived,
-                                    context: context,
-                                  );
-                                },
-                              );
-                            },
+                          10.w.horizontalSpace,
+                        ],
+                        if (cubit.getTripDetailsModel?.data?.isDriverArrived ==
+                                0 &&
+                            cubit.getTripDetailsModel?.data?.isDriverAccept ==
+                                1 &&
+                            cubit
+                                    .getTripDetailsModel
+                                    ?.data
+                                    ?.isDriverAnotherTrip ==
+                                0) ...[
+                          Flexible(
+                            flex: 1,
+                            child: CustomButton(
+                              title: "arrived".tr(),
+                              btnColor: AppColors.secondPrimary,
+                              textColor: AppColors.primary,
+                              onPressed: () {
+                                warningDialog(
+                                  context,
+                                  title:
+                                      "are_you_sure_you_want_to_confirm_arrival"
+                                          .tr(),
+                                  onPressedOk: () {
+                                    cubit.updateTripStatus(
+                                      isDriver: isDriver,
+                                      step: TripStep.isDriverArrived,
+                                      context: context,
+                                    );
+                                  },
+                                );
+                              },
+                            ),
                           ),
-                        ),
-                        10.w.horizontalSpace,
-                        Flexible(
-                          flex: 1,
-                          child: CustomButton(
-                            title: "another_trip".tr(),
-                            btnColor: AppColors.secondPrimary,
-                            textColor: AppColors.primary,
-                            onPressed: () {
-                              // warningDialog(
-                              //   context,
-                              //   title: "are_you_sure_you_want_to_decline_trip"
-                              //       .tr(),
-                              //   onPressedOk: () {
-                              //     cubit.updateTripStatus(
-                              //       isDriver: isDriver,
-                              //       step: TripStep.isDriverDecline,
-                              //       context: context,
-                              //     );
-                              //   },
-                              // );
-                            },
+                          10.w.horizontalSpace,
+                        ],
+                        if (cubit
+                                .getTripDetailsModel
+                                ?.data
+                                ?.isDriverAnotherTrip ==
+                            0
+                        //      &&
+                        // cubit.getTripDetailsModel?.data?.isDriverAccept ==
+                        //     0
+                        )
+                          Flexible(
+                            flex: 1,
+                            child: CustomButton(
+                              title: "another_trip".tr(),
+                              btnColor: AppColors.secondPrimary,
+                              textColor: AppColors.primary,
+                              onPressed: () {
+                                warningDialog(
+                                  context,
+                                  title: "are_you_sure_you_want_to_decline_trip"
+                                      .tr(),
+                                  onPressedOk: () {
+                                    cubit.updateTripStatus(
+                                      isDriver: isDriver,
+                                      step: TripStep.isDriverAnotherTrip,
+                                      context: context,
+                                    );
+                                  },
+                                );
+                              },
+                            ),
                           ),
-                        ),
                       ],
                     ),
                   )
@@ -164,49 +223,96 @@ class CustomChatHeader extends StatelessWidget {
                     padding: const EdgeInsets.all(8.0),
                     child: Row(
                       children: [
-                        Flexible(
-                          flex: 3,
-                          child: CustomButton(
-                            title: "accept_trip".tr(),
-                            onPressed: () {
-                              warningDialog(
-                                context,
-                                title: "are_you_sure_you_want_to_accept_trip"
-                                    .tr(),
-                                onPressedOk: () {
-                                  cubit.updateTripStatus(
-                                    isDriver: isDriver,
-                                    step: TripStep.isUserAccept,
-                                    context: context,
-                                  );
-                                },
-                              );
-                            },
+                        if (cubit.getTripDetailsModel?.data?.isUserAccept ==
+                            0) ...[
+                          Flexible(
+                            flex: 3,
+                            child: CustomButton(
+                              title: "accept_trip".tr(),
+                              onPressed: () {
+                                warningDialog(
+                                  context,
+                                  title: "are_you_sure_you_want_to_accept_trip"
+                                      .tr(),
+                                  onPressedOk: () {
+                                    cubit.updateTripStatus(
+                                      isDriver: isDriver,
+                                      step: TripStep.isUserAccept,
+                                      context: context,
+                                    );
+                                  },
+                                );
+                              },
+                            ),
                           ),
-                        ),
-                        10.w.horizontalSpace,
-                        Flexible(
-                          flex: 2,
-                          child: CustomButton(
-                            title: "change_captain".tr(),
-                            btnColor: AppColors.secondPrimary,
-                            textColor: AppColors.primary,
-                            onPressed: () {
-                              // warningDialog(
-                              //   context,
-                              //   title:
-                              //       "are_you_sure_you_want_to_change_captain"
-                              //           .tr(),
-                              //   onPressedOk: () {
-                              //     // context.read<DriverHomeCubit>().cancleTrip(
-                              //     //       tripId: trip?.id ?? 0,
-                              //     //       context: context,
-                              //     //     );
-                              //   },
-                              // );
-                            },
+                          10.w.horizontalSpace,
+                        ],
+                        if (cubit.getTripDetailsModel?.data?.isUserStartTrip ==
+                                0 &&
+                            cubit.getTripDetailsModel?.data?.isUserAccept ==
+                                1 &&
+                            cubit
+                                    .getTripDetailsModel
+                                    ?.data
+                                    ?.isUserChangeCaptain ==
+                                0) ...[
+                          Flexible(
+                            flex: 3,
+                            child: CustomButton(
+                              title: "start_trip".tr(),
+                              onPressed: () {
+                                warningDialog(
+                                  context,
+                                  title: "are_you_sure_you_want_to_start_trip"
+                                      .tr(),
+                                  onPressedOk: () {
+                                    cubit.updateTripStatus(
+                                      isDriver: isDriver,
+                                      step: TripStep.isUserStartTrip,
+                                      context: context,
+                                    );
+                                  },
+                                );
+                              },
+                            ),
                           ),
-                        ),
+                          10.w.horizontalSpace,
+                        ],
+                        if (cubit
+                                    .getTripDetailsModel
+                                    ?.data
+                                    ?.isUserChangeCaptain ==
+                                0 &&
+                            (cubit.getTripDetailsModel?.data?.isUserAccept ==
+                                    0 ||
+                                cubit
+                                        .getTripDetailsModel
+                                        ?.data
+                                        ?.isUserStartTrip ==
+                                    0))
+                          Flexible(
+                            flex: 2,
+                            child: CustomButton(
+                              title: "change_captain".tr(),
+                              btnColor: AppColors.secondPrimary,
+                              textColor: AppColors.primary,
+                              onPressed: () {
+                                warningDialog(
+                                  context,
+                                  title:
+                                      "are_you_sure_you_want_to_change_captain"
+                                          .tr(),
+                                  onPressedOk: () {
+                                    cubit.updateTripStatus(
+                                      isDriver: isDriver,
+                                      step: TripStep.isUserChangeCaptain,
+                                      context: context,
+                                    );
+                                  },
+                                );
+                              },
+                            ),
+                          ),
                       ],
                     ),
                   ),

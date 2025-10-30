@@ -39,6 +39,7 @@ class EndPoints {
   static const String driverStartTripUrl = '${baseUrl}driver/start-trip';
   static const String driverEndTripUrl = '${baseUrl}driver/end-trip';
   static const String updateTripStepsUrl = '${baseUrl}driver/update-trip-steps';
+  static const String tripDetailsUrl = '${baseUrl}get-trip-detail/';
   static const String addShipmentLocationUrl =
       '${baseUrl}add-shipment-location';
   static const String addRateUrl = '${baseUrl}add-rate';

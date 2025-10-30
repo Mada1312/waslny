@@ -5,6 +5,7 @@ import 'package:waslny/core/preferences/preferences.dart';
 import 'package:waslny/features/general/chat/cubit/chat_state.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
+import 'package:waslny/features/general/chat/data/model/get_trips_model.dart';
 import 'package:waslny/features/user/home/cubit/cubit.dart';
 
 import '../../../driver/home/cubit/cubit.dart';
@@ -213,7 +214,6 @@ class ChatCubit extends Cubit<ChatState> {
   }
 
   Future<void> updateTripStatus({
-   
     required TripStep step,
     required bool isDriver,
     required BuildContext context,
@@ -221,26 +221,49 @@ class ChatCubit extends Cubit<ChatState> {
     AppWidget.createProgressDialog(context, msg: "...");
     emit(UpdateTripStatusLoadingState());
     try {
-      final response = await chatRepo.updateTripStatus(id: 4, ///TODO: get trip id from details
-       step: step);
+      final response = await chatRepo.updateTripStatus(
+        id: getTripDetailsModel?.data?.id ?? 0,
+        step: step,
+      );
       response.fold(
         (failure) {
-          Navigator.pop(context); // Close the progress dialog
+          Navigator.pop(context);
           emit(UpdateTripStatusErrorState());
         },
         (response) {
-          Navigator.pop(context); // Close the progress dialog
+          Navigator.pop(context);
           if (response.status == 200 || response.status == 201) {
             emit(UpdateTripStatusSuccessState());
             successGetBar(response.msg ?? "Trip cancelled successfully");
-
-            ///TODO :
-            ///get home data again to refresh the trips list
             if (isDriver) {
+              if (step == TripStep.isDriverAnotherTrip) {
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  Routes.mainRoute,
+                  (route) => false,
+                  arguments: true,
+                );
+                return;
+              }
+              getTripDetails(
+                id: getTripDetailsModel?.data?.id.toString() ?? '',
+              );
               DriverHomeCubit driverHomeCubit =
                   BlocProvider.of<DriverHomeCubit>(context);
               driverHomeCubit.getDriverHomeData(context);
             } else {
+              if (step == TripStep.isUserChangeCaptain) {
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  Routes.mainRoute,
+                  (route) => false,
+                  arguments: false,
+                );
+                return;
+              }
+              getTripDetails(
+                id: getTripDetailsModel?.data?.id.toString() ?? '',
+              );
               UserHomeCubit homeCubit = BlocProvider.of<UserHomeCubit>(context);
               homeCubit.getHome(context);
             }
@@ -252,6 +275,34 @@ class ChatCubit extends Cubit<ChatState> {
     } catch (e) {
       log("Error in cancelShipment: $e");
       emit(UpdateTripStatusErrorState());
+    }
+  }
+
+  GetTripDetailsModel? getTripDetailsModel;
+  Future<void> getTripDetails({required String id}) async {
+    getTripDetailsModel = null;
+    emit(GetTripStatusLoadingState());
+    try {
+      final response = await chatRepo.getTripDetails(id: id);
+      response.fold(
+        (failure) {
+          emit(GetTripStatusErrorState());
+        },
+        (response) {
+          if (response.status == 200 || response.status == 201) {
+            emit(GetTripStatusSuccessState());
+            getTripDetailsModel = response;
+           
+          } else {
+            errorGetBar(response.msg ?? "Failed to get trip details");
+            emit(GetTripStatusErrorState());
+           
+          }
+        },
+      );
+    } catch (e) {
+      log("Error in cancelShipment: $e");
+      emit(GetTripStatusErrorState());
     }
   }
 }
@@ -267,13 +318,15 @@ String extractTimeFromTimestamp(Timestamp timestamp) {
   return outputFormat.format(dateTime);
 }
 
-// create enum with trip steps is_user_accept|is_driver_accept|is_driver_arrived|is_user_start_trip|is_driver_start_trip
+// create enum with trip steps is_user_accept|is_driver_accept|is_driver_arrived|is_user_start_trip|is_driver_start_trip|is_user_change_captain|is_driver_another_trip
 enum TripStep {
   isUserAccept,
   isDriverAccept,
   isDriverArrived,
   isUserStartTrip,
   isDriverStartTrip,
+  isUserChangeCaptain,
+  isDriverAnotherTrip,
 }
 
 extension TripStepExtension on TripStep {
@@ -289,6 +342,10 @@ extension TripStepExtension on TripStep {
         return 'is_user_start_trip';
       case TripStep.isDriverStartTrip:
         return 'is_driver_start_trip';
+      case TripStep.isUserChangeCaptain:
+        return 'is_user_change_captain';
+      case TripStep.isDriverAnotherTrip:
+        return 'is_driver_another_trip';
     }
   }
 }
