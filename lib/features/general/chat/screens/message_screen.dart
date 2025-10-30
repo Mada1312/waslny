@@ -1,7 +1,6 @@
 import 'dart:developer';
 import 'package:waslny/core/exports.dart';
 import 'package:waslny/core/notification_services/notification_service.dart';
-import 'package:waslny/core/widgets/network_image.dart';
 import 'package:waslny/features/general/auth/cubit/cubit.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -48,7 +47,6 @@ class _MessageScreenState extends State<MessageScreen> {
     log('7777777777 ${widget.model.tripId.toString()}');
     if (widget.model.chatId != null) {
       log('999999999 8888888888 ${widget.model.chatId}');
-
       context.read<ChatCubit>().listenForMessages(widget.model.chatId ?? '');
     } else {
       context.read<ChatCubit>().createChatRoom(
@@ -56,6 +54,8 @@ class _MessageScreenState extends State<MessageScreen> {
         tripId: widget.model.tripId,
       );
     }
+    
+    context.read<ChatCubit>().getTripDetails(id: widget.model.tripId ?? '');
   }
 
   @override
@@ -129,7 +129,7 @@ class _MessageScreenState extends State<MessageScreen> {
                               children: [
                                 CustomChatHeader(
                                   isDriver: widget.model.isDriver ?? false,
-                                  
+
                                   isNotification:
                                       widget.model.isNotification ?? false,
                                 ),
@@ -460,4 +460,3 @@ class _MessageScreenState extends State<MessageScreen> {
     );
   }
 }
-

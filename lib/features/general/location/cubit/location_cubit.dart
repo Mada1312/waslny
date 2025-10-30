@@ -181,7 +181,6 @@
 //     emit(SetSelectedLocationState());
 //   }
 
-
 //   _getAddressFromLatLng(lat, long) async {
 //     emit(GetAddressMapLoadingState());
 //     final response = await api.getAddressMap(lat: lat, long: long);
@@ -287,15 +286,15 @@
 //   }
 // }
 
-
-
 //////// OSRM /////////////
 ///// ignore_for_file: use_build_context_synchronously
 
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:async';
 import 'dart:developer';
-import 'dart:ui' as ui;
-
+// import 'dart:ui' as ui;
+import 'package:flutter/foundation.dart';
 import 'package:waslny/core/utils/convert_numbers_method.dart';
 import 'package:waslny/features/general/location/data/models/get_address_map_model.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -307,13 +306,11 @@ import 'package:permission_handler/permission_handler.dart' as perm;
 import 'package:latlong2/latlong.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:osrm/osrm.dart';
-
 import '../data/repo.dart';
 import 'location_state.dart';
 
 class LocationCubit extends Cubit<LocationState> {
   LocationCubit(this.api) : super(LocationInitial());
-
   LocationRepo api;
   StreamSubscription<Position>? _positionStream;
   loc.LocationData? currentLocation;
@@ -321,27 +318,20 @@ class LocationCubit extends Cubit<LocationState> {
   loc.LocationData? selectedLocation;
   List<Marker> positionMarkers = [];
   Uint8List? markerIcon;
-
   MapController mapController = MapController();
-
   String address = "";
-
   bool isPermissionChecked = false;
   bool isPermissionGranted = false;
-
   // ============ OSRM Route Properties ============
   List<LatLng> routePoints = [];
   num routeDistance = 0.0;
   num routeDuration = 0.0;
   bool isLoadingRoute = false;
-  
   LatLng? fromLocation;
   LatLng? toLocation;
   // ===============================================
-
   Future<void> checkAndRequestLocationPermission(BuildContext context) async {
     final permissionStatus = await perm.Permission.location.status;
-
     if (permissionStatus.isDenied) {
       final newStatus = await perm.Permission.location.request();
       if (newStatus.isGranted) {
@@ -356,7 +346,6 @@ class LocationCubit extends Cubit<LocationState> {
     } else if (permissionStatus.isPermanentlyDenied) {
       _showLocationPermissionDialog(context);
     }
-
     isPermissionChecked = true;
     emit(LocationInitial());
   }
@@ -364,12 +353,10 @@ class LocationCubit extends Cubit<LocationState> {
   Future<void> _enableLocationServices(BuildContext context) async {
     final location = loc.Location();
     bool serviceEnabled = await location.serviceEnabled();
-
     if (!serviceEnabled) {
       serviceEnabled = await location.requestService();
       if (!serviceEnabled) return;
     }
-
     final permissionStatus = await location.hasPermission();
     if (permissionStatus == loc.PermissionStatus.granted) {
       await _getCurrentLocation(context);
@@ -384,7 +371,6 @@ class LocationCubit extends Cubit<LocationState> {
         selectedLocation = location;
       }
       isFirstTime = false;
-
       await _getAddressFromLatLng(
         location.latitude ?? 0.0,
         location.longitude ?? 0.0,
@@ -393,7 +379,6 @@ class LocationCubit extends Cubit<LocationState> {
 
       emit(GetCurrentLocationState());
     });
-
     location.onLocationChanged.listen((newLocationData) async {
       if (currentLocation != null) {
         final distance = Geolocator.distanceBetween(
@@ -402,7 +387,6 @@ class LocationCubit extends Cubit<LocationState> {
           newLocationData.latitude ?? 0.0,
           newLocationData.longitude ?? 0.0,
         );
-
         if (distance > 8) {
           currentLocation = newLocationData;
         }
@@ -433,7 +417,6 @@ class LocationCubit extends Cubit<LocationState> {
   }
 
   late AnimatedMapController animatedMapController;
-
   void setAnimatedMapController(AnimatedMapController controller) {
     animatedMapController = controller;
   }
@@ -449,7 +432,6 @@ class LocationCubit extends Cubit<LocationState> {
       curve: Curves.easeInOut,
       duration: const Duration(milliseconds: 600),
     );
-
     _setSelectedPositionedLocation(latLng, context);
   }
 
@@ -487,7 +469,6 @@ class LocationCubit extends Cubit<LocationState> {
   }
 
   List<GetAddressMapModel> placeSuggestions = [];
-
   Future<void> selectPlaceSuggestion(int placeId, BuildContext context) async {
     final latLng = LatLng(
       double.parse(
@@ -507,7 +488,6 @@ class LocationCubit extends Cubit<LocationState> {
         ),
       ),
     );
-
     placeSuggestions.clear();
     updateSelectedPositionedCamera(latLng, context);
   }
@@ -522,7 +502,9 @@ class LocationCubit extends Cubit<LocationState> {
 
       updateSelectedPositionedCamera(currentLatLng, context);
     } catch (e) {
-      print("Failed to get current location: $e");
+      if (kDebugMode) {
+        print("Failed to get current location: $e");
+      }
     }
   }
 
@@ -531,7 +513,6 @@ class LocationCubit extends Cubit<LocationState> {
     final response = await api.searchOnMap(searchKey: lat);
     response.fold((failure) => emit(GetAddressMapErrorState()), (data) {
       placeSuggestions = data;
-
       emit(GetAddressMapSuccessState());
     });
   }
@@ -571,18 +552,12 @@ class LocationCubit extends Cubit<LocationState> {
   }
 
   // ============ OSRM Route Methods ============
-
   /// Get route between two locations using OSRM
-  Future<void> getRouteBetweenLocations(
-    LatLng from,
-    LatLng to,
-  ) async {
+  Future<void> getRouteBetweenLocations(LatLng from, LatLng to) async {
     isLoadingRoute = true;
     emit(RouteLoadingState());
-
     try {
       final osrm = Osrm();
-      
       final options = RouteRequest(
         coordinates: [
           (from.longitude, from.latitude),
@@ -590,26 +565,27 @@ class LocationCubit extends Cubit<LocationState> {
         ],
         overview: OsrmOverview.full,
       );
-      
       final route = await osrm.route(options);
-      
       if (route.routes.isNotEmpty) {
         routeDistance = route.routes.first.distance ?? 0.0;
         routeDuration = route.routes.first.duration ?? 0.0;
-        routePoints = route.routes.first.geometry?.lineString?.coordinates
-            .map((e) {
-          var location = e.toLocation();
-          return LatLng(location.lat, location.lng);
-        }).toList() ?? [];
-        
-        log("Route calculated: ${getFormattedDistance()}, ${getFormattedDuration()}");
-        
+        routePoints =
+            route.routes.first.geometry?.lineString?.coordinates.map((e) {
+              var location = e.toLocation();
+              return LatLng(location.lat, location.lng);
+            }).toList() ??
+            [];
+        log(
+          "Route calculated: ${getFormattedDistance()}, ${getFormattedDuration()}",
+        );
         isLoadingRoute = false;
-        emit(RouteSuccessState(
-          distance: routeDistance,
-          duration: routeDuration,
-          points: routePoints,
-        ));
+        emit(
+          RouteSuccessState(
+            distance: routeDistance,
+            duration: routeDuration,
+            points: routePoints,
+          ),
+        );
       } else {
         isLoadingRoute = false;
         emit(RouteErrorState());
@@ -693,28 +669,23 @@ class LocationCubit extends Cubit<LocationState> {
   /// Animate camera to show full route
   void animateCameraToShowRoute() {
     if (routePoints.isEmpty) return;
-
     // Calculate bounds
     double minLat = routePoints.first.latitude;
     double maxLat = routePoints.first.latitude;
     double minLng = routePoints.first.longitude;
     double maxLng = routePoints.first.longitude;
-
     for (var point in routePoints) {
       if (point.latitude < minLat) minLat = point.latitude;
       if (point.latitude > maxLat) maxLat = point.latitude;
       if (point.longitude < minLng) minLng = point.longitude;
       if (point.longitude > maxLng) maxLng = point.longitude;
     }
-
     final centerLat = (minLat + maxLat) / 2;
     final centerLng = (minLng + maxLng) / 2;
-
     // Calculate appropriate zoom level
     final latDiff = maxLat - minLat;
     final lngDiff = maxLng - minLng;
     final maxDiff = latDiff > lngDiff ? latDiff : lngDiff;
-    
     // Rough zoom level calculation
     double zoom = 12;
     if (maxDiff > 0.5) {
@@ -726,7 +697,6 @@ class LocationCubit extends Cubit<LocationState> {
     } else {
       zoom = 14;
     }
-
     animatedMapController.animateTo(
       dest: LatLng(centerLat, centerLng),
       zoom: zoom,
@@ -744,7 +714,7 @@ class LocationCubit extends Cubit<LocationState> {
   double getRouteDistanceInKilometers() {
     return routeDistance / 1000;
   }
-
+  
   /// Get route duration in seconds
   num getRouteDurationInSeconds() {
     return routeDuration;
@@ -764,8 +734,7 @@ class LocationCubit extends Cubit<LocationState> {
   bool hasFromAndToLocations() {
     return fromLocation != null && toLocation != null;
   }
-
-  // ============================================
+  // ============================================ //
 
   @override
   Future<void> close() {

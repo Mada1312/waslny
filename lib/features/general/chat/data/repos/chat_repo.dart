@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:waslny/features/general/chat/cubit/chat_cubit.dart';
+import 'package:waslny/features/general/chat/data/model/get_trips_model.dart';
 
 import '../../../../../core/exports.dart';
 import '../model/create_chat_room.dart';
@@ -10,11 +11,12 @@ class ChatRepo {
   BaseApiConsumer dio;
   ChatRepo(this.dio);
 
-  //! :: chat/getChatRooms
+  // !  chat room getChatRooms
+
   Future<Either<Failure, ChatRoomModel>> getChatRooms() async {
     try {
       final response = await dio.get(EndPoints.getChatRoomsUrl);
-      log('Get Chat Rooms Response: ${response.toString()}');
+      // log('Get Chat Rooms Response: ${response.toString()}');
       return Right(ChatRoomModel.fromJson(response));
     } on ServerException {
       return Left(ServerFailure());
@@ -74,20 +76,14 @@ class ChatRepo {
     }
   }
 
-  // Future<Either<Failure, DefaultMainModel>> sendMessage(
-  //     {String? chatId, String? message, File? file}) async {
-  //   try {
-  //     log('"file"${file?.path ?? ''}');
-  //     final response = await dio
-  //         .post(EndPoints.sendMessageUrl, formDataIsEnabled: true, body: {
-  //       "chat_id": chatId,
-  //       "message": message,
-  //       if (file != null)
-  //         "file": MultipartFile.fromFileSync(file.path, filename: file.path),
-  //     });
-  //     return Right(DefaultMainModel.fromJson(response));
-  //   } on ServerException {
-  //     return Left(ServerFailure());
-  //   }
-  // }
+  Future<Either<Failure, GetTripDetailsModel>> getTripDetails({
+    required String id,
+  }) async {
+    try {
+      final response = await dio.get(EndPoints.tripDetailsUrl + id.toString());
+      return Right(GetTripDetailsModel.fromJson(response));
+    } on ServerException {
+      return Left(ServerFailure());
+    }
+  }
 }

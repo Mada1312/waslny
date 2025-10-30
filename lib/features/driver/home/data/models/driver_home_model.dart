@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import 'package:waslny/features/general/chat/data/model/room_model.dart';
+
 GetDriverHomeModel getDriverHomeModelFromJson(String str) =>
     GetDriverHomeModel.fromJson(json.decode(str));
 
@@ -76,6 +78,11 @@ class DriverTripModel {
   int? isDriverStartTrip;
   int? isUserAccept;
   int? isDriverAccept;
+  int? isUserChangeCaptain;
+  int? isDriverAnotherTrip;
+
+  Driver? driver;
+  Driver? user;
 
   DriverTripModel({
     this.id,
@@ -100,6 +107,10 @@ class DriverTripModel {
     this.isDriverStartTrip,
     this.isUserAccept,
     this.isDriverAccept,
+    this.isUserChangeCaptain,
+    this.isDriverAnotherTrip,
+    this.driver,
+    this.user,
   });
 
   factory DriverTripModel.fromJson(Map<String, dynamic> json) =>
@@ -117,7 +128,7 @@ class DriverTripModel {
         toLat: json["to_lat"],
         toLong: json["to_long"],
         description: json["description"],
-        type: json["type"],
+        type: json["type"].toString(),
         statusName: json["status_name"],
         status: json["status"],
         roomToken: json["room_token"],
@@ -126,6 +137,10 @@ class DriverTripModel {
         isDriverStartTrip: json["is_driver_start_trip"],
         isUserAccept: json["is_user_accept"],
         isDriverAccept: json["is_driver_accept"],
+        isUserChangeCaptain: json["is_user_change_captain"],
+        isDriverAnotherTrip: json["is_driver_another_trip"],
+        driver: json["driver"] == null ? null : Driver.fromJson(json["driver"]),
+        user: json["user"] == null ? null : Driver.fromJson(json["user"]),
       );
 
   Map<String, dynamic> toJson() => {
@@ -151,6 +166,10 @@ class DriverTripModel {
     "is_driver_start_trip": isDriverStartTrip,
     "is_user_accept": isUserAccept,
     "is_driver_accept": isDriverAccept,
+    "is_user_change_captain": isUserChangeCaptain,
+    "is_driver_another_trip": isDriverAnotherTrip,
+    "driver": driver?.toJson(),
+    "user": user?.toJson(),
   };
 }
 
