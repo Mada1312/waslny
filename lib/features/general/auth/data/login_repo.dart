@@ -117,6 +117,23 @@ class LoginRepo {
       return Left(ServerFailure());
     }
   }
+
+  Future<Either<Failure, DefaultMainModel>> sendOtp({
+    required String phone,
+  }) async {
+    try {
+      var response = await dio.post(
+        EndPoints.sendOtpUrl,
+        options: Options(headers: {}),
+        formDataIsEnabled: true,
+        body: {"key": "sendOtp", 'phone': phone},
+      );
+
+      return Right(DefaultMainModel.fromJson(response));
+    } on ServerException {
+      return Left(ServerFailure());
+    }
+  }
   //!
 
   Future<Either<Failure, DefaultMainModel>> forgetPassword(String phone) async {

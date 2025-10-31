@@ -171,7 +171,7 @@ class _FromToScreenMapState extends State<FromToScreenMap>
                             Polyline(
                               points: cubit.routePoints,
                               strokeWidth: 4.0,
-                              color: AppColors.primary,
+                              color: AppColors.secondPrimary,
                             ),
                           ],
                         ),
@@ -439,10 +439,10 @@ class _FromToScreenMapState extends State<FromToScreenMap>
         Marker(
           point: cubit.fromLocation!,
           child: MySvgWidget(
-            path: AppIcons.pin,
-            width: 50,
-            height: 50,
-            imageColor: Colors.blue,
+            path: AppIcons.fromMapIcon,
+            // width: 50,
+            // height: 50,
+            // imageColor: Colors.blue,
           ),
         ),
       );
@@ -454,10 +454,10 @@ class _FromToScreenMapState extends State<FromToScreenMap>
         Marker(
           point: cubit.toLocation!,
           child: MySvgWidget(
-            path: AppIcons.pin,
-            width: 50,
-            height: 50,
-            imageColor: Colors.red,
+            path: AppIcons.toMapIcon,
+            // width: 50,
+            // height: 50,
+            // imageColor: Colors.red,
           ),
         ),
       );

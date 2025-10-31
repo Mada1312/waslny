@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:url_launcher/url_launcher.dart';
@@ -114,7 +115,7 @@ class LoginCubit extends Cubit<LoginState> {
         password: passwordController.text,
         vehicleModel: vehicleModelController.text,
         vehicleNumber: vehicleNumberController.text,
-        vehicleColor: vehicleColorController.text, 
+        vehicleColor: vehicleColorController.text,
       );
       res.fold(
         (l) {
@@ -153,7 +154,7 @@ class LoginCubit extends Cubit<LoginState> {
   }
 
   Future<void> _launchWhatsApp(BuildContext context) async {
-    Future<void> _launch(String? phone) async {
+    Future<void> launchUrlMethod(String? phone) async {
       if (phone == null || phone.isEmpty) {
         throw 'Phone number is not available';
       }
@@ -172,11 +173,26 @@ class LoginCubit extends Cubit<LoginState> {
 
     final profileCubit = context.read<ProfileCubit>();
     if (profileCubit.settings != null) {
-      await _launch(profileCubit.settings?.data?.waapiPhone);
+      await launchUrlMethod(profileCubit.settings?.data?.waapiPhone);
     } else {
       await profileCubit.getSettings(context);
-      await _launch(profileCubit.settings?.data?.waapiPhone);
+      await launchUrlMethod(profileCubit.settings?.data?.waapiPhone);
     }
+    await sendOtp();
+  }
+
+  Future<void> sendOtp() async {
+    Future.delayed(Duration(seconds: 10), () async {
+      final res = await api.sendOtp(phone: fullPhoneNumber ?? '');
+      res.fold(
+        (l) {
+          log('Error');
+        },
+        (r) {
+          log('SUCCESS');
+        },
+      );
+    });
   }
 
   Future<void> register(BuildContext context, bool isDriver) async {
@@ -208,15 +224,12 @@ class LoginCubit extends Cubit<LoginState> {
         emit(LoadedLoginState());
         if (r.status == 200) {
           await Preferences.instance.setUser(r);
-
-          successGetBar(r.msg);
-          context.read<DriverHomeCubit>().homeModel = null;
-          context.read<UserHomeCubit>().homeModel = null;
+          await successGetBar(r.msg);
           Navigator.pushNamedAndRemoveUntil(
             context,
-            Routes.verifyCodeScreen,
+            Routes.mainRoute,
             (route) => false,
-            arguments: [isDriver, false],
+            arguments: isDriver,
           );
           clearData();
         } else {

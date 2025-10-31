@@ -3,6 +3,7 @@ class EndPoints {
   static const String loginUrl = '${baseUrl}login';
   static const String validateDataUrl = '${baseUrl}validate-data';
   static const String registerUrl = '${baseUrl}register';
+  static const String sendOtpUrl = '${baseUrl}send-otp';
   static const String homeUrl = '${baseUrl}get-home?filter_by=';
   static const String changeFavUrl = '${baseUrl}tripFav/';
   static const String getLastAddressesUrl =
@@ -69,11 +70,11 @@ class EndPoints {
   static const String searchOnMapUrl =
       'https://nominatim.openstreetmap.org/search';
   static const String getDriverDetailsUrl = '${baseUrl}get-driver-details/';
-  static const String getMyDriverDetailsUrl = '${baseUrl}driver/get-driver-data';
+  static const String getMyDriverDetailsUrl =
+      '${baseUrl}driver/get-driver-data';
   static const String sendMessageNotificationUrl =
       '${baseUrl}send-message-notification';
   static const String updatePassword = '${baseUrl}update-password';
   static const String getMyTrips = '${baseUrl}get-my-trips?filter_by=';
   static const String cancelTrip = '${baseUrl}cancel-trip';
 }
-
