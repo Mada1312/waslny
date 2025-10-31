@@ -248,7 +248,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 cubit.acceptTermsAndConditions == true) {
                               if (cubit.passwordController.text ==
                                   cubit.confirmPasswordController.text) {
-                                cubit.register(context, widget.isDriver);
+                                cubit.validateData(context, widget.isDriver);
                               } else {
                                 errorGetBar('not_identical_password'.tr());
                               }

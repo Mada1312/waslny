@@ -98,7 +98,8 @@ class LoginCubit extends Cubit<LoginState> {
     confirmNewPasswordController.clear();
     phoneNumberForgetController.clear();
   }
-  Future<void> valudateData(BuildContext context, bool isDriver) async {
+
+  Future<void> validateData(BuildContext context, bool isDriver) async {
     try {
       AppWidget.createProgressDialog(context, msg: 'loading'.tr());
       emit(LoadingValidateDataState());
@@ -113,7 +114,7 @@ class LoginCubit extends Cubit<LoginState> {
         password: passwordController.text,
         vehicleModel: vehicleModelController.text,
         vehicleNumber: vehicleNumberController.text,
-        vehicleColor: vehicleColorController.text,
+        vehicleColor: vehicleColorController.text, 
       );
       res.fold(
         (l) {
@@ -133,6 +134,8 @@ class LoginCubit extends Cubit<LoginState> {
               Routes.verifyCodeScreen,
               arguments: [isDriver, false],
             );
+
+            await _launchWhatsApp(context);
           } else {
             Navigator.pop(context);
 
@@ -154,7 +157,7 @@ class LoginCubit extends Cubit<LoginState> {
       if (phone == null || phone.isEmpty) {
         throw 'Phone number is not available';
       }
-      final message = "Hello i want be partner in baraddy app";
+      final message = "Hello, I want to sign up for Waslny App";
       final Uri whatsappUri = Uri(
         scheme: 'https',
         host: 'wa.me',
@@ -181,12 +184,12 @@ class LoginCubit extends Cubit<LoginState> {
     emit(LoadingLoginState());
     final res = await api.register(
       isDriver: isDriver,
+      otp: pinController.text,
       name: nameController.text,
       gender: gender?.name == Gender.male.name ? '0' : '1',
       vehicleType: vehicleType?.name == VehicleType.car.name
           ? 'car'
           : 'scooter', //TODO get it from List
-      // otp: pinController.text,
       phone: fullPhoneNumber ?? '',
       password: passwordController.text,
       vehicleModel: vehicleModelController.text,
@@ -205,15 +208,15 @@ class LoginCubit extends Cubit<LoginState> {
         emit(LoadedLoginState());
         if (r.status == 200) {
           await Preferences.instance.setUser(r);
-          await _launchWhatsApp(context);
+
           successGetBar(r.msg);
-               context.read<DriverHomeCubit>().homeModel = null;
-        context.read<UserHomeCubit>().homeModel = null;
+          context.read<DriverHomeCubit>().homeModel = null;
+          context.read<UserHomeCubit>().homeModel = null;
           Navigator.pushNamedAndRemoveUntil(
             context,
-            Routes.mainRoute,
+            Routes.verifyCodeScreen,
             (route) => false,
-            arguments: isDriver,
+            arguments: [isDriver, false],
           );
           clearData();
         } else {

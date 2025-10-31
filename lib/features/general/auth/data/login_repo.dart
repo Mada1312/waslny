@@ -81,7 +81,7 @@ class LoginRepo {
     required String phone,
     required String password,
     required String name,
-    // required String otp,
+    required String otp,
     required bool isDriver,
     required String gender,
     required String vehicleType,
@@ -102,7 +102,7 @@ class LoginRepo {
           'name': name,
           'password': password,
           'user_type': isDriver ? '1' : '0',
-          // "otp": otp,
+          "otp": otp,
 
           if (isDriver) 'vehicle_type': vehicleType,
           if (isDriver) 'gender': gender,
@@ -215,9 +215,8 @@ class LoginRepo {
 
   Future<Either<Failure, LoginModel>> updateDeliveryProfile({
     String? name,
-    
+
     File? image,
-   
   }) async {
     try {
       var response = await dio.post(
@@ -225,13 +224,12 @@ class LoginRepo {
         formDataIsEnabled: true,
         body: {
           'name': name,
-      
+
           if (image != null)
             'image': MultipartFile.fromFileSync(
               image.path,
               filename: image.path.split('/').last,
             ),
-         
         },
       );
 

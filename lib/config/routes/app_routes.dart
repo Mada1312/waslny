@@ -47,8 +47,7 @@ class Routes {
   static const String driverTripsRoute = '/driverTripsRoute';
   static const String changePasswordScreen = '/ChangePasswordScreen';
   static const String allTripsScreenRoute = '/allTripsScreenRoute';
-    static const String notVerifiedUserRoute = '/notVerifiedUserRoute';
-
+  static const String notVerifiedUserRoute = '/notVerifiedUserRoute';
 }
 
 class AppRoutes {
@@ -59,7 +58,7 @@ class AppRoutes {
       case Routes.initialRoute:
         return MaterialPageRoute(builder: (context) => const SplashScreen());
 
- case Routes.notVerifiedUserRoute:
+      case Routes.notVerifiedUserRoute:
         bool isDriver = settings.arguments as bool;
         return PageTransition(
           child: NotVerifiedUserScreen(isDriver: isDriver),
