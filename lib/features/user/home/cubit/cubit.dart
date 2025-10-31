@@ -22,28 +22,25 @@ class UserHomeCubit extends Cubit<UserHomeState> {
     log('PPPP services ${serviceType?.name == ServicesType.services.name}');
     result.fold((failure) => emit(UserHomeError()), (data) {
       homeModel = data;
-      log('888888888888 ${data.data?.isWebhookVerified}');
-      if (!(isVerify == true) || data.data?.isWebhookVerified == 1) {
-        //! false X false
-        if (data.data?.isWebhookVerified == 0) {
-          Navigator.pushReplacementNamed(
-            context,
-            Routes.notVerifiedUserRoute,
-            arguments: false,
-          );
-        }
-        if (isVerify == true) {
-          Navigator.pushReplacementNamed(
-            context,
-            Routes.mainRoute,
-            arguments: false,
-          );
-        }
-        //  else {
-        //   Navigator.pushReplacementNamed(context, Routes.mainRoute,
-        //       arguments: false);
-        // }
-      }
+      // log('888888888888 ${data.data?.isWebhookVerified}');
+      // if (!(isVerify == true) || data.data?.isWebhookVerified == 1) {
+      //   //! false X false
+      //   if (data.data?.isWebhookVerified == 0) {
+      //     Navigator.pushReplacementNamed(
+      //       context,
+      //       Routes.notVerifiedUserRoute,
+      //       arguments: false,
+      //     );
+      //   }
+      //   if (isVerify == true) {
+      //     Navigator.pushReplacementNamed(
+      //       context,
+      //       Routes.mainRoute,
+      //       arguments: false,
+      //     );
+      //   }
+
+      // }
 
       emit(UserHomeLoaded());
     });
