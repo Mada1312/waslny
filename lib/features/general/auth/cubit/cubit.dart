@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:url_launcher/url_launcher.dart';
@@ -98,63 +99,66 @@ class LoginCubit extends Cubit<LoginState> {
     confirmNewPasswordController.clear();
     phoneNumberForgetController.clear();
   }
-  // Future<void> valudateData(BuildContext context, bool isDriver) async {
-  //   try {
-  //     AppWidget.createProgressDialog(context, msg: 'loading'.tr());
-  //     emit(LoadingValidateDataState());
-  //     final res = await api.validateData(
-  //       isDriver: isDriver,
-  //       name: nameController.text,
-  //       gender: gender?.name == Gender.male.name ? '0' : '1',
-  //       vehicleType: vehicleType?.name == VehicleType.car.name
-  //           ? 'car'
-  //           : 'scooter', //TODO get it from List
-  //       phone: fullPhoneNumber ?? '',
-  //       password: passwordController.text,
-  //       vehicleModel: vehicleModelController.text,
-  //       vehicleNumber: vehicleNumberController.text,
-  //       vehicleColor: vehicleColorController.text,
-  //     );
-  //     res.fold(
-  //       (l) {
-  //         emit(ErrorValidateDataState());
-  //         Navigator.pop(context);
-  //         errorGetBar(l.toString()); //!
-  //       },
-  //       (r) async {
-  //         //! Nav to Main Screen
-  //         emit(LoadedValidateDataState());
-  //         if (r.status == 200) {
-  //           successGetBar(r.msg);
-  //           Navigator.pop(context);
 
-  //           Navigator.pushReplacementNamed(
-  //             context,
-  //             Routes.verifyCodeScreen,
-  //             arguments: [isDriver, false],
-  //           );
-  //         } else {
-  //           Navigator.pop(context);
+  Future<void> validateData(BuildContext context, bool isDriver) async {
+    try {
+      AppWidget.createProgressDialog(context, msg: 'loading'.tr());
+      emit(LoadingValidateDataState());
+      final res = await api.validateData(
+        isDriver: isDriver,
+        name: nameController.text,
+        gender: gender?.name == Gender.male.name ? '0' : '1',
+        vehicleType: vehicleType?.name == VehicleType.car.name
+            ? 'car'
+            : 'scooter', //TODO get it from List
+        phone: fullPhoneNumber ?? '',
+        password: passwordController.text,
+        vehicleModel: vehicleModelController.text,
+        vehicleNumber: vehicleNumberController.text,
+        vehicleColor: vehicleColorController.text,
+      );
+      res.fold(
+        (l) {
+          emit(ErrorValidateDataState());
+          Navigator.pop(context);
+          errorGetBar(l.toString()); //!
+        },
+        (r) async {
+          //! Nav to Main Screen
+          emit(LoadedValidateDataState());
+          if (r.status == 200) {
+            successGetBar(r.msg);
+            Navigator.pop(context);
 
-  //           errorGetBar(r.msg ?? '');
-  //           emit(ErrorValidateDataState());
-  //         }
-  //         //!
-  //       },
-  //     );
-  //   } catch (e) {
-  //     Navigator.pop(context);
-  //     errorGetBar(e.toString()); //!
-  //     emit(ErrorValidateDataState());
-  //   }
-  // }
+            Navigator.pushReplacementNamed(
+              context,
+              Routes.verifyCodeScreen,
+              arguments: [isDriver, false],
+            );
+
+            await _launchWhatsApp(context);
+          } else {
+            Navigator.pop(context);
+
+            errorGetBar(r.msg ?? '');
+            emit(ErrorValidateDataState());
+          }
+          //!
+        },
+      );
+    } catch (e) {
+      Navigator.pop(context);
+      errorGetBar(e.toString()); //!
+      emit(ErrorValidateDataState());
+    }
+  }
 
   Future<void> _launchWhatsApp(BuildContext context) async {
-    Future<void> _launch(String? phone) async {
+    Future<void> launchUrlMethod(String? phone) async {
       if (phone == null || phone.isEmpty) {
         throw 'Phone number is not available';
       }
-      final message = "Hello i want be partner in baraddy app";
+      final message = "Hello, I want to sign up for Waslny App";
       final Uri whatsappUri = Uri(
         scheme: 'https',
         host: 'wa.me',
@@ -169,11 +173,26 @@ class LoginCubit extends Cubit<LoginState> {
 
     final profileCubit = context.read<ProfileCubit>();
     if (profileCubit.settings != null) {
-      await _launch(profileCubit.settings?.data?.waapiPhone);
+      await launchUrlMethod(profileCubit.settings?.data?.waapiPhone);
     } else {
       await profileCubit.getSettings(context);
-      await _launch(profileCubit.settings?.data?.waapiPhone);
+      await launchUrlMethod(profileCubit.settings?.data?.waapiPhone);
     }
+    await sendOtp();
+  }
+
+  Future<void> sendOtp() async {
+    Future.delayed(Duration(seconds: 10), () async {
+      final res = await api.sendOtp(phone: fullPhoneNumber ?? '');
+      res.fold(
+        (l) {
+          log('Error');
+        },
+        (r) {
+          log('SUCCESS');
+        },
+      );
+    });
   }
 
   Future<void> register(BuildContext context, bool isDriver) async {
@@ -181,12 +200,12 @@ class LoginCubit extends Cubit<LoginState> {
     emit(LoadingLoginState());
     final res = await api.register(
       isDriver: isDriver,
+      otp: pinController.text,
       name: nameController.text,
       gender: gender?.name == Gender.male.name ? '0' : '1',
       vehicleType: vehicleType?.name == VehicleType.car.name
           ? 'car'
           : 'scooter', //TODO get it from List
-      // otp: pinController.text,
       phone: fullPhoneNumber ?? '',
       password: passwordController.text,
       vehicleModel: vehicleModelController.text,
@@ -205,10 +224,7 @@ class LoginCubit extends Cubit<LoginState> {
         emit(LoadedLoginState());
         if (r.status == 200) {
           await Preferences.instance.setUser(r);
-          await _launchWhatsApp(context);
-          successGetBar(r.msg);
-               context.read<DriverHomeCubit>().homeModel = null;
-        context.read<UserHomeCubit>().homeModel = null;
+          await successGetBar(r.msg);
           Navigator.pushNamedAndRemoveUntil(
             context,
             Routes.mainRoute,

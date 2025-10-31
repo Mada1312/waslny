@@ -29,29 +29,29 @@ class DriverHomeCubit extends Cubit<DriverHomeState> {
       result.fold((failure) => emit(DriverHomeError()), (data) {
         homeModel = data;
         log('6666666666666 ${data.data?.isWebhookVerified}');
-        if (!(isVerify == true) || data.data?.isWebhookVerified == 1) {
-          if (data.data?.isWebhookVerified == 0) {
-            Navigator.pushReplacementNamed(
-              context,
-              Routes.notVerifiedUserRoute,
-              arguments: true,
-            );
-          } else {
-            isDataVerifided = homeModel?.data?.user?.isVerified == 1;
-            if (homeModel?.data?.user?.isDataUploaded != 1) {
-              Navigator.pushNamed(context, Routes.driverDataRoute);
-            } else if (homeModel?.data?.user?.isVerified != 1) {
-              completeDialog(
-                context,
-                btnOkText: 'done'.tr(),
-                title: 'reviewing_data'.tr(),
-                onPressedOk: () {
-                  showExitDialog(context);
-                },
-              );
-            }
-          }
+        // if (!(isVerify == true) || data.data?.isWebhookVerified == 1) {
+        // if (data.data?.isWebhookVerified == 0) {
+        //   Navigator.pushReplacementNamed(
+        //     context,
+        //     Routes.notVerifiedUserRoute,
+        //     arguments: true,
+        //   );
+        // } else {
+        isDataVerifided = homeModel?.data?.user?.isVerified == 1;
+        if (homeModel?.data?.user?.isDataUploaded != 1) {
+          Navigator.pushNamed(context, Routes.driverDataRoute);
+        } else if (homeModel?.data?.user?.isVerified != 1) {
+          completeDialog(
+            context,
+            btnOkText: 'done'.tr(),
+            title: 'reviewing_data'.tr(),
+            onPressedOk: () {
+              showExitDialog(context);
+            },
+          );
         }
+        // }
+        // }
 
         emit(DriverHomeLoaded());
       });

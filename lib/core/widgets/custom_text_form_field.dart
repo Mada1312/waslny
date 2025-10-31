@@ -308,7 +308,7 @@ class CustomPhoneFormField extends StatelessWidget {
                 //   return null;
                 // },
                 keyboardType: TextInputType.number,
-                disableLengthCheck: true,
+                disableLengthCheck: false,
 
                 validator: (p0) {
                   if (p0 == null) {

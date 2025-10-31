@@ -1,12 +1,7 @@
-import 'dart:developer';
-
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-
 import 'package:waslny/core/exports.dart';
 import 'package:waslny/core/widgets/custom_divider.dart';
 import 'package:waslny/extention.dart';
 import 'package:waslny/features/driver/my_profile/data/model/driver_details_model.dart';
-import 'package:waslny/features/user/trip_and_services/screens/widgets/call_message.dart';
 
 import '../cubit/cubit.dart';
 import '../cubit/state.dart';
@@ -95,6 +90,7 @@ class _DriverDetailsScreenState extends State<DriverDetailsScreen> {
                               ],
                             ),
                           ),
+                          kBottomNavigationBarHeight.h.verticalSpace,
                         ],
                       ),
                     ),
