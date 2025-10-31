@@ -98,56 +98,56 @@ class LoginCubit extends Cubit<LoginState> {
     confirmNewPasswordController.clear();
     phoneNumberForgetController.clear();
   }
-  // Future<void> valudateData(BuildContext context, bool isDriver) async {
-  //   try {
-  //     AppWidget.createProgressDialog(context, msg: 'loading'.tr());
-  //     emit(LoadingValidateDataState());
-  //     final res = await api.validateData(
-  //       isDriver: isDriver,
-  //       name: nameController.text,
-  //       gender: gender?.name == Gender.male.name ? '0' : '1',
-  //       vehicleType: vehicleType?.name == VehicleType.car.name
-  //           ? 'car'
-  //           : 'scooter', //TODO get it from List
-  //       phone: fullPhoneNumber ?? '',
-  //       password: passwordController.text,
-  //       vehicleModel: vehicleModelController.text,
-  //       vehicleNumber: vehicleNumberController.text,
-  //       vehicleColor: vehicleColorController.text,
-  //     );
-  //     res.fold(
-  //       (l) {
-  //         emit(ErrorValidateDataState());
-  //         Navigator.pop(context);
-  //         errorGetBar(l.toString()); //!
-  //       },
-  //       (r) async {
-  //         //! Nav to Main Screen
-  //         emit(LoadedValidateDataState());
-  //         if (r.status == 200) {
-  //           successGetBar(r.msg);
-  //           Navigator.pop(context);
+  Future<void> valudateData(BuildContext context, bool isDriver) async {
+    try {
+      AppWidget.createProgressDialog(context, msg: 'loading'.tr());
+      emit(LoadingValidateDataState());
+      final res = await api.validateData(
+        isDriver: isDriver,
+        name: nameController.text,
+        gender: gender?.name == Gender.male.name ? '0' : '1',
+        vehicleType: vehicleType?.name == VehicleType.car.name
+            ? 'car'
+            : 'scooter', //TODO get it from List
+        phone: fullPhoneNumber ?? '',
+        password: passwordController.text,
+        vehicleModel: vehicleModelController.text,
+        vehicleNumber: vehicleNumberController.text,
+        vehicleColor: vehicleColorController.text,
+      );
+      res.fold(
+        (l) {
+          emit(ErrorValidateDataState());
+          Navigator.pop(context);
+          errorGetBar(l.toString()); //!
+        },
+        (r) async {
+          //! Nav to Main Screen
+          emit(LoadedValidateDataState());
+          if (r.status == 200) {
+            successGetBar(r.msg);
+            Navigator.pop(context);
 
-  //           Navigator.pushReplacementNamed(
-  //             context,
-  //             Routes.verifyCodeScreen,
-  //             arguments: [isDriver, false],
-  //           );
-  //         } else {
-  //           Navigator.pop(context);
+            Navigator.pushReplacementNamed(
+              context,
+              Routes.verifyCodeScreen,
+              arguments: [isDriver, false],
+            );
+          } else {
+            Navigator.pop(context);
 
-  //           errorGetBar(r.msg ?? '');
-  //           emit(ErrorValidateDataState());
-  //         }
-  //         //!
-  //       },
-  //     );
-  //   } catch (e) {
-  //     Navigator.pop(context);
-  //     errorGetBar(e.toString()); //!
-  //     emit(ErrorValidateDataState());
-  //   }
-  // }
+            errorGetBar(r.msg ?? '');
+            emit(ErrorValidateDataState());
+          }
+          //!
+        },
+      );
+    } catch (e) {
+      Navigator.pop(context);
+      errorGetBar(e.toString()); //!
+      emit(ErrorValidateDataState());
+    }
+  }
 
   Future<void> _launchWhatsApp(BuildContext context) async {
     Future<void> _launch(String? phone) async {
