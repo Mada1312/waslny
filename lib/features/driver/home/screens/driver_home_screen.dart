@@ -79,10 +79,11 @@ class DriverHomeUI extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var cubit = context.read<DriverHomeCubit>();
     return BlocBuilder<DriverHomeCubit, DriverHomeState>(
       builder: (context, state) {
+        var cubit = context.read<DriverHomeCubit>();
         return RefreshIndicator(
+          color: AppColors.primary,
           onRefresh: () async {
             await cubit.getDriverHomeData(context);
           },
@@ -99,7 +100,9 @@ class DriverHomeUI extends StatelessWidget {
                       },
                     )
                   : state is DriverHomeLoading || cubit.homeModel?.data == null
-                  ? const Center(child: CustomLoadingIndicator())
+                  ? Center(
+                      child: CustomLoadingIndicator(color: AppColors.primary),
+                    )
                   : Column(
                       children: [
                         SafeArea(
@@ -157,24 +160,31 @@ class DriverHomeUI extends StatelessWidget {
                                               ),
                                             ),
                                           ),
-                                          CupertinoSwitch(
-                                            value:
-                                                cubit
-                                                    .homeModel
-                                                    ?.data
-                                                    ?.user
-                                                    ?.isActive ==
-                                                1,
 
-                                            activeTrackColor:
-                                                AppColors.secondPrimary,
+                                          state is LoadingChangeOnlineStatusState
+                                              ? CircularProgressIndicator(
+                                                  color:
+                                                      AppColors.secondPrimary,
+                                                )
+                                              : CupertinoSwitch(
+                                                  value:
+                                                      cubit
+                                                          .homeModel
+                                                          ?.data
+                                                          ?.user
+                                                          ?.isActive ==
+                                                      1,
 
-                                            inactiveThumbColor: AppColors.white,
-                                            thumbColor: AppColors.primary,
-                                            onChanged: (value) {
-                                              cubit.changeActiveStatus();
-                                            },
-                                          ),
+                                                  activeTrackColor:
+                                                      AppColors.secondPrimary,
+
+                                                  inactiveThumbColor:
+                                                      AppColors.white,
+                                                  thumbColor: AppColors.primary,
+                                                  onChanged: (value) {
+                                                    cubit.changeActiveStatus();
+                                                  },
+                                                ),
                                         ],
                                       ),
                                     ),
@@ -318,7 +328,6 @@ class DriverHomeUI extends StatelessWidget {
                                             ],
                                           ),
 
-                                          // 10.w.horizontalSpace,
                                           Row(
                                             mainAxisSize: MainAxisSize.min,
                                             children: [

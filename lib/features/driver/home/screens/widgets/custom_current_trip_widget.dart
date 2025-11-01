@@ -46,7 +46,6 @@ class CustomsSheduledTripWidet extends StatelessWidget {
                 lat: trip?.fromLat,
                 lng: trip?.fromLong,
               ),
-
               8.h.verticalSpace,
               FromToContainer(
                 isFrom: false,

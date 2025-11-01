@@ -1,6 +1,7 @@
 import 'package:waslny/core/exports.dart';
 import 'package:waslny/features/general/profile/cubit/cubit.dart';
 import 'package:waslny/features/general/profile/cubit/state.dart';
+import 'package:flutter_html/flutter_html.dart';
 
 class PrivacyAndTermsScreen extends StatefulWidget {
   const PrivacyAndTermsScreen({super.key});
@@ -25,16 +26,12 @@ class _PrivacyAndTermsScreenState extends State<PrivacyAndTermsScreen> {
     return BlocBuilder<ProfileCubit, ProfileState>(
       builder: (context, state) {
         return Scaffold(
-          appBar: AppBar(
-            title: Text('terms_and_conditions'.tr()),
-          ),
+          appBar: AppBar(title: Text('terms_and_conditions'.tr())),
           body: state is LoadingContactUsState
-              ? Center(
-                  child: CustomLoadingIndicator(),
-                )
+              ? Center(child: CustomLoadingIndicator())
               : ListView(
                   children: [
-                    Text(cubit.settings?.data?.privacy.toString() ?? '')
+                    Html(data: cubit.settings?.data?.privacy.toString() ?? ''),
                   ],
                 ),
         );

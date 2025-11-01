@@ -7,7 +7,7 @@ import 'widgets/notification_widget.dart';
 class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({super.key, required this.isDriver});
   final bool isDriver;
-  
+
   @override
   State<NotificationsScreen> createState() => _NotificationsScreenState();
 }
@@ -24,7 +24,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     return BlocBuilder<NotificationsCubit, NotificationsState>(
       builder: (context, state) {
         var cubit = context.read<NotificationsCubit>();
-        
+
         return Scaffold(
           appBar: customAppBar(
             context,
@@ -50,6 +50,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                     },
                   )
                 : RefreshIndicator(
+                    color: AppColors.primary,
+
                     onRefresh: () async {
                       await cubit.getNotifications();
                     },

@@ -44,11 +44,12 @@ class _DriverTripsScreenState extends State<DriverTripsScreen> {
                 : cubit.getTripsModel?.data?.isEmpty ?? true
                 ? CustomNoDataWidget(message: 'no_trips_yet'.tr())
                 : RefreshIndicator(
+                    color: AppColors.primary,
+
                     onRefresh: () async {
                       await cubit.getTrips();
                     },
                     child: ListView.separated(
-                  
                       itemBuilder: (context, index) => Padding(
                         padding: EdgeInsets.symmetric(
                           horizontal: getHorizontalPadding(context),
