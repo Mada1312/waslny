@@ -188,15 +188,15 @@
   "rates": "التقييمات",
   "no_rates": "لا توجد تقييمات لعرضها.",
   "are_you_sure_you_want_to_reject_trip": "هل انت متاكد من رفض الرحلة؟",
-  "are_you_sure_you_want_to_cancel_trip" : "تم جدولة هذه الرحل هل حقا تريد الالغاء؟",
-  "are_you_sure_you_want_to_end_trip" : "وصلت لوجهتك وتريد انهاء الرحلة؟",
-  "are_you_sure_you_want_to_start_trip" : "هل انت متاكد من بدء الرحلة؟",
+  "are_you_sure_you_want_to_cancel_trip": "تم جدولة هذه الرحل هل حقا تريد الالغاء؟",
+  "are_you_sure_you_want_to_end_trip": "وصلت لوجهتك وتريد انهاء الرحلة؟",
+  "are_you_sure_you_want_to_start_trip": "هل انت متاكد من بدء الرحلة؟",
   "past": "سابقاً",
   "yesterday": "أمس",
   "today": "اليوم",
   "vehicle_color": "لون المركبة",
   "vehicle_model": "موديل المركبة",
-  "enter" : "ادخل ",
+  "enter": "ادخل ",
   "accept_trip": "قبول الرحلة",
   "another_trip": "رحلة اخري",
   "change_captain": "تغيير الكابتن",
@@ -206,11 +206,11 @@
   "are_you_sure_you_want_to_change_captain": "هل انت متاكد من تغيير الكابتن؟",
   "are_you_sure_you_want_to_confirm_arrival": "هل انت متاكد من تأكيد الوصول؟",
   "are_you_sure_you_want_to_accept_trip": "هل انت متاكد من قبول الرحلة؟",
-  
   "calculating_route": "جاري حساب المسار...",
   "select_from_location": "اختر موقع الانطلاق",
   "select_to_location": "اختر موقع الوجهة",
+  "gallery": "المعرض",
+  "camera": "الكاميرا",
   "": "",
- 
   "**": "**"
 }

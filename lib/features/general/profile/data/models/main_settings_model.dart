@@ -3,11 +3,7 @@ class MainSettingModel {
   String? msg;
   int? status;
 
-  MainSettingModel({
-    this.data,
-    this.msg,
-    this.status,
-  });
+  MainSettingModel({this.data, this.msg, this.status});
 
   factory MainSettingModel.fromJson(Map<String, dynamic> json) =>
       MainSettingModel(
@@ -19,10 +15,10 @@ class MainSettingModel {
       );
 
   Map<String, dynamic> toJson() => {
-        "data": data?.toJson(),
-        "msg": msg,
-        "status": status,
-      };
+    "data": data?.toJson(),
+    "msg": msg,
+    "status": status,
+  };
 }
 
 class MainSettingModelData {
@@ -39,7 +35,7 @@ class MainSettingModelData {
   String? whatsappNumber;
   String? facebookLink;
   String? instaLink;
-String? waapiPhone;
+  String? waapiPhone;
   MainSettingModelData({
     this.appName,
     this.logo,
@@ -54,7 +50,7 @@ String? waapiPhone;
     this.whatsappNumber,
     this.privacy,
     this.instaLink,
-    this.waapiPhone
+    this.waapiPhone,
   });
 
   factory MainSettingModelData.fromJson(Map<String, dynamic> json) =>
@@ -72,23 +68,23 @@ String? waapiPhone;
         iosAppVersion: json["ios_app_version"],
         liveLocationHours: json["live_location_hours"],
         privacy: json["privacy"],
-         waapiPhone: json["waapi_phone"],
+        waapiPhone: json["waapi_phone"],
       );
 
   Map<String, dynamic> toJson() => {
-        "app_name": appName,
-        "facebook_link": facebookLink,
-        "insta_link": instaLink,
-        "logo": logo,
-        "fav_icon": favIcon,
-        "loader": loader,
-        "whatsapp_number": whatsappNumber,
-        "app_maintenance": appMaintenance,
-        "development_mode": developmentMode,
-        "android_app_version": androidAppVersion,
-        "ios_app_version": iosAppVersion,
-        "live_location_hours": liveLocationHours,
-        "privacy": privacy,
-        "waapi_phone": waapiPhone,
-      };
+    "app_name": appName,
+    "facebook_link": facebookLink,
+    "insta_link": instaLink,
+    "logo": logo,
+    "fav_icon": favIcon,
+    "loader": loader,
+    "whatsapp_number": whatsappNumber,
+    "app_maintenance": appMaintenance,
+    "development_mode": developmentMode,
+    "android_app_version": androidAppVersion,
+    "ios_app_version": iosAppVersion,
+    "live_location_hours": liveLocationHours,
+    "privacy": privacy,
+    "waapi_phone": waapiPhone,
+  };
 }

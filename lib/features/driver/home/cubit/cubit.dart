@@ -2,7 +2,9 @@ import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:waslny/core/exports.dart';
 import 'package:waslny/features/driver/home/data/models/driver_home_model.dart';
 import 'package:waslny/features/main/screens/main_screen.dart';
@@ -45,8 +47,12 @@ class DriverHomeCubit extends Cubit<DriverHomeState> {
             context,
             btnOkText: 'done'.tr(),
             title: 'reviewing_data'.tr(),
-            onPressedOk: () {
-              showExitDialog(context);
+            onPressedOk: () async {
+              bool shouldExit = await showExitDialog(context);
+              log("shouldExit: $shouldExit");
+              if (shouldExit) {
+                SystemNavigator.pop();
+              }
             },
           );
         }
@@ -153,19 +159,25 @@ class DriverHomeCubit extends Cubit<DriverHomeState> {
     }
   }
 
-  changeActiveStatus() {
-    homeModel?.data?.user?.isActive = (homeModel?.data?.user?.isActive == 1)
-        ? 0
-        : 1;
-    emit(ChangeOnlineStatusState());
-    api.toggleActive().then((value) {
-      value.fold((failure) {
-        homeModel?.data?.user?.isActive = (homeModel?.data?.user?.isActive == 1)
-            ? 0
-            : 1;
-        emit(ChangeOnlineStatusState());
-      }, (response) {});
-    });
+  changeActiveStatus() async {
+    emit(LoadingChangeOnlineStatusState());
+    final res = await api.toggleActive();
+    res.fold(
+      (l) {
+        log(l.toString());
+        emit(ErrorChangeOnlineStatusState());
+      },
+      (s) {
+        if (s.status == 200) {
+          homeModel?.data?.user?.isActive =
+              (homeModel?.data?.user?.isActive == 1) ? 0 : 1;
+          successGetBar(s.msg);
+          emit(ChangeOnlineStatusState());
+        } else {
+          emit(ErrorChangeOnlineStatusState());
+        }
+      },
+    );
   }
 
   int selectedStep = 1;
@@ -236,13 +248,56 @@ class DriverHomeCubit extends Cubit<DriverHomeState> {
     );
   }
 
+  Future<File?> compressImage(String path, {int quality = 70}) async {
+    // Get the system's temporary directory to store the output file
+    final dir = await getTemporaryDirectory();
+
+    // Create a unique target path for the compressed file
+    final targetPath =
+        '${dir.absolute.path}/COMPRESSED_${DateTime.now().millisecondsSinceEpoch}.jpg';
+
+    try {
+      final compressedResult = await FlutterImageCompress.compressAndGetFile(
+        path,
+        targetPath,
+
+        quality: quality,
+
+        format: CompressFormat.jpeg,
+      );
+
+      if (compressedResult != null) {
+        debugPrint('Original Size: ${await File(path).length()} bytes');
+        debugPrint('Compressed Size: ${await compressedResult.length()} bytes');
+        return File(compressedResult.path);
+      }
+    } catch (e) {
+      debugPrint('Error during image compression: $e');
+    }
+
+    return null;
+  }
+
+  /// 2. Updated File Picker Method
   Future<void> pickImage(DriverDataImages imageType, bool isCamera) async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(
       source: isCamera ? ImageSource.camera : ImageSource.gallery,
     );
+
     if (pickedFile != null) {
-      setImageFile(imageType, File(pickedFile.path));
+      final originalPath = pickedFile.path;
+
+      // Step 1: Attempt to compress the picked file
+      final compressedFile = await compressImage(originalPath, quality: 70);
+
+      // Step 2: Decide which file to use
+      final fileToSet =
+          compressedFile ??
+          File(originalPath); // Use compressed, fallback to original
+
+      // Step 3: Set the file and update state
+      setImageFile(imageType, fileToSet);
     }
   }
 

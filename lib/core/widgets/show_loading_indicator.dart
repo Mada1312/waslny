@@ -3,8 +3,9 @@ import 'dart:io';
 import '../exports.dart';
 
 class CustomLoadingIndicator extends StatefulWidget {
-  const CustomLoadingIndicator({super.key, this.withLogo = true});
+  const CustomLoadingIndicator({super.key, this.withLogo = true, this.color});
   final bool withLogo;
+  final Color? color;
 
   @override
   State<CustomLoadingIndicator> createState() => _CustomLoadingIndicatorState();
@@ -41,6 +42,7 @@ class _CustomLoadingIndicatorState extends State<CustomLoadingIndicator>
                   ImageAssets.loaderIcon,
                   height: 50.h,
                   width: 50.h,
+                  color: widget.color,
                 ),
               ),
               /*Platform.isIOS
@@ -69,13 +71,7 @@ class _CustomLoadingIndicatorState extends State<CustomLoadingIndicator>
             ],
           )
         : Platform.isIOS
-            ? CircularProgressIndicator(
-                color: AppColors.primary,
-                strokeWidth: 3,
-              )
-            : CircularProgressIndicator(
-                color: AppColors.primary,
-                strokeWidth: 3,
-              );
+        ? CircularProgressIndicator(color: AppColors.primary, strokeWidth: 3)
+        : CircularProgressIndicator(color: AppColors.primary, strokeWidth: 3);
   }
 }

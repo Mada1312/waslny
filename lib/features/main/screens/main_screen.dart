@@ -155,7 +155,7 @@ class _MainScreenState extends State<MainScreen>
     return GestureDetector(
       onTap: () => cubit.changeIndex(index),
       child: Container(
-        padding: EdgeInsets.all(15.sp),
+        padding: EdgeInsets.all(10.sp),
         decoration: isSelected
             ? BoxDecoration(
                 color: AppColors.primary, // Yellow circle

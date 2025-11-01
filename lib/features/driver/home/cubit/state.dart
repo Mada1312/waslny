@@ -22,6 +22,10 @@ class UpdateTripStatusLoadingState extends DriverHomeState {}
 
 class BackgroundLocationUpdated extends DriverHomeState {}
 
+class LoadingChangeOnlineStatusState extends DriverHomeState {}
+
+class ErrorChangeOnlineStatusState extends DriverHomeState {}
+
 class ChangeOnlineStatusState extends DriverHomeState {}
 
 class ChangeSelectedIndexState extends DriverHomeState {}
