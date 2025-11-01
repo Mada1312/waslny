@@ -54,7 +54,7 @@ class _MessageScreenState extends State<MessageScreen> {
         tripId: widget.model.tripId,
       );
     }
-    
+
     context.read<ChatCubit>().getTripDetails(id: widget.model.tripId ?? '');
   }
 
@@ -421,13 +421,15 @@ class _MessageScreenState extends State<MessageScreen> {
                         log(
                           '0000 : ${widget.model.chatId ?? cubit.createChatRoomModel?.data?.roomToken ?? ''}',
                         );
-                        cubit.sendMessage(
-                          receiverId: widget.model.receiverId,
-                          chatId:
-                              widget.model.chatId ??
-                              cubit.createChatRoomModel?.data?.roomToken ??
-                              '',
-                        );
+                        if (cubit.messageController.text.isNotEmpty) {
+                          cubit.sendMessage(
+                            receiverId: widget.model.receiverId,
+                            chatId:
+                                widget.model.chatId ??
+                                cubit.createChatRoomModel?.data?.roomToken ??
+                                '',
+                          );
+                        }
                       },
                       icon: SvgPicture.asset(AppIcons.sendIcon),
                     ),

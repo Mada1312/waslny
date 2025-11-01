@@ -328,7 +328,6 @@ class DriverHomeUI extends StatelessWidget {
                                             ],
                                           ),
 
-                                          // 10.w.horizontalSpace,
                                           Row(
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
