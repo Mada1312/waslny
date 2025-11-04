@@ -210,21 +210,25 @@ class _MessageScreenState extends State<MessageScreen> {
                                                 Expanded(
                                                   child: TextField(
                                                     onSubmitted: (value) {
-                                                      cubit.sendMessage(
-                                                        receiverId: widget
-                                                            .model
-                                                            .receiverId,
-
-                                                        chatId:
-                                                            widget
-                                                                .model
-                                                                .chatId ??
-                                                            cubit
-                                                                .createChatRoomModel
-                                                                ?.data
-                                                                ?.roomToken ??
-                                                            '',
-                                                      );
+                                                      if (cubit
+                                                          .messageController
+                                                          .text
+                                                          .isNotEmpty) {
+                                                        cubit.sendMessage(
+                                                          receiverId: widget
+                                                              .model
+                                                              .receiverId,
+                                                          chatId:
+                                                              widget
+                                                                  .model
+                                                                  .chatId ??
+                                                              cubit
+                                                                  .createChatRoomModel
+                                                                  ?.data
+                                                                  ?.roomToken ??
+                                                              '',
+                                                        );
+                                                      }
                                                     },
                                                     controller:
                                                         cubit.messageController,
