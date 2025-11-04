@@ -73,11 +73,10 @@ class DriverTripPrServiceItemWidget extends StatelessWidget {
               ),
             ],
           ),
-
           10.h.verticalSpace,
           CustomFromToWidget(
             from: trip?.from,
-            to: trip?.to,
+            to: trip?.serviceToName ?? trip?.to,
             fromLat: trip?.fromLat,
             fromLng: trip?.fromLong,
             toLat: trip?.toLat,

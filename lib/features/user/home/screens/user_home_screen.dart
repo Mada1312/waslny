@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:developer';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:waslny/core/exports.dart';
 import 'package:waslny/core/utils/general_enum.dart';
@@ -20,11 +22,24 @@ class UserHomeScreen extends StatefulWidget {
 }
 
 class _UserHomeScreenState extends State<UserHomeScreen> {
+  StreamSubscription? _fcmSubscription;
+
   @override
   void initState() {
-    // if (context.read<UserHomeCubit>().homeModel == null)
-    context.read<UserHomeCubit>().getHome(context);
     super.initState();
+
+    context.read<UserHomeCubit>().getHome(context);
+    _fcmSubscription = FirebaseMessaging.onMessage.listen((message) async {
+      if (!mounted) return;
+
+      context.read<UserHomeCubit>().getHome(context);
+    });
+  }
+
+  @override
+  void dispose() {
+    _fcmSubscription?.cancel();
+    super.dispose();
   }
 
   @override

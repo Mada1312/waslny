@@ -151,7 +151,8 @@ class CustomChatHeader extends StatelessWidget {
                           ),
                           10.w.horizontalSpace,
                         ],
-                        if (cubit.getTripDetailsModel?.data?.isDriverArrived ==
+                        if (cubit.getTripDetailsModel?.data?.status == 0 &&
+                            cubit.getTripDetailsModel?.data?.isDriverArrived ==
                                 0 &&
                             cubit.getTripDetailsModel?.data?.isDriverAccept ==
                                 1 &&
@@ -185,15 +186,16 @@ class CustomChatHeader extends StatelessWidget {
                           ),
                           10.w.horizontalSpace,
                         ],
-                        if (cubit
-                                .getTripDetailsModel
-                                ?.data
-                                ?.isDriverAnotherTrip ==
-                            0
-                        //      &&
-                        // cubit.getTripDetailsModel?.data?.isDriverAccept ==
-                        //     0
-                        )
+                        if (cubit.getTripDetailsModel?.data?.status == 0 &&
+                            cubit
+                                    .getTripDetailsModel
+                                    ?.data
+                                    ?.isDriverAnotherTrip ==
+                                0 &&
+                            (cubit.getTripDetailsModel?.data?.isDriverAccept ==
+                                    0 ||
+                                cubit.getTripDetailsModel?.data?.isUserAccept ==
+                                    0))
                           Flexible(
                             flex: 1,
                             child: CustomButton(
@@ -260,6 +262,12 @@ class CustomChatHeader extends StatelessWidget {
                             flex: 3,
                             child: CustomButton(
                               title: "start_trip".tr(),
+                              isDisabled:
+                                  cubit
+                                      .getTripDetailsModel
+                                      ?.data
+                                      ?.isDriverAccept ==
+                                  0,
                               onPressed: () {
                                 warningDialog(
                                   context,
@@ -278,7 +286,8 @@ class CustomChatHeader extends StatelessWidget {
                           ),
                           10.w.horizontalSpace,
                         ],
-                        if (cubit
+                        if (cubit.getTripDetailsModel?.data?.status == 0 &&
+                            cubit
                                     .getTripDetailsModel
                                     ?.data
                                     ?.isUserChangeCaptain ==
@@ -289,6 +298,11 @@ class CustomChatHeader extends StatelessWidget {
                                         .getTripDetailsModel
                                         ?.data
                                         ?.isUserStartTrip ==
+                                    0 ||
+                                cubit
+                                        .getTripDetailsModel
+                                        ?.data
+                                        ?.isDriverAccept ==
                                     0))
                           Flexible(
                             flex: 2,

@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'dart:developer' show log;
 import 'dart:ui';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:waslny/core/exports.dart';
 import 'package:waslny/features/driver/home/data/models/driver_home_model.dart';
@@ -19,18 +21,25 @@ class DriverHomeScreen extends StatefulWidget {
 }
 
 class _DriverHomeScreenState extends State<DriverHomeScreen> {
+  StreamSubscription? _fcmSubscription;
+
   @override
   void initState() {
-    // if (context.read<DriverHomeCubit>().homeModel == null)
+    super.initState();
+
     context.read<DriverHomeCubit>().getDriverHomeData(context);
 
-    // FirebaseMessaging.onMessage.listen((message) async {
-    //   if (message.data['reference_table'] == "shipments" &&
-    //       message.data['user_type'].toString() == "1") {
-    //     context.read<DriverHomeCubit>().getDriverHomeData(context);
-    //   }
-    // });
-    super.initState();
+    _fcmSubscription = FirebaseMessaging.onMessage.listen((message) async {
+      if (!mounted) return;
+
+      context.read<DriverHomeCubit>().getDriverHomeData(context);
+    });
+  }
+
+  @override
+  void dispose() {
+    _fcmSubscription?.cancel();
+    super.dispose();
   }
 
   @override

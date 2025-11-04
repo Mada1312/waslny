@@ -25,10 +25,10 @@ class DioConsumer implements BaseApiConsumer {
   void _configureClient() {
     (client.httpClientAdapter as IOHttpClientAdapter).onHttpClientCreate =
         (HttpClient client) {
-      client.badCertificateCallback =
-          (X509Certificate cert, String host, int port) => true;
-      return client;
-    };
+          client.badCertificateCallback =
+              (X509Certificate cert, String host, int port) => true;
+          return client;
+        };
 
     client.options
       ..baseUrl = EndPoints.baseUrl
@@ -45,15 +45,17 @@ class DioConsumer implements BaseApiConsumer {
   void _addInterceptors() {
     client.interceptors.add(injector.serviceLocator<AppInterceptors>());
     if (kDebugMode) {
-      client.interceptors.add(PrettyDioLogger(
-        requestHeader: true,
-        requestBody: true,
-        responseBody: true,
-        responseHeader: false,
-        error: true,
-        compact: true,
-        maxWidth: 90,
-      ));
+      client.interceptors.add(
+        PrettyDioLogger(
+          requestHeader: true,
+          requestBody: true,
+          responseBody: true,
+          responseHeader: false,
+          error: true,
+          compact: true,
+          maxWidth: 90,
+        ),
+      );
     }
   }
 
@@ -130,12 +132,15 @@ class DioConsumer implements BaseApiConsumer {
     final token = await _getToken();
     final lang = await Preferences.instance.getSavedLang();
     log('myToken=>$token');
-    return Options(headers: {
-      if (token != null) 'Authorization': token,
-      'Connection': 'keep-alive',
-      'Accept': '*/*',
-      'Accept-Language': lang,
-    });
+    return Options(
+      headers: {
+        if (token != null) 'Authorization': token,
+        'Connection': 'keep-alive',
+        'Accept': 'application/json',
+        // 'Accept': '*/*',
+        'Accept-Language': lang,
+      },
+    );
   }
 
   Future<String?> _getToken() async {

@@ -440,52 +440,21 @@ class LoginCubit extends Cubit<LoginState> {
           emit(GetAuthDataError());
         },
         (r) {
-          authData = r;
+          if (r.status == 200 || r.status == 201) {
+            authData = r;
 
-          if (isFirstTime) {
-            /*if (authData?.data?.userType == 0) {
-              if (authData?.data?.exportCard == null) {
-                warningDialog(
-                  context,
-                  title: 'you_are_didnt_upload_export_card_please_upload_it'
-                      .tr(),
-                  onPressedOk: () {
-                    Navigator.pushNamed(context, Routes.editUserProfileRoute);
-                  },
-                );
-              }
-            } else {
-              if (authData?.data?.frontDriverCard == null &&
-                  authData?.data?.backDriverCard == null) {
-                warningDialog(
-                  context,
-                  title: 'you_are_didnt_upload_driver_card_please_upload_it'
-                      .tr(),
-                  onPressedOk: () {
-                    Navigator.pushNamed(
-                      context,
-                      Routes.editDeliveryProfileRoute,
-                    );
-                  },
-                );
-              }
-              if (authData?.data?.countries == null ||
-                  (authData?.data?.countries?.isEmpty ?? true)) {
-                warningDialog(
-                  context,
-                  title: 'you_are_didnt_upload_countries'.tr(),
-                  onPressedOk: () {
-                    Navigator.pushNamed(
-                      context,
-                      Routes.editDeliveryProfileRoute,
-                    );
-                  },
-                );
-              }
-            }*/
-            changeLanguage();
+            if (isFirstTime) {
+              changeLanguage();
+            }
+            isFirstTime = false;
+          } else if (r.status == 401) {
+            Preferences.instance.clearUser();
+            Navigator.pushNamedAndRemoveUntil(
+              context,
+              Routes.chooseLoginRoute,
+              (route) => false,
+            );
           }
-          isFirstTime = false;
 
           emit(GetAuthDataLoaded());
         },

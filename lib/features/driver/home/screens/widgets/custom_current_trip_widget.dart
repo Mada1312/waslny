@@ -49,7 +49,7 @@ class CustomsSheduledTripWidet extends StatelessWidget {
               8.h.verticalSpace,
               FromToContainer(
                 isFrom: false,
-                address: trip?.to,
+                address:trip?.serviceToName?? trip?.to,
                 lat: trip?.toLat,
                 lng: trip?.toLong,
               ),
@@ -133,7 +133,7 @@ class CustomsSheduledTripWidet extends StatelessWidget {
                           context,
                           title: "are_you_sure_you_want_to_start_trip".tr(),
                           onPressedOk: () {
-                            context.read<DriverHomeCubit>().cancleTrip(
+                            context.read<DriverHomeCubit>().startTrip(
                               tripId: trip?.id ?? 0,
                               context: context,
                             );
@@ -143,7 +143,11 @@ class CustomsSheduledTripWidet extends StatelessWidget {
                       // btnColor: AppColors.secondPrimary,
                       // textColor: AppColors.primary,
                     )
-                  : trip?.status == 1
+                  : trip?.status == 1 &&
+                        trip?.isDriverAccept == 1 &&
+                        trip?.isUserAccept == 1 &&
+                        trip?.isDriverStartTrip == 1 &&
+                        trip?.isUserStartTrip == 1
                   ? CustomButton(
                       title: "end_trip".tr(),
                       btnColor: AppColors.red,
