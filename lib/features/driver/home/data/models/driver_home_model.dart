@@ -80,7 +80,8 @@ class DriverTripModel {
   int? isDriverAccept;
   int? isUserChangeCaptain;
   int? isDriverAnotherTrip;
-
+  String? serviceToName;
+  int? serviceTo;
   Driver? driver;
   Driver? user;
 
@@ -111,11 +112,15 @@ class DriverTripModel {
     this.isDriverAnotherTrip,
     this.driver,
     this.user,
+    this.serviceToName,
+    this.serviceTo,
   });
 
   factory DriverTripModel.fromJson(Map<String, dynamic> json) =>
       DriverTripModel(
         id: json["id"],
+        serviceTo: json["service_to"],
+        serviceToName: json["service_to_name"],
         driverId: json["driver_id"],
         userId: json["user_id"],
         code: json["code"],
@@ -170,6 +175,8 @@ class DriverTripModel {
     "is_driver_another_trip": isDriverAnotherTrip,
     "driver": driver?.toJson(),
     "user": user?.toJson(),
+    "service_to": serviceTo,
+    "service_to_name": serviceToName,
   };
 }
 

@@ -158,7 +158,7 @@ class _AllRoomScreenState extends State<AllRoomScreen> {
                                       start: 8.0,
                                     ),
                                     child: Text(
-                                      "#${cubit.chatRoomModel?.data?[index].shipmentCode ?? ''}-${context.read<LoginCubit>().authData?.data?.userType == 0 ? (cubit.chatRoomModel?.data?[index].driver?.name ?? '') : (cubit.chatRoomModel?.data?[index].user?.name ?? '')}",
+                                      "${context.read<LoginCubit>().authData?.data?.userType == 0 ? (cubit.chatRoomModel?.data?[index].driver?.name ?? '') : (cubit.chatRoomModel?.data?[index].user?.name ?? '')}",
                                       maxLines: 2,
                                       style: getBoldStyle(fontSize: 16.sp),
                                     ),

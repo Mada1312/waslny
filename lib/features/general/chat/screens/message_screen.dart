@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:waslny/core/exports.dart';
 import 'package:waslny/core/notification_services/notification_service.dart';
 import 'package:waslny/features/general/auth/cubit/cubit.dart';
@@ -56,6 +57,12 @@ class _MessageScreenState extends State<MessageScreen> {
     }
 
     context.read<ChatCubit>().getTripDetails(id: widget.model.tripId ?? '');
+    FirebaseMessaging.onMessage.listen((message) async {
+      // if () {
+      context.read<ChatCubit>().getTripDetails(
+        id: widget.model.tripId ?? '',
+      ); // }
+    });
   }
 
   @override
@@ -203,21 +210,25 @@ class _MessageScreenState extends State<MessageScreen> {
                                                 Expanded(
                                                   child: TextField(
                                                     onSubmitted: (value) {
-                                                      cubit.sendMessage(
-                                                        receiverId: widget
-                                                            .model
-                                                            .receiverId,
-
-                                                        chatId:
-                                                            widget
-                                                                .model
-                                                                .chatId ??
-                                                            cubit
-                                                                .createChatRoomModel
-                                                                ?.data
-                                                                ?.roomToken ??
-                                                            '',
-                                                      );
+                                                      if (cubit
+                                                          .messageController
+                                                          .text
+                                                          .isNotEmpty) {
+                                                        cubit.sendMessage(
+                                                          receiverId: widget
+                                                              .model
+                                                              .receiverId,
+                                                          chatId:
+                                                              widget
+                                                                  .model
+                                                                  .chatId ??
+                                                              cubit
+                                                                  .createChatRoomModel
+                                                                  ?.data
+                                                                  ?.roomToken ??
+                                                              '',
+                                                        );
+                                                      }
                                                     },
                                                     controller:
                                                         cubit.messageController,
@@ -241,8 +252,8 @@ class _MessageScreenState extends State<MessageScreen> {
                                                             BorderSide.none,
                                                       ),
                                                       filled: true,
-                                                      fillColor: AppColors.gray
-                                                          .withOpacity(0.1),
+                                                      fillColor:
+                                                          AppColors.white,
                                                     ),
                                                   ),
                                                 ),

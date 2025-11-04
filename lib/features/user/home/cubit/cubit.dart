@@ -21,6 +21,10 @@ class UserHomeCubit extends Cubit<UserHomeState> {
     log('PPPP trips ${serviceType?.name == ServicesType.trips.name}');
     log('PPPP services ${serviceType?.name == ServicesType.services.name}');
     result.fold((failure) => emit(UserHomeError()), (data) {
+      if (data.status != 200 && data.status != 201) {
+        emit(UserHomeError());
+        return;
+      }
       homeModel = data;
       // log('888888888888 ${data.data?.isWebhookVerified}');
       // if (!(isVerify == true) || data.data?.isWebhookVerified == 1) {

@@ -234,6 +234,8 @@ class _TripOrServiceItemWidgetState extends State<TripOrServiceItemWidget> {
                     ),
                     (widget.tripOrService?.driver != null)
                         ? CustomDriverInfo(
+                            isCancelable:
+                                widget.tripOrService?.isUserStartTrip == 0,
                             onTapToCancelTrip: () {
                               warningDialog(
                                 context,

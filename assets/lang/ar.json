@@ -147,6 +147,7 @@
   "time_is_required": "ادخل وقت الرحلة",
   "service_to": "خدمة إلي",
   "searching_for_driver": "جاري البحث عن كابتن",
+  "no_driver_found": "لم يتم العثور على كابتن",
   "select_location_from_map": "حدد الموقع علي الخريطة",
   "from_map": "من موقعي",
   "saved_locations": "الأماكن المحفوظة",

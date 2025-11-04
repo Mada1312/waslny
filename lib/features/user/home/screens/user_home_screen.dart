@@ -1,13 +1,13 @@
+import 'dart:async';
 import 'dart:developer';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:waslny/core/exports.dart';
 import 'package:waslny/core/utils/general_enum.dart';
 import 'package:waslny/core/utils/user_info.dart';
 import 'package:waslny/features/user/add_new_trip/screens/add_new_trip.dart';
-import 'package:waslny/features/user/trip_and_services/cubit/cubit.dart';
 import 'package:waslny/features/user/trip_and_services/screens/widgets/trip_and_service_widget.dart';
-import 'package:escapable_padding/escapable_padding.dart';
 
 import '../cubit/cubit.dart';
 import '../cubit/state.dart';
@@ -20,11 +20,24 @@ class UserHomeScreen extends StatefulWidget {
 }
 
 class _UserHomeScreenState extends State<UserHomeScreen> {
+  StreamSubscription? _fcmSubscription;
+
   @override
   void initState() {
-    // if (context.read<UserHomeCubit>().homeModel == null)
-    context.read<UserHomeCubit>().getHome(context);
     super.initState();
+
+    context.read<UserHomeCubit>().getHome(context);
+    _fcmSubscription = FirebaseMessaging.onMessage.listen((message) async {
+      if (!mounted) return;
+
+      context.read<UserHomeCubit>().getHome(context);
+    });
+  }
+
+  @override
+  void dispose() {
+    _fcmSubscription?.cancel();
+    super.dispose();
   }
 
   @override

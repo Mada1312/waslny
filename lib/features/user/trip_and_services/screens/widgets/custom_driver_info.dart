@@ -19,6 +19,7 @@ class CustomDriverInfo extends StatefulWidget {
     this.tripId,
     this.isFavWidget,
     this.onTapToCancelTrip,
+    this.isCancelable = true,
   });
   final String? hint;
   final String? shipmentCode;
@@ -27,6 +28,7 @@ class CustomDriverInfo extends StatefulWidget {
   final Driver? driver;
   final bool? isFavWidget;
   final void Function()? onTapToCancelTrip;
+  final bool isCancelable;
   @override
   State<CustomDriverInfo> createState() => _CustomDriverInfoState();
 }
@@ -45,25 +47,30 @@ class _CustomDriverInfoState extends State<CustomDriverInfo> {
 
         10.w.horizontalSpace,
         Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: AppColors.primary,
+            !widget.isCancelable
+                ? SizedBox()
+                : Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: AppColors.primary,
 
-                  borderRadius: BorderRadius.circular(10.r),
-                ),
-                child: GestureDetector(
-                  onTap: widget.onTapToCancelTrip,
-                  child: Center(
-                    child: Text(
-                      'cancel_trip'.tr(),
-                      style: getMediumStyle(color: AppColors.secondPrimary),
+                        borderRadius: BorderRadius.circular(10.r),
+                      ),
+                      child: GestureDetector(
+                        onTap: widget.onTapToCancelTrip,
+                        child: Center(
+                          child: Text(
+                            'cancel_trip'.tr(),
+                            style: getMediumStyle(
+                              color: AppColors.secondPrimary,
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ),
-            ),
             20.h.horizontalSpace,
             CustomCallAndMessageWidget(
               driverId:

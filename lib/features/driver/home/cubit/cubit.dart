@@ -29,16 +29,13 @@ class DriverHomeCubit extends Cubit<DriverHomeState> {
     try {
       final result = await api.getHome();
       result.fold((failure) => emit(DriverHomeError()), (data) {
+        if (data.status != 200 && data.status != 201) {
+          emit(DriverHomeError());
+          return;
+        }
         homeModel = data;
         log('6666666666666 ${data.data?.isWebhookVerified}');
-        // if (!(isVerify == true) || data.data?.isWebhookVerified == 1) {
-        // if (data.data?.isWebhookVerified == 0) {
-        //   Navigator.pushReplacementNamed(
-        //     context,
-        //     Routes.notVerifiedUserRoute,
-        //     arguments: true,
-        //   );
-        // } else {
+
         isDataVerifided = homeModel?.data?.user?.isVerified == 1;
         if (homeModel?.data?.user?.isDataUploaded != 1) {
           Navigator.pushNamed(context, Routes.driverDataRoute);
@@ -255,17 +252,13 @@ class DriverHomeCubit extends Cubit<DriverHomeState> {
     // Create a unique target path for the compressed file
     final targetPath =
         '${dir.absolute.path}/COMPRESSED_${DateTime.now().millisecondsSinceEpoch}.jpg';
-
     try {
       final compressedResult = await FlutterImageCompress.compressAndGetFile(
         path,
         targetPath,
-
         quality: quality,
-
         format: CompressFormat.jpeg,
       );
-
       if (compressedResult != null) {
         debugPrint('Original Size: ${await File(path).length()} bytes');
         debugPrint('Compressed Size: ${await compressedResult.length()} bytes');
@@ -274,7 +267,6 @@ class DriverHomeCubit extends Cubit<DriverHomeState> {
     } catch (e) {
       debugPrint('Error during image compression: $e');
     }
-
     return null;
   }
 
@@ -319,7 +311,6 @@ class DriverHomeCubit extends Cubit<DriverHomeState> {
 
   bool isNextButtonDisabled(DriverDataSteps currentStep) {
     final requiredImages = getRequiredImagesForStep(currentStep);
-
     bool isUploaded(DriverDataImages image) {
       switch (image) {
         case DriverDataImages.vehicleInfoFront:
@@ -337,7 +328,6 @@ class DriverHomeCubit extends Cubit<DriverHomeState> {
       }
     }
 
-    // الزر يتعطّل لو في صورة ناقصة من الخطوة الحالية
     return !requiredImages.every(isUploaded);
   }
 

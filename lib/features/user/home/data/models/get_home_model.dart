@@ -35,11 +35,16 @@ class GetUserHomeModel {
 
 class GetUserHomeModelData {
   User? user;
-   int? isWebhookVerified;
+  int? isWebhookVerified;
   List<TripAndServiceModel>? trips;
   List<TripAndServiceModel>? services;
 
-  GetUserHomeModelData({this.user, this.trips, this.services, this.isWebhookVerified});
+  GetUserHomeModelData({
+    this.user,
+    this.trips,
+    this.services,
+    this.isWebhookVerified,
+  });
 
   factory GetUserHomeModelData.fromJson(Map<String, dynamic> json) =>
       GetUserHomeModelData(
@@ -86,7 +91,14 @@ class TripAndServiceModel {
   dynamic roomToken;
   bool? isFav;
   Driver? driver;
-
+  int? cannotFindDriver;
+  int? isDriverArrived;
+  int? isUserStartTrip;
+  int? isDriverStartTrip;
+  int? isUserAccept;
+  int? isDriverAccept;
+  int? isUserChangeCaptain;
+  int? isDriverAnotherTrip;
   TripAndServiceModel({
     this.id,
     this.code,
@@ -104,6 +116,14 @@ class TripAndServiceModel {
     this.driver,
     this.isFav,
     this.serviceToName,
+    this.isDriverArrived,
+    this.isUserStartTrip,
+    this.isDriverStartTrip,
+    this.isUserAccept,
+    this.isDriverAccept,
+    this.isUserChangeCaptain,
+    this.isDriverAnotherTrip,
+    this.cannotFindDriver,
   });
 
   factory TripAndServiceModel.fromJson(Map<String, dynamic> json) =>
@@ -124,6 +144,14 @@ class TripAndServiceModel {
         serviceToName: json["service_to_name"],
         roomToken: json["room_token"],
         driver: json["driver"] == null ? null : Driver.fromJson(json["driver"]),
+        cannotFindDriver: json["cannot_find_driver"],
+        isDriverArrived: json["is_driver_arrived"],
+        isUserStartTrip: json["is_user_start_trip"],
+        isDriverStartTrip: json["is_driver_start_trip"],
+        isUserAccept: json["is_user_accept"],
+        isDriverAccept: json["is_driver_accept"],
+        isUserChangeCaptain: json["is_user_change_captain"],
+        isDriverAnotherTrip: json["is_driver_another_trip"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -144,6 +172,14 @@ class TripAndServiceModel {
     "type": type,
     "room_token": roomToken,
     "driver": driver?.toJson(),
+    "cannot_find_driver": cannotFindDriver,
+    "is_driver_arrived": isDriverArrived,
+    "is_user_start_trip": isUserStartTrip,
+    "is_driver_start_trip": isDriverStartTrip,
+    "is_user_accept": isUserAccept,
+    "is_driver_accept": isDriverAccept,
+    "is_user_change_captain": isUserChangeCaptain,
+    "is_driver_another_trip": isDriverAnotherTrip,
   };
 }
 
