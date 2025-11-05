@@ -182,14 +182,16 @@ class LoginCubit extends Cubit<LoginState> {
   }
 
   Future<void> sendOtp() async {
-    Future.delayed(Duration(seconds: 10), () async {
+    await Future.delayed(Duration(seconds: 10), () async {
       final res = await api.sendOtp(phone: fullPhoneNumber ?? '');
       res.fold(
         (l) {
           log('Error');
+          print('Error ${l.toString()}');
         },
         (r) {
           log('SUCCESS');
+          print('SUCCESS ${r.toString()}}');
         },
       );
     });
