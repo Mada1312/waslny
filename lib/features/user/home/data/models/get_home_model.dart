@@ -84,6 +84,7 @@ class TripAndServiceModel {
   String? fromLong;
   String? to;
   String? toLat;
+  String? distance;
   String? toLong;
   String? type;
   String? serviceToName;
@@ -108,6 +109,7 @@ class TripAndServiceModel {
     this.fromLat,
     this.fromLong,
     this.to,
+    this.distance,
     this.toLat,
     this.toLong,
     this.type,
@@ -135,6 +137,7 @@ class TripAndServiceModel {
         serviceTo: json["service_to"],
         isFav: json["is_fav"] == 0 ? false : true,
         from: json["from"],
+        distance: json["distance"],
         fromLat: json["from_lat"],
         fromLong: json["from_long"],
         to: json["to"],
@@ -163,6 +166,7 @@ class TripAndServiceModel {
     "from": from,
     "from_lat": fromLat,
     "service_to": serviceTo,
+    "distance": distance,
     "service_to_name": serviceToName,
     "is_fav": isFav,
     "from_long": fromLong,

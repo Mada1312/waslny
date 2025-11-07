@@ -232,6 +232,25 @@ class _TripOrServiceItemWidgetState extends State<TripOrServiceItemWidget> {
                       toLng: widget.tripOrService?.toLong,
                       serviceTo: widget.tripOrService?.serviceToName,
                     ),
+                    if (widget.tripOrService?.distance.toString() != "")
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          MySvgWidget(
+                            path: AppIcons.fromMapIcon,
+                            width: 25.sp,
+                            height: 30.sp,
+                            // imageColor: AppColors.dark2Grey,
+                          ),
+                          10.w.horizontalSpace,
+                          Flexible(
+                            child: Text(
+                              "${(widget.tripOrService?.distance ?? '').substring(0, 4)} ${'km'.tr()}",
+                              style: getMediumStyle(fontSize: 14.sp),
+                            ),
+                          ),
+                        ],
+                      ),
                     (widget.tripOrService?.driver != null)
                         ? CustomDriverInfo(
                             isCancelable:

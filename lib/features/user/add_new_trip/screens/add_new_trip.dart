@@ -2,6 +2,7 @@ import 'package:waslny/core/exports.dart';
 import 'package:waslny/core/utils/general_enum.dart';
 import 'package:waslny/core/widgets/custom_divider.dart';
 import 'package:waslny/extention.dart';
+import 'package:waslny/features/general/location/cubit/location_cubit.dart';
 import 'package:waslny/features/general/location/screens/from_to_screen_map.dart';
 import 'package:waslny/features/user/add_new_trip/screens/all_latest_locations_screen.dart';
 import 'package:waslny/features/user/add_new_trip/screens/widget/custom_location_widget.dart';
@@ -15,9 +16,8 @@ import '../cubit/cubit.dart';
 import '../cubit/state.dart';
 
 class AddTripArgs {
-  final UserShipmentData? shipment;
   final bool? isService;
-  AddTripArgs({this.isService = false, this.shipment});
+  AddTripArgs({this.isService = false});
 }
 
 class AddNewTripScreen extends StatefulWidget {
@@ -33,6 +33,9 @@ class _AddNewTripScreenState extends State<AddNewTripScreen> {
     super.initState();
 
     final cubit = context.read<AddNewTripCubit>();
+    final cubit2 = context.read<LocationCubit>();
+    cubit2.clearRouteData();
+    cubit.clearTripData();
     cubit.gettMainLastestLocation((widget.args?.isService ?? false));
     // final shipment = widget.args?.shipment;
 
@@ -128,9 +131,7 @@ class _AddNewTripScreenState extends State<AddNewTripScreen> {
                     path: AppIcons.waslnyArIcon,
                     imageColor: AppColors.secondPrimary,
                   ),
-            title: widget.args?.shipment != null
-                ? 'edit_trip'.tr()
-                : 'add_trip'.tr(),
+            title: 'add_trip'.tr(),
           ),
           body: SingleChildScrollView(
             padding: EdgeInsets.all(12.w),
@@ -351,9 +352,7 @@ class _AddNewTripScreenState extends State<AddNewTripScreen> {
                     ), //!
                   10.h.verticalSpace,
                   CustomButton(
-                    title: widget.args?.shipment != null
-                        ? 'update'.tr()
-                        : 'add'.tr(),
+                    title: 'add'.tr(),
                     onPressed: () async {
                       if (formKey.currentState?.validate() ?? false) {
                         if (cubit.selectedDateController.text.isEmpty &&
@@ -363,30 +362,23 @@ class _AddNewTripScreenState extends State<AddNewTripScreen> {
                             cubit.selectedTimeType == TimeType.later) {
                           errorGetBar('time_is_required'.tr());
                         } else {
-                          if (widget.args?.shipment != null) {
-                            cubit.updateShipment(
-                              context,
-                              id: widget.args?.shipment?.id.toString() ?? '',
-                            );
-                          } else {
-                            cubit.addNewTrip(
-                              context,
-                              isService: widget.args?.isService ?? false,
-                            );
-                            // await metaSdk.logEvent(
-                            //   name: 'add_new_shipment',
-                            //   parameters: {
-                            //     'from': cubit.fromAddressController.text,
-                            //     'to': cubit.toCountry?.name ?? '',
-                            //     'shipment_type': cubit.shipmentType?.name ?? '',
-                            //     'from_qty': cubit.fromQtyController.text,
-                            //     'to_qty': cubit.toQtyController.text,
-                            //     'goods_type': cubit.shipmentTypeController.text,
-                            //     'loading_time': cubit.selectedTimeController.text,
-                            //     'description': cubit.descriptionController.text,
-                            //   },
-                            // );
-                          }
+                          cubit.addNewTrip(
+                            context,
+                            isService: widget.args?.isService ?? false,
+                          );
+                          // await metaSdk.logEvent(
+                          //   name: 'add_new_shipment',
+                          //   parameters: {
+                          //     'from': cubit.fromAddressController.text,
+                          //     'to': cubit.toCountry?.name ?? '',
+                          //     'shipment_type': cubit.shipmentType?.name ?? '',
+                          //     'from_qty': cubit.fromQtyController.text,
+                          //     'to_qty': cubit.toQtyController.text,
+                          //     'goods_type': cubit.shipmentTypeController.text,
+                          //     'loading_time': cubit.selectedTimeController.text,
+                          //     'description': cubit.descriptionController.text,
+                          //   },
+                          // );
                         }
                       }
                     },

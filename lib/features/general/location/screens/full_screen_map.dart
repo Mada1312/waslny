@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:waslny/extention.dart';
 
 import 'package:waslny/features/user/add_new_trip/cubit/cubit.dart';
@@ -49,17 +51,7 @@ class _FullScreenMapState extends State<FullScreenMap>
 
     return WillPopScope(
       onWillPop: () {
-        if (widget.isTo == true) {
-          context.read<AddNewTripCubit>().toAddressController.text =
-              cubit.address;
-          context.read<AddNewTripCubit>().toSelectedLocation =
-              cubit.selectedLocation;
-        } else {
-          context.read<AddNewTripCubit>().fromAddressController.text =
-              cubit.address;
-          context.read<AddNewTripCubit>().fromSelectedLocation =
-              cubit.selectedLocation;
-        }
+        _saveLocationToTrip(cubit);
 
         Navigator.pop(context);
         return Future.value(false);
@@ -74,17 +66,7 @@ class _FullScreenMapState extends State<FullScreenMap>
             leading: IconButton(
               icon: const Icon(Icons.arrow_back),
               onPressed: () {
-                if (widget.isTo == true) {
-                  context.read<AddNewTripCubit>().toAddressController.text =
-                      cubit.address;
-                  context.read<AddNewTripCubit>().toSelectedLocation =
-                      cubit.selectedLocation;
-                } else {
-                  context.read<AddNewTripCubit>().fromAddressController.text =
-                      cubit.address;
-                  context.read<AddNewTripCubit>().fromSelectedLocation =
-                      cubit.selectedLocation;
-                }
+                _saveLocationToTrip(cubit);
                 Navigator.pop(context);
               },
             ),
@@ -124,7 +106,7 @@ class _FullScreenMapState extends State<FullScreenMap>
                   FlutterMap(
                     mapController: animatedMapController.mapController,
                     options: MapOptions(
-                      initialZoom: 12,
+                      initialZoom: 18,
                       initialCenter: LatLng(
                         cubit.selectedLocation!.latitude ?? 0.0,
                         cubit.selectedLocation!.longitude ?? 0.0,
@@ -210,6 +192,7 @@ class _FullScreenMapState extends State<FullScreenMap>
                     child: MapButton(
                       isCircular: true,
                       icon: Icons.my_location,
+
                       onTap: () => cubit.goToCurrentLocation(context),
                     ),
                   ),
@@ -279,27 +262,8 @@ class _FullScreenMapState extends State<FullScreenMap>
                         child: CustomButton(
                           padding: EdgeInsets.all(8),
                           onPressed: () {
-                            if (widget.isTo == true) {
-                              context
-                                      .read<AddNewTripCubit>()
-                                      .toAddressController
-                                      .text =
-                                  cubit.address;
-                              context
-                                      .read<AddNewTripCubit>()
-                                      .toSelectedLocation =
-                                  cubit.selectedLocation;
-                            } else {
-                              context
-                                      .read<AddNewTripCubit>()
-                                      .fromAddressController
-                                      .text =
-                                  cubit.address;
-                              context
-                                      .read<AddNewTripCubit>()
-                                      .fromSelectedLocation =
-                                  cubit.selectedLocation;
-                            }
+                            _saveLocationToTrip(cubit);
+
                             Navigator.pop(context);
                           },
                           title: 'confirm_destination'.tr(),
@@ -315,5 +279,22 @@ class _FullScreenMapState extends State<FullScreenMap>
       ),
     );
   }
-}
 
+  void _saveLocationToTrip(LocationCubit cubit) {
+    if (widget.isTo == true) {
+      context.read<AddNewTripCubit>().toAddressController.text = cubit.address;
+      context.read<AddNewTripCubit>().toSelectedLocation =
+          cubit.selectedLocation;
+    } else {
+      context.read<AddNewTripCubit>().fromAddressController.text =
+          cubit.address;
+      context.read<AddNewTripCubit>().fromSelectedLocation =
+          cubit.selectedLocation;
+    }
+    context.read<AddNewTripCubit>().distance = cubit.routeDistance;
+
+    log(
+      'dis ${context.read<AddNewTripCubit>().distance} : ${cubit.routeDistance}',
+    );
+  }
+}

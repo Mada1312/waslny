@@ -329,6 +329,17 @@ class LocationCubit extends Cubit<LocationState> {
   bool isLoadingRoute = false;
   LatLng? fromLocation;
   LatLng? toLocation;
+
+  // ============ OSRM Clear data ============
+  clearRouteData() {
+    routePoints = [];
+    routeDistance = 0.0;
+    routeDuration = 0.0;
+    isLoadingRoute = false;
+    fromLocation = null;
+    toLocation = null;
+  }
+
   // ===============================================
   Future<void> checkAndRequestLocationPermission(BuildContext context) async {
     final permissionStatus = await perm.Permission.location.status;
@@ -410,9 +421,9 @@ class LocationCubit extends Cubit<LocationState> {
   MySvgWidget buildMarker() {
     return MySvgWidget(
       path: AppIcons.pin,
-      width: 50,
-      height: 50,
-      imageColor: AppColors.primary,
+      width: 60,
+      height: 60,
+      imageColor: AppColors.secondPrimary,
     );
   }
 
@@ -714,7 +725,7 @@ class LocationCubit extends Cubit<LocationState> {
   double getRouteDistanceInKilometers() {
     return routeDistance / 1000;
   }
-  
+
   /// Get route duration in seconds
   num getRouteDurationInSeconds() {
     return routeDuration;
