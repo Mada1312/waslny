@@ -98,4 +98,5 @@ class AppIcons {
   static const String rate = '$iconsPath/rate.svg';
   static const String fromMapIcon = '$iconsPath/from_map_icon.svg';
   static const String toMapIcon = '$iconsPath/to_map_icon.svg';
+  static const String distanceIcon = '$iconsPath/distance.svg';
 }

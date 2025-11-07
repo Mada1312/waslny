@@ -23,6 +23,7 @@ class AddNewTripCubit extends Cubit<AddNewTripState> {
   TextEditingController toAddressController = TextEditingController();
   loc.LocationData? fromSelectedLocation;
   loc.LocationData? toSelectedLocation;
+  num? distance;
 
   TimeType? selectedTimeType = TimeType.now;
   ServiceTo? selectedServiceTo = ServiceTo.electric;
@@ -124,6 +125,7 @@ class AddNewTripCubit extends Cubit<AddNewTripState> {
       AppWidget.createProgressDialog(context, msg: 'locading'.tr());
       emit(AddNewTripLoading());
       final res = await api.addNewTrip(
+        distance: distance,
         description: descriptionController.text,
         from: fromAddressController.text,
         gender: selectedGenderType?.name == Gender.male.name ? '0' : '1',
@@ -194,10 +196,12 @@ class AddNewTripCubit extends Cubit<AddNewTripState> {
     selectedTime = null;
     fromSelectedLocation = null;
     toSelectedLocation = null;
+    distance = null;
     selectedDateController.clear();
   }
 
   GetMainLastestLocation? latestLocation;
+
   gettMainLastestLocation(bool isService) async {
     try {
       emit(LoadingGetLatestLocation());
@@ -257,49 +261,4 @@ class AddNewTripCubit extends Cubit<AddNewTripState> {
   }
 
   //! END
-  updateShipment(BuildContext context, {required String id}) async {
-    try {
-      AppWidget.createProgressDialog(context, msg: 'locading'.tr());
-      emit(AddNewTripLoading());
-      final res = await api.updateTrip(
-        description: descriptionController.text,
-        from: fromAddressController.text,
-        loadSizeFrom: null,
-        loadSizeTo: null,
-        shipmentDateTime: selectedTimeController.text,
-        toCountryId: '',
-        truckTypeId: '',
-        goodsType: "shipmentTypeController.text",
-        lat: context.read<LocationCubit>().selectedLocation?.latitude,
-        long: context.read<LocationCubit>().selectedLocation?.longitude,
-        shipmentId: id,
-      );
-      res.fold(
-        (l) {
-          errorGetBar(l.toString());
-          Navigator.pop(context);
-          emit(AddNewTripError());
-        },
-        (r) {
-          if (r.status == 200) {
-            successGetBar(r.msg ?? '');
-            Navigator.pop(context);
-            context.read<UserTripAndServicesCubit>().getShipmentDetails(id: id);
-            clearTripData();
-            emit(AddNewTripLoaded());
-          } else {
-            errorGetBar(r.msg.toString());
-
-            emit(AddNewTripError());
-          }
-          Navigator.pop(context);
-        },
-      );
-    } catch (e) {
-      errorGetBar(e.toString());
-      Navigator.pop(context);
-
-      emit(AddNewTripError());
-    }
-  }
 }

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:waslny/extention.dart';
 import 'package:waslny/features/user/add_new_trip/cubit/cubit.dart';
 import 'package:easy_debounce/easy_debounce.dart';
@@ -129,7 +131,7 @@ class _FromToScreenMapState extends State<FromToScreenMap>
                   FlutterMap(
                     mapController: animatedMapController.mapController,
                     options: MapOptions(
-                      initialZoom: 12,
+                      initialZoom: 18,
                       initialCenter: _getInitialCenter(cubit),
                       onTap: (tapPosition, tappedLatLng) {
                         double lat = double.parse(
@@ -440,8 +442,9 @@ class _FromToScreenMapState extends State<FromToScreenMap>
           point: cubit.fromLocation!,
           child: MySvgWidget(
             path: AppIcons.fromMapIcon,
-            // width: 50,
-            // height: 50,
+
+            width: 60,
+            height: 60,
             // imageColor: Colors.blue,
           ),
         ),
@@ -455,8 +458,9 @@ class _FromToScreenMapState extends State<FromToScreenMap>
           point: cubit.toLocation!,
           child: MySvgWidget(
             path: AppIcons.toMapIcon,
-            // width: 50,
-            // height: 50,
+
+            width: 60,
+            height: 60,
             // imageColor: Colors.red,
           ),
         ),
@@ -489,6 +493,11 @@ class _FromToScreenMapState extends State<FromToScreenMap>
       context.read<AddNewTripCubit>().fromSelectedLocation =
           cubit.selectedLocation;
     }
+    context.read<AddNewTripCubit>().distance = cubit.routeDistance;
+
+    log(
+      'dis ${context.read<AddNewTripCubit>().distance} : ${cubit.routeDistance}',
+    );
   }
 
   @override

@@ -47,11 +47,59 @@ class CustomsSheduledTripWidet extends StatelessWidget {
                 lng: trip?.fromLong,
               ),
               8.h.verticalSpace,
-              FromToContainer(
-                isFrom: false,
-                address:trip?.serviceToName?? trip?.to,
-                lat: trip?.toLat,
-                lng: trip?.toLong,
+              Row(
+                children: [
+                  Flexible(
+                    fit: FlexFit.tight,
+                    child: FromToContainer(
+                      isFrom: false,
+                      address: trip?.serviceToName ?? trip?.to,
+                      lat: trip?.toLat,
+                      lng: trip?.toLong,
+                    ),
+                  ),
+                  if (trip?.description != "")
+                    IconButton(
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              insetPadding: const EdgeInsets.all(8),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.r),
+                              ),
+                              title: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "enter_trip_desc".tr(),
+                                    style: TextStyle(
+                                      fontSize: 18.sp,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  InkWell(
+                                    child: Icon(
+                                      Icons.close,
+                                      color: Colors.black,
+                                    ),
+                                    onTap: () => Navigator.pop(context),
+                                  ),
+                                ],
+                              ),
+                              content: Text(
+                                trip?.description ?? '',
+                                style: TextStyle(fontSize: 14.sp),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                      icon: Icon(Icons.info, color: AppColors.secondPrimary),
+                    ),
+                ],
               ),
               if (trip?.description != null &&
                   trip!.description!.isNotEmpty) ...[

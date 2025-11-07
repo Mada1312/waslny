@@ -79,7 +79,7 @@ class CustomFromToWidget extends StatelessWidget {
                         maxLines: 3,
                         style: getRegularStyle(
                           fontSize: 13.sp,
-                          color: AppColors.grey,
+                          color: Colors.blue,
                         ),
                       ),
                       10.h.verticalSpace,
@@ -122,7 +122,7 @@ class CustomFromToWidget extends StatelessWidget {
                       serviceTo != null ? (serviceTo ?? '') : (to ?? " "),
                       style: getRegularStyle(
                         fontSize: 13.sp,
-                        color: AppColors.grey,
+                        color: Colors.blue,
                       ),
                     ),
                     // 20.h.verticalSpace,

@@ -101,7 +101,7 @@
     "name": "Name",
     "enter_your_name": "Enter your name",
     "trip_desc": "Trip Description",
-    "enter_trip_desc": "Additional details.",
+    "enter_trip_desc": "Additional details",
     "add": "Add",
     "select_location": "Select Location",
     "subject": "Subject",
@@ -125,7 +125,7 @@
     "countries": "Export Countries",
     "driver_details": "Driver Details",
     "contact_us_using": "Or contact us via",
-    "enter_valid_number": "Please enter a valid phone number",
+    "enter_valid_number": "Please enter a valid phone number without 0",
     "change_langauge": "Change Language",
     "------------------------------------": "-------------------Waslny----------------------",
     "Male": "Male",
@@ -212,6 +212,7 @@
     "select_to_location": "Select To Location",
     "gallery": "Gallery",
     "camera": "Camera",
+    "km": "Km",
     "": "",
     "**": "**"
 }
