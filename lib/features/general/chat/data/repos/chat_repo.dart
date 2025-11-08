@@ -59,6 +59,8 @@ class ChatRepo {
   Future<Either<Failure, DefaultPostModel>> updateTripStatus({
     required int id,
     required TripStep step,
+    double? arrivalLat,
+    double? arrivalLong,
   }) async {
     try {
       final response = await dio.post(
@@ -67,8 +69,33 @@ class ChatRepo {
           "trip_id": id,
           "step": step
               .stepValue, // is_user_accept|is_driver_accept|is_driver_arrived|is_user_start_trip|is_driver_start_trip
-          "value": 1, // 1,0
+          "value": 1, // 1,0,
+          "arrival_lat" : arrivalLat,
+          "arrival_long" : arrivalLong,
         },
+      );
+      return Right(DefaultPostModel.fromJson(response));
+    } on ServerException {
+      return Left(ServerFailure());
+    }
+  }
+  Future<Either<Failure, DefaultPostModel>> startTrip({required int id}) async {
+    try {
+      final response = await dio.post(
+        EndPoints.driverStartTripUrl,
+        body: {"trip_id": id},
+      );
+      return Right(DefaultPostModel.fromJson(response));
+    } on ServerException {
+      return Left(ServerFailure());
+    }
+  }
+
+  Future<Either<Failure, DefaultPostModel>> endTrip({required int id}) async {
+    try {
+      final response = await dio.post(
+        EndPoints.driverEndTripUrl,
+        body: {"trip_id": id},
       );
       return Right(DefaultPostModel.fromJson(response));
     } on ServerException {

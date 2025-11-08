@@ -1,5 +1,6 @@
 import 'package:waslny/core/exports.dart';
 import 'package:waslny/core/notification_services/notification_service.dart';
+import 'package:waslny/core/utils/call_method.dart';
 import 'package:waslny/core/widgets/network_image.dart';
 import 'package:waslny/features/general/chat/cubit/chat_cubit.dart';
 import 'package:waslny/features/general/chat/cubit/chat_state.dart';
@@ -99,6 +100,25 @@ class CustomChatHeader extends StatelessWidget {
                           style: getBoldStyle(),
                         ),
                       ),
+                      GestureDetector(
+                        onTap: () {
+                          String? phoneNumber = isDriver
+                              ? cubit.getTripDetailsModel?.data?.user?.phone
+                              : cubit.getTripDetailsModel?.data?.driver?.phone;
+                          if (phoneNumber == null || phoneNumber.isEmpty) {
+                            return;
+                          }
+                          phoneCallMethod(phoneNumber);
+                        },
+                        child: CircleAvatar(
+                          backgroundColor: AppColors.primary,
+                          child: MySvgWidget(
+                            path: AppIcons.call,
+                            imageColor: AppColors.secondPrimary,
+                          ),
+                        ),
+                      ),
+                      10.horizontalSpace,
                     ],
                   ],
                 ),
@@ -108,14 +128,12 @@ class CustomChatHeader extends StatelessWidget {
             10.verticalSpace,
             (state is GetTripStatusLoadingState)
                 ? Center(
-                    child:
-                        // make it linearProgressIndicator
-                        Center(
-                          child: LinearProgressIndicator(
-                            color: AppColors.secondPrimary,
-                            backgroundColor: AppColors.grey.withOpacity(0.3),
-                          ),
-                        ),
+                    child: Center(
+                      child: LinearProgressIndicator(
+                        color: AppColors.secondPrimary,
+                        backgroundColor: AppColors.grey.withOpacity(0.3),
+                      ),
+                    ),
                   )
                 : isDriver
                 ? Padding(
@@ -130,7 +148,7 @@ class CustomChatHeader extends StatelessWidget {
                                     ?.isDriverAnotherTrip ==
                                 0) ...[
                           Flexible(
-                            flex: 1,
+                            // flex: 1,
                             child: CustomButton(
                               title: "accept".tr(),
                               onPressed: () {
@@ -162,7 +180,7 @@ class CustomChatHeader extends StatelessWidget {
                                     ?.isDriverAnotherTrip ==
                                 0) ...[
                           Flexible(
-                            flex: 1,
+                            // flex: 1,
                             child: CustomButton(
                               title: "arrived".tr(),
                               btnColor: AppColors.secondPrimary,
@@ -187,19 +205,83 @@ class CustomChatHeader extends StatelessWidget {
                           10.w.horizontalSpace,
                         ],
                         if (cubit.getTripDetailsModel?.data?.status == 0 &&
-                            cubit
-                                    .getTripDetailsModel
-                                    ?.data
-                                    ?.isDriverAnotherTrip ==
-                                0 &&
-                            (cubit.getTripDetailsModel?.data?.isDriverAccept ==
-                                    0 ||
-                                cubit.getTripDetailsModel?.data?.isUserAccept ==
-                                    0))
+                            cubit.getTripDetailsModel?.data?.isDriverAccept ==
+                                1 &&
+                            cubit.getTripDetailsModel?.data?.isDriverArrived ==
+                                1) ...[
                           Flexible(
-                            flex: 1,
                             child: CustomButton(
-                              title: "another_trip".tr(),
+                              title: "start_trip".tr(),
+                              isDisabled:
+                                  cubit
+                                      .getTripDetailsModel
+                                      ?.data
+                                      ?.isUserAccept ==
+                                  0,
+                              onPressed: () {
+                                warningDialog(
+                                  context,
+                                  title: "are_you_sure_you_want_to_start_trip"
+                                      .tr(),
+                                  onPressedOk: () {
+                                    cubit.startTrip(
+                                      tripId:
+                                          cubit.getTripDetailsModel?.data?.id ??
+                                          0,
+                                      context: context,
+                                    );
+                                  },
+                                );
+                              },
+                            ),
+                          ),
+                          10.w.horizontalSpace,
+                        ],
+                        if (cubit.getTripDetailsModel?.data?.status == 1 &&
+                            cubit.getTripDetailsModel?.data?.isDriverAccept ==
+                                1 &&
+                            cubit.getTripDetailsModel?.data?.isDriverArrived ==
+                                1) ...[
+                          Flexible(
+                            child: CustomButton(
+                              title: "end_trip".tr(),
+                              btnColor: AppColors.red,
+                              textColor: AppColors.white,
+                              isDisabled:
+                                  cubit.getTripDetailsModel?.data?.isService ==
+                                      1 &&
+                                  cubit
+                                          .getTripDetailsModel
+                                          ?.data
+                                          ?.isUserStartTrip ==
+                                      0,
+                              onPressed: () {
+                                warningDialog(
+                                  context,
+                                  title: "are_you_sure_you_want_to_end_trip"
+                                      .tr(),
+                                  onPressedOk: () {
+                                    cubit.endTrip(
+                                      tripId:
+                                          cubit.getTripDetailsModel?.data?.id ??
+                                          0,
+                                      context: context,
+                                    );
+                                  },
+                                );
+                              },
+                            ),
+                          ),
+                          10.w.horizontalSpace,
+                        ],
+                        if (cubit
+                                .getTripDetailsModel
+                                ?.data
+                                ?.isDriverAnotherTrip ==
+                            0)
+                          Flexible(
+                            child: CustomButton(
+                              title: "reject".tr(),
                               btnColor: AppColors.secondPrimary,
                               textColor: AppColors.primary,
                               onPressed: () {
@@ -223,7 +305,8 @@ class CustomChatHeader extends StatelessWidget {
                   )
                 : Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Row(
+                    child: 
+                    Row(
                       children: [
                         if (cubit.getTripDetailsModel?.data?.isUserAccept ==
                             0) ...[
@@ -257,6 +340,8 @@ class CustomChatHeader extends StatelessWidget {
                                     .getTripDetailsModel
                                     ?.data
                                     ?.isUserChangeCaptain ==
+                                0 &&
+                            cubit.getTripDetailsModel?.data?.isService ==
                                 0) ...[
                           Flexible(
                             flex: 3,
@@ -286,24 +371,10 @@ class CustomChatHeader extends StatelessWidget {
                           ),
                           10.w.horizontalSpace,
                         ],
-                        if (cubit.getTripDetailsModel?.data?.status == 0 &&
-                            cubit
-                                    .getTripDetailsModel
-                                    ?.data
-                                    ?.isUserChangeCaptain ==
-                                0 &&
-                            (cubit.getTripDetailsModel?.data?.isUserAccept ==
-                                    0 ||
-                                cubit
-                                        .getTripDetailsModel
-                                        ?.data
-                                        ?.isUserStartTrip ==
-                                    0 ||
-                                cubit
-                                        .getTripDetailsModel
-                                        ?.data
-                                        ?.isDriverAccept ==
-                                    0))
+                        if (
+                        cubit.getTripDetailsModel?.data?.isUserChangeCaptain ==
+                            0                  
+                        )
                           Flexible(
                             flex: 2,
                             child: CustomButton(
@@ -329,6 +400,7 @@ class CustomChatHeader extends StatelessWidget {
                           ),
                       ],
                     ),
+                  
                   ),
           ],
         );

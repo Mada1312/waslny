@@ -56,5 +56,10 @@ class LoadingCancelTripAndServiceState extends UserTripAndServicesState {}
 class LoadedCancelTripAndServiceState extends UserTripAndServicesState {}
 
 class ErrorCancelTripAndServiceState extends UserTripAndServicesState {}
+class UpdateTripStatusLoadingState extends UserTripAndServicesState {}
+
+class UpdateTripStatusSuccessState extends UserTripAndServicesState {}
+
+class UpdateTripStatusErrorState extends UserTripAndServicesState {}
 
 //!

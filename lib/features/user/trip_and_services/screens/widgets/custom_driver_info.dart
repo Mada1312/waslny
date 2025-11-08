@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:waslny/core/exports.dart';
 
 import 'package:waslny/core/widgets/network_image.dart';
+import 'package:waslny/features/general/chat/cubit/chat_cubit.dart';
 import 'package:waslny/features/user/home/data/models/get_home_model.dart';
 import 'package:waslny/features/user/trip_and_services/cubit/cubit.dart';
 
@@ -20,6 +21,7 @@ class CustomDriverInfo extends StatefulWidget {
     this.isFavWidget,
     this.onTapToCancelTrip,
     this.isCancelable = true,
+    this.trip,
   });
   final String? hint;
   final String? shipmentCode;
@@ -29,6 +31,7 @@ class CustomDriverInfo extends StatefulWidget {
   final bool? isFavWidget;
   final void Function()? onTapToCancelTrip;
   final bool isCancelable;
+  final TripAndServiceModel? trip;
   @override
   State<CustomDriverInfo> createState() => _CustomDriverInfoState();
 }
@@ -36,41 +39,117 @@ class CustomDriverInfo extends StatefulWidget {
 class _CustomDriverInfoState extends State<CustomDriverInfo> {
   @override
   Widget build(BuildContext context) {
+    var cubit = context.read<UserTripAndServicesCubit>();
     return Column(
       children: [
         CustomDriverCardInfo(
           driver: widget.driver,
-
           shipmentCode: widget.shipmentCode,
           tripId: widget.tripId,
         ),
 
         10.w.horizontalSpace,
         Row(
+          children: [
+            if (widget.trip?.isUserAccept == 0) ...[
+              Flexible(
+                flex: 3,
+                child: CustomButton(
+                  title: "accept_trip".tr(),
+                  height: 40.h,
+                  fontSize: 14.sp,
+
+                  onPressed: () {
+                    warningDialog(
+                      context,
+                      title: "are_you_sure_you_want_to_accept_trip".tr(),
+                      onPressedOk: () {
+                        cubit.updateTripStatus(
+                          id: widget.trip?.id ?? 0,
+                          step: TripStep.isUserAccept,
+                          context: context,
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+              10.w.horizontalSpace,
+            ],
+            if (widget.trip?.isUserStartTrip == 0 &&
+                widget.trip?.isUserAccept == 1 &&
+                widget.trip?.isUserChangeCaptain == 0 &&
+                widget.trip?.isService == 0) ...[
+              Flexible(
+                flex: 3,
+                child: CustomButton(
+                  title: "start_trip".tr(),
+                  height: 40.h,
+                  fontSize: 14.sp,
+
+                  isDisabled: widget.trip?.isDriverAccept == 0,
+                  onPressed: () {
+                    warningDialog(
+                      context,
+                      title: "are_you_sure_you_want_to_start_trip".tr(),
+                      onPressedOk: () {
+                        cubit.updateTripStatus(
+                          id: widget.trip?.id ?? 0,
+                          step: TripStep.isUserStartTrip,
+                          context: context,
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+              10.w.horizontalSpace,
+            ],
+            if (widget.trip?.isUserChangeCaptain == 0)
+              Flexible(
+                flex: 2,
+                child: CustomButton(
+                  title: "change_captain".tr(),
+                  height: 40.h,
+                  fontSize: 14.sp,
+
+                  btnColor: AppColors.secondPrimary,
+                  textColor: AppColors.primary,
+                  onPressed: () {
+                    warningDialog(
+                      context,
+                      title: "are_you_sure_you_want_to_change_captain".tr(),
+                      onPressedOk: () {
+                        cubit.updateTripStatus(
+                          id: widget.trip?.id ?? 0,
+
+                          step: TripStep.isUserChangeCaptain,
+                          context: context,
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+          ],
+        ),
+        10.w.verticalSpace,
+        Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            !widget.isCancelable
-                ? SizedBox()
-                : Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: AppColors.primary,
-
-                        borderRadius: BorderRadius.circular(10.r),
-                      ),
-                      child: GestureDetector(
-                        onTap: widget.onTapToCancelTrip,
-                        child: Center(
-                          child: Text(
-                            'cancel_trip'.tr(),
-                            style: getMediumStyle(
-                              color: AppColors.secondPrimary,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+            // !widget.isCancelable
+            //     ? SizedBox()
+            //     :
+            Expanded(
+              child: CustomButton(
+                title: "cancel_trip".tr(),
+                onPressed: widget.onTapToCancelTrip,
+                height: 40.h,
+                fontSize: 14.sp,
+                btnColor: AppColors.red,
+                textColor: AppColors.white,
+              ),
+            ),
             20.h.horizontalSpace,
             CustomCallAndMessageWidget(
               driverId:

@@ -4,14 +4,18 @@ import 'package:waslny/core/exports.dart';
 import 'package:waslny/features/driver/home/cubit/cubit.dart'
     show DriverHomeCubit;
 import 'package:waslny/features/driver/home/data/models/driver_home_model.dart';
-import 'package:waslny/features/general/chat/screens/message_screen.dart';
+import 'package:waslny/features/general/chat/cubit/chat_cubit.dart';
+// import 'package:waslny/features/general/chat/screens/message_screen.dart';
 import 'package:waslny/features/general/location/cubit/location_cubit.dart';
+import 'package:waslny/features/user/trip_and_services/screens/widgets/call_message.dart';
 
 class CustomsSheduledTripWidet extends StatelessWidget {
   const CustomsSheduledTripWidet({super.key, this.trip});
   final DriverTripModel? trip;
   @override
   Widget build(BuildContext context) {
+    var cubit = context.read<DriverHomeCubit>();
+
     return SafeArea(
       top: false,
       // bottom: false,
@@ -56,51 +60,75 @@ class CustomsSheduledTripWidet extends StatelessWidget {
                       address: trip?.serviceToName ?? trip?.to,
                       lat: trip?.toLat,
                       lng: trip?.toLong,
+                      isService: trip?.isService == 1,
                     ),
                   ),
-                  if (trip?.description != "")
-                    IconButton(
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              insetPadding: const EdgeInsets.all(8),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10.r),
-                              ),
-                              title: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "enter_trip_desc".tr(),
-                                    style: TextStyle(
-                                      fontSize: 18.sp,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  InkWell(
-                                    child: Icon(
-                                      Icons.close,
-                                      color: Colors.black,
-                                    ),
-                                    onTap: () => Navigator.pop(context),
-                                  ),
-                                ],
-                              ),
-                              content: Text(
-                                trip?.description ?? '',
-                                style: TextStyle(fontSize: 14.sp),
-                              ),
-                            );
-                          },
-                        );
-                      },
-                      icon: Icon(Icons.info, color: AppColors.secondPrimary),
-                    ),
+
+                  // if (trip?.description != "")
+                  //   IconButton(
+                  //     onPressed: () {
+                  //       showDialog(
+                  //         context: context,
+                  //         builder: (BuildContext context) {
+                  //           return AlertDialog(
+                  //             insetPadding: const EdgeInsets.all(8),
+                  //             shape: RoundedRectangleBorder(
+                  //               borderRadius: BorderRadius.circular(10.r),
+                  //             ),
+                  //             title: Row(
+                  //               mainAxisAlignment:
+                  //                   MainAxisAlignment.spaceBetween,
+                  //               children: [
+                  //                 Text(
+                  //                   "enter_trip_desc".tr(),
+                  //                   style: TextStyle(
+                  //                     fontSize: 18.sp,
+                  //                     fontWeight: FontWeight.bold,
+                  //                   ),
+                  //                 ),
+                  //                 InkWell(
+                  //                   child: Icon(
+                  //                     Icons.close,
+                  //                     color: Colors.black,
+                  //                   ),
+                  //                   onTap: () => Navigator.pop(context),
+                  //                 ),
+                  //               ],
+                  //             ),
+                  //             content: Text(
+                  //               trip?.description ?? '',
+                  //               style: TextStyle(fontSize: 14.sp),
+                  //             ),
+                  //           );
+                  //         },
+                  //       );
+                  //     },
+                  //     icon: Icon(Icons.info, color: AppColors.secondPrimary),
+                  //   ),
                 ],
               ),
+              if (trip?.distance != null && trip?.distance?.isNotEmpty == true)
+                Padding(
+                  padding: const EdgeInsets.only(top: 10),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      MySvgWidget(
+                        path: AppIcons.fromMapIcon,
+                        width: 30.sp,
+                        height: 30.sp,
+                        // imageColor: AppColors.dark2Grey,
+                      ),
+                      10.w.horizontalSpace,
+                      Flexible(
+                        child: Text(
+                          "${(trip?.distance ?? '').substring(0, 4)} ${'km'.tr()}",
+                          style: getMediumStyle(fontSize: 15.sp),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               if (trip?.description != null &&
                   trip!.description!.isNotEmpty) ...[
                 12.h.verticalSpace,
@@ -117,104 +145,145 @@ class CustomsSheduledTripWidet extends StatelessWidget {
                   ),
                 ),
               ],
-              20.h.verticalSpace,
-              // show chat and reject if status == 0 (new) && isDriverAccept == 0 (not accepted)  || isUserAccept == 0 (not accepted)
-              // show start trip button if status == 0 (new) & isDriverAccept == 1 (accepted) & isUserAccept == 1 (accepted)
-              // show end trip button if status == 1 (in progress)
-              trip?.status == 0 &&
-                      (trip?.isDriverAccept == 0 || trip?.isUserAccept == 0)
-                  ? Row(
-                      children: [
-                        Flexible(
-                          flex: 2,
-                          child: CustomButton(
-                            title: "chat_with_client".tr(),
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => MessageScreen(
-                                    model: MainUserAndRoomChatModel(
-                                      driverId: trip?.driverId.toString(),
-                                      receiverId: trip?.userId.toString(),
-                                      tripId: trip?.id.toString(),
-                                      chatId: trip?.roomToken,
-                                      isDriver: true,
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                        20.w.horizontalSpace,
-                        Flexible(
-                          flex: 1,
-                          child: CustomButton(
-                            title: "reject".tr(),
-                            btnColor: AppColors.secondPrimary,
-                            textColor: AppColors.primary,
-                            onPressed: () {
-                              warningDialog(
-                                context,
-                                title: "are_you_sure_you_want_to_reject_trip"
-                                    .tr(),
-                                onPressedOk: () {
-                                  context.read<DriverHomeCubit>().cancleTrip(
-                                    tripId: trip?.id ?? 0,
-                                    context: context,
-                                  );
-                                },
-                              );
-                            },
-                          ),
-                        ),
-                      ],
-                    )
-                  : trip?.status == 0 &&
-                        trip?.isDriverAccept == 1 &&
-                        trip?.isUserAccept == 1
-                  ? CustomButton(
-                      title: "start_trip".tr(),
-                      onPressed: () {
-                        warningDialog(
-                          context,
-                          title: "are_you_sure_you_want_to_start_trip".tr(),
-                          onPressedOk: () {
-                            context.read<DriverHomeCubit>().startTrip(
-                              tripId: trip?.id ?? 0,
-                              context: context,
-                            );
-                          },
-                        );
-                      },
-                      // btnColor: AppColors.secondPrimary,
-                      // textColor: AppColors.primary,
-                    )
-                  : trip?.status == 1 &&
-                        trip?.isDriverAccept == 1 &&
-                        trip?.isUserAccept == 1 &&
-                        trip?.isDriverStartTrip == 1 &&
-                        trip?.isUserStartTrip == 1
-                  ? CustomButton(
-                      title: "end_trip".tr(),
-                      btnColor: AppColors.red,
-                      textColor: AppColors.white,
-                      onPressed: () {
-                        warningDialog(
-                          context,
-                          title: "are_you_sure_you_want_to_end_trip".tr(),
-                          onPressedOk: () {
-                            context.read<DriverHomeCubit>().endTrip(
-                              tripId: trip?.id ?? 0,
-                              context: context,
-                            );
-                          },
-                        );
-                      },
-                    )
-                  : Container(),
 
+              10.h.verticalSpace,
+              Row(
+                children: [
+                  if (trip?.isDriverAccept == 0 &&
+                      trip?.isDriverAnotherTrip == 0) ...[
+                    Flexible(
+                      // flex: 1,
+                      child: CustomButton(
+                        title: "accept".tr(),
+                        onPressed: () {
+                          warningDialog(
+                            context,
+                            title: "are_you_sure_you_want_to_accept_trip".tr(),
+                            onPressedOk: () {
+                              cubit.updateTripStatus(
+                                id: trip?.id ?? 0,
+                                step: TripStep.isDriverAccept,
+                                context: context,
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                    10.w.horizontalSpace,
+                  ],
+                  if (trip?.status == 0 &&
+                      trip?.isDriverArrived == 0 &&
+                      trip?.isDriverAccept == 1 &&
+                      trip?.isDriverAnotherTrip == 0) ...[
+                    Flexible(
+                      // flex: 1,
+                      child: CustomButton(
+                        title: "arrived".tr(),
+                        btnColor: AppColors.secondPrimary,
+                        textColor: AppColors.primary,
+                        onPressed: () {
+                          warningDialog(
+                            context,
+                            title: "are_you_sure_you_want_to_confirm_arrival"
+                                .tr(),
+                            onPressedOk: () {
+                              cubit.updateTripStatus(
+                                id: trip?.id ?? 0,
+                                step: TripStep.isDriverArrived,
+                                context: context,
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                    10.w.horizontalSpace,
+                  ],
+                  if (trip?.status == 0 &&
+                      trip?.isDriverAccept == 1 &&
+                      trip?.isDriverArrived == 1) ...[
+                    Flexible(
+                      child: CustomButton(
+                        title: "start_trip".tr(),
+                        isDisabled: trip?.isUserAccept == 0,
+                        onPressed: () {
+                          warningDialog(
+                            context,
+                            title: "are_you_sure_you_want_to_start_trip".tr(),
+                            onPressedOk: () {
+                              context.read<DriverHomeCubit>().startTrip(
+                                tripId: trip?.id ?? 0,
+                                context: context,
+                              );
+                            },
+                          );
+                        },
+                        // btnColor: AppColors.secondPrimary,
+                        // textColor: AppColors.primary,
+                      ),
+                    ),
+                    10.w.horizontalSpace,
+                  ],
+                  if (trip?.status == 1 &&
+                      trip?.isDriverAccept == 1 &&
+                      trip?.isDriverArrived == 1) ...[
+                    Flexible(
+                      child: CustomButton(
+                        title: "end_trip".tr(),
+                        btnColor: AppColors.red,
+                        textColor: AppColors.white,
+                        isDisabled:
+                            trip?.isService == 1 && trip?.isUserStartTrip == 0,
+                        onPressed: () {
+                          warningDialog(
+                            context,
+                            title: "are_you_sure_you_want_to_end_trip".tr(),
+                            onPressedOk: () {
+                              context.read<DriverHomeCubit>().endTrip(
+                                tripId: trip?.id ?? 0,
+                                context: context,
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                    10.w.horizontalSpace,
+                  ],
+                  if (trip?.isDriverAnotherTrip == 0)
+                    Flexible(
+                      child: CustomButton(
+                        title: "reject".tr(),
+                        btnColor: AppColors.secondPrimary,
+                        textColor: AppColors.primary,
+                        onPressed: () {
+                          warningDialog(
+                            context,
+                            title: "are_you_sure_you_want_to_decline_trip".tr(),
+                            onPressedOk: () {
+                              cubit.updateTripStatus(
+                                id: trip?.id ?? 0,
+                                step: TripStep.isDriverAnotherTrip,
+                                context: context,
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  10.w.horizontalSpace,
+                  CustomCallAndMessageWidget(
+                    tripId: trip?.id.toString() ?? '',
+                    driverId: trip?.driverId.toString(),
+                    receiverId: trip?.userId.toString(),
+                    isDriver: true,
+
+                    roomToken: trip?.roomToken,
+                    phoneNumber: trip?.user?.phone.toString(),
+                  ),
+                ],
+              ),
               80.h.verticalSpace,
             ],
           ),
@@ -231,11 +300,13 @@ class FromToContainer extends StatelessWidget {
     this.address,
     this.lat,
     this.lng,
+    this.isService = false,
   });
   final bool isFrom;
   final String? address;
   final String? lat;
   final String? lng;
+  final bool isService;
 
   @override
   Widget build(BuildContext context) {
@@ -263,7 +334,11 @@ class FromToContainer extends StatelessWidget {
           text: TextSpan(
             children: [
               TextSpan(
-                text: isFrom ? '${'from'.tr()}: ' : '${'to'.tr()}: ',
+                text: isFrom
+                    ? '${'from'.tr()}: '
+                    : isService
+                    ? '${'service_to'.tr()}: '
+                    : '${'to'.tr()}: ',
                 style: getBoldStyle(fontSize: 16.sp, color: AppColors.primary),
               ),
               TextSpan(

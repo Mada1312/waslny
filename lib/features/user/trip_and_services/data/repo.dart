@@ -1,6 +1,7 @@
 import 'package:waslny/core/exports.dart';
 import 'package:waslny/core/preferences/preferences.dart';
 import 'package:waslny/features/general/auth/data/model/validate_data.dart';
+import 'package:waslny/features/general/chat/cubit/chat_cubit.dart';
 import 'package:waslny/features/user/home/data/models/get_home_model.dart';
 import 'package:waslny/features/user/trip_and_services/data/models/get_shipments.dart';
 
@@ -21,28 +22,29 @@ class UserShipmentsRepo {
     }
   }
 
-  //!
-
-  // Future<Either<Failure, GetShipmentsModel>> getShipments({
-  //   required String status,
-  // }) async {
-  //   try {
-  //     final userModel = await Preferences.instance.getUserModel();
-  //     String? userId = userModel.data?.id.toString();
-
-  //     final response = await api.get(
-  //       EndPoints.mainGetDataUrl,
-  //       queryParameters: {
-  //         "model": "Shipment",
-  //         "where[0]": "status,$status",
-  //         if (userId != null) "where[1]": "user_id,$userId",
-  //       },
-  //     );
-  //     return Right(GetShipmentsModel.fromJson(response));
-  //   } on ServerException {
-  //     return Left(ServerFailure());
-  //   }
-  // }
+   Future<Either<Failure, DefaultPostModel>> updateTripStatus({
+    required int id,
+    required TripStep step,
+    double? arrivalLat,
+    double? arrivalLong,
+  }) async {
+    try {
+      final response = await api.post(
+        EndPoints.updateTripStepsUrl,
+        body: {
+          "trip_id": id,
+          "step": step
+              .stepValue, // is_user_accept|is_driver_accept|is_driver_arrived|is_user_start_trip|is_driver_start_trip
+          "value": 1, // 1,0,
+          "arrival_lat" : arrivalLat,
+          "arrival_long" : arrivalLong,
+        },
+      );
+      return Right(DefaultPostModel.fromJson(response));
+    } on ServerException {
+      return Left(ServerFailure());
+    }
+  }
 
   Future<Either<Failure, GetUserHomeModel>> getCompletedTripsAndServices({
     required String type,
