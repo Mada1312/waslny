@@ -3,12 +3,12 @@
 import 'package:waslny/core/exports.dart';
 import 'package:waslny/features/driver/home/screens/driver_home_screen.dart';
 import 'package:waslny/features/driver/my_profile/screens/driver_details.dart';
-import 'package:waslny/features/driver/trips/screens/trips_screen.dart';
+import 'package:waslny/features/general/compound_services/screens/compound_screen.dart';
 import 'package:waslny/features/user/home/screens/user_home_screen.dart';
 import 'package:waslny/features/general/notifications/screens/notifications_screen.dart';
 import 'package:waslny/features/general/profile/screens/profile_screen.dart';
+import 'package:waslny/features/user/trip_and_services/screens/trips_and_services.dart';
 
-import '../../general/chat/screens/room_screen.dart';
 import '../data/main_repo.dart';
 import 'state.dart';
 
@@ -25,18 +25,22 @@ class MainCubit extends Cubit<MainState> {
 
   List<Widget> driverScreens = [
     DriverHomeScreen(),
-    NotificationsScreen(isDriver: true),
-    AllRoomScreen(),
+    CompoundServicesScreen(isDriver: true),
+    // NotificationsScreen(isDriver: true),
+    // AllRoomScreen(),
+    UserTripsAndServicesScreen(isDriver: true),
+
     DriverDetailsScreen(),
     // ProfileScreen(isDriver: true),
   ];
 
   List<Widget> userScreens = [
     UserHomeScreen(),
+    CompoundServicesScreen(isDriver: false),
 
-    NotificationsScreen(isDriver: false),
-    AllRoomScreen(),
-
+    // NotificationsScreen(isDriver: false),
+    UserTripsAndServicesScreen(isDriver: false),
+    // AllRoomScreen(),
     ProfileScreen(isDriver: false),
   ];
 }

@@ -131,8 +131,9 @@ class AppRoutes {
           duration: const Duration(milliseconds: 800),
         );
       case Routes.userTripsAndServicesRoute:
+        final bool isDriver = settings.arguments as bool;
         return PageTransition(
-          child: const UserTripsAndServicesScreen(),
+          child: UserTripsAndServicesScreen(isDriver: isDriver),
           type: PageTransitionType.fade,
           alignment: Alignment.center,
           duration: const Duration(milliseconds: 800),

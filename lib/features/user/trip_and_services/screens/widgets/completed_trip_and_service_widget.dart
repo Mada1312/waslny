@@ -1,3 +1,4 @@
+import 'package:flutter_svg/svg.dart';
 import 'package:waslny/core/exports.dart';
 import 'package:waslny/features/general/profile/cubit/cubit.dart';
 import 'package:waslny/features/general/profile/cubit/state.dart';
@@ -12,10 +13,12 @@ class CompletedTripOrServiceItemWidget extends StatefulWidget {
   const CompletedTripOrServiceItemWidget({
     super.key,
     this.isDelivered = false,
+    required this.isDriver,
     this.tripOrService,
   });
 
   final bool isDelivered;
+  final bool isDriver;
   final TripAndServiceModel? tripOrService;
 
   @override
@@ -34,6 +37,7 @@ class _CompletedTripOrServiceItemWidgetState
             showTripDetailsModal(
               context: context,
               tripDetails: widget.tripOrService,
+              isDriver: widget.isDriver,
             );
           },
           child: Container(
@@ -96,6 +100,7 @@ class _CompletedTripOrServiceItemWidgetState
 void showTripDetailsModal({
   required BuildContext context,
   required TripAndServiceModel? tripDetails,
+  required bool isDriver,
 }) {
   showModalBottomSheet(
     context: context,
@@ -105,15 +110,22 @@ void showTripDetailsModal({
     isScrollControlled: true, // Allows the sheet to take full height if needed
     backgroundColor: Colors.transparent, // Crucial for custom rounded corners
     builder: (context) {
-      return TripDetailsBottomSheet(tripDetails: tripDetails);
+      return TripDetailsBottomSheet(
+        tripDetails: tripDetails,
+        isDriver: isDriver,
+      );
     },
   );
 }
 
 class TripDetailsBottomSheet extends StatelessWidget {
   final TripAndServiceModel? tripDetails;
-
-  const TripDetailsBottomSheet({super.key, required this.tripDetails});
+  final bool isDriver;
+  const TripDetailsBottomSheet({
+    super.key,
+    required this.tripDetails,
+    required this.isDriver,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -216,118 +228,143 @@ class TripDetailsBottomSheet extends StatelessWidget {
                   toLat: tripDetails?.toLat,
                   toLng: tripDetails?.toLong,
                 ),
-                SizedBox(height: 24.h),
 
-                // Action Buttons
-                Row(
-                  children: [
-                    10.h.horizontalSpace,
-                    Expanded(
-                      child: CustomButton(
-                        title: 'make_trip'.tr(),
-                        radius: 10.r,
-                        onPressed: () {
-                          customTripAndServiceCloneDialog(
-                            controller: cubit.selectedDateTimeController,
-                            isSchedule: false,
+                // if (!(isDriver == true))
+                SizedBox(height: 12.h),
 
-                            context,
-                            btnOkText: 'confirm'.tr(),
-
-                            title: 'sure_to_make_trip'.tr(),
-                            onPressedOk: () {
-                              cubit.cloneTrip(
-                                isSchedule: false,
-                                tripDetails?.id?.toString() ?? '',
-                                context: context,
-                              );
-                            },
-                          );
-                        },
-                        textColor: AppColors.primary,
-                        padding: EdgeInsets.all(5),
-                        btnColor: AppColors.secondPrimary,
+                //!
+                if (tripDetails?.distance != "")
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      MySvgWidget(
+                        path: AppIcons.fromMapIcon,
+                        width: 35.sp,
+                        height: 35.sp,
+                        // imageColor: AppColors.dark2Grey,
                       ),
-                    ),
-                    5.h.horizontalSpace,
-                    Expanded(
-                      child: CustomButton(
-                        title: 'make_schedule_trip'.tr(),
-                        radius: 10.r,
-                        textColor: AppColors.primary,
-                        onPressed: () {
-                          customTripAndServiceCloneDialog(
-                            controller: cubit.selectedDateTimeController,
-                            isSchedule: true,
-                            onTap: () {
-                              cubit.selectDateTime(context);
-                            },
-                            context,
-                            btnOkText: 'confirm'.tr(),
-
-                            title: 'sure_to_make_schedule_trip'.tr(),
-                            onPressedOk: () {
-                              cubit.cloneTrip(
-                                isSchedule: true,
-                                tripDetails?.id?.toString() ?? '',
-                                context: context,
-                              );
-                            },
-                          );
-                        },
-                        padding: EdgeInsets.all(5),
-                        btnColor: AppColors.secondPrimary,
-                      ),
-                    ),
-                    5.h.horizontalSpace,
-
-                    InkWell(
-                      onTap: () {
-                        if (tripDetails?.isFav == true) {
-                          warningDialog(
-                            context,
-                            btnOkText: 'delete'.tr(),
-
-                            title: 'remove_from_fav'.tr(),
-                            onPressedOk: () {
-                              cubit.actionFav(
-                                isCompleteScreen: true,
-                                tripDetails?.id?.toString() ?? '',
-                                context: context,
-                                model: tripDetails,
-                              );
-                            },
-                          );
-                        } else {
-                          cubit.actionFav(
-                            isCompleteScreen: true,
-                            model: tripDetails,
-                            tripDetails?.id?.toString() ?? '',
-                            context: context,
-                          );
-                        }
-
-                        //! remove form fav
-                      },
-                      child: Container(
-                        padding: EdgeInsets.all(5),
-                        decoration: BoxDecoration(
-                          color: AppColors.secondPrimary,
-
-                          borderRadius: BorderRadius.circular(10.r),
-                        ),
-                        child: Icon(
-                          Icons.favorite_rounded,
-                          color: tripDetails?.isFav == true
-                              ? AppColors.primary
-                              : AppColors.white,
+                      10.w.horizontalSpace,
+                      Flexible(
+                        child: Text(
+                          "${((tripDetails?.distance?.length ?? 0) > 4 ? (tripDetails?.distance ?? '').substring(0, 4) : (tripDetails?.distance ?? ''))} ${'km'.tr()}",
+                          style: getMediumStyle(fontSize: 14.sp),
                         ),
                       ),
-                    ),
-                    10.h.horizontalSpace,
-                  ],
-                ),
-                SizedBox(height: 24.h), // Bottom padding
+                    ],
+                  ),
+
+                if (!(isDriver == true)) SizedBox(height: 12.h),
+                if (!(isDriver == true))
+                  // Action Buttons
+                  Row(
+                    children: [
+                      10.h.horizontalSpace,
+                      Expanded(
+                        child: CustomButton(
+                          title: 'make_trip'.tr(),
+                          radius: 10.r,
+                          onPressed: () {
+                            customTripAndServiceCloneDialog(
+                              controller: cubit.selectedDateTimeController,
+                              isSchedule: false,
+
+                              context,
+                              btnOkText: 'confirm'.tr(),
+
+                              title: 'sure_to_make_trip'.tr(),
+                              onPressedOk: () {
+                                cubit.cloneTrip(
+                                  isSchedule: false,
+                                  tripDetails?.id?.toString() ?? '',
+                                  context: context,
+                                );
+                              },
+                            );
+                          },
+                          textColor: AppColors.primary,
+                          padding: EdgeInsets.all(5),
+                          btnColor: AppColors.secondPrimary,
+                        ),
+                      ),
+                      5.h.horizontalSpace,
+                      Expanded(
+                        child: CustomButton(
+                          title: 'make_schedule_trip'.tr(),
+                          radius: 10.r,
+                          textColor: AppColors.primary,
+                          onPressed: () {
+                            customTripAndServiceCloneDialog(
+                              controller: cubit.selectedDateTimeController,
+                              isSchedule: true,
+                              onTap: () {
+                                cubit.selectDateTime(context);
+                              },
+                              context,
+                              btnOkText: 'confirm'.tr(),
+
+                              title: 'sure_to_make_schedule_trip'.tr(),
+                              onPressedOk: () {
+                                cubit.cloneTrip(
+                                  isSchedule: true,
+                                  tripDetails?.id?.toString() ?? '',
+                                  context: context,
+                                );
+                              },
+                            );
+                          },
+                          padding: EdgeInsets.all(5),
+                          btnColor: AppColors.secondPrimary,
+                        ),
+                      ),
+                      5.h.horizontalSpace,
+
+                      InkWell(
+                        onTap: () {
+                          if (tripDetails?.isFav == true) {
+                            warningDialog(
+                              context,
+                              btnOkText: 'delete'.tr(),
+
+                              title: 'remove_from_fav'.tr(),
+                              onPressedOk: () {
+                                cubit.actionFav(
+                                  isCompleteScreen: true,
+                                  tripDetails?.id?.toString() ?? '',
+                                  context: context,
+                                  model: tripDetails,
+                                );
+                              },
+                            );
+                          } else {
+                            cubit.actionFav(
+                              isCompleteScreen: true,
+                              model: tripDetails,
+                              tripDetails?.id?.toString() ?? '',
+                              context: context,
+                            );
+                          }
+
+                          //! remove form fav
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(5),
+                          decoration: BoxDecoration(
+                            color: AppColors.secondPrimary,
+
+                            borderRadius: BorderRadius.circular(10.r),
+                          ),
+                          child: Icon(
+                            Icons.favorite_rounded,
+                            color: tripDetails?.isFav == true
+                                ? AppColors.primary
+                                : AppColors.white,
+                          ),
+                        ),
+                      ),
+                      10.h.horizontalSpace,
+                    ],
+                  ),
+                SizedBox(height: 12.h), // Bottom padding
               ],
             ),
           ),

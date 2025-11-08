@@ -168,7 +168,7 @@ class UserTripAndServicesCubit extends Cubit<UserTripAndServicesState> {
   }
 
   GetUserHomeModel? completedTripsModel;
-  getCompletedTripsAndServices(ServicesType serviceType) async {
+  getCompletedTripsAndServices(ServicesType serviceType, bool isDriver) async {
     emit(LoadingCompletedTripAndServiceState());
     final res = await api.getCompletedTripsAndServices(
       type: serviceType.name == ServicesType.trips.name ? '0' : '1',
