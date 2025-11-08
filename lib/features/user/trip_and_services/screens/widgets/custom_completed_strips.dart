@@ -14,12 +14,15 @@ class CustomTripsAndServicesDataList extends StatelessWidget {
 
   // 2. The refresh action
   final VoidCallback onRefresh;
+  final bool isDriver;
 
+  // 3. Constructor
   const CustomTripsAndServicesDataList({
     super.key,
     required this.homeModel,
     required this.serviceType,
     required this.onRefresh,
+    required this.isDriver,
   });
 
   // --- Internal Helper Logic ---
@@ -83,6 +86,7 @@ class CustomTripsAndServicesDataList extends StatelessWidget {
       itemBuilder: (context, index) => Padding(
         padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 0.h),
         child: CompletedTripOrServiceItemWidget(
+          isDriver: isDriver,
           tripOrService: _currentList![index],
         ),
       ),

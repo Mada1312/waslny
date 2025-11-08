@@ -7,8 +7,8 @@ import '../cubit/cubit.dart';
 import '../cubit/state.dart';
 
 class UserTripsAndServicesScreen extends StatefulWidget {
-  const UserTripsAndServicesScreen({super.key});
-
+  const UserTripsAndServicesScreen({super.key, required this.isDriver});
+  final bool isDriver;
   @override
   State<UserTripsAndServicesScreen> createState() =>
       _UserTripsAndServicesScreenState();
@@ -21,6 +21,7 @@ class _UserTripsAndServicesScreenState
     var cubit = context.read<UserTripAndServicesCubit>();
     cubit.getCompletedTripsAndServices(
       context.read<UserHomeCubit>().serviceType!,
+      widget.isDriver,
     );
     super.initState();
   }
@@ -32,7 +33,11 @@ class _UserTripsAndServicesScreenState
         var cubit = context.read<UserTripAndServicesCubit>();
         var cubit2 = context.read<UserHomeCubit>();
         return Scaffold(
-          appBar: customAppBar(context, title: 'trips'.tr()),
+          appBar: customAppBar(
+            context,
+            title: 'trips'.tr(),
+            leading: SizedBox(),
+          ),
           body: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
@@ -54,6 +59,7 @@ class _UserTripsAndServicesScreenState
                           });
                           await cubit.getCompletedTripsAndServices(
                             cubit2.serviceType!,
+                            widget.isDriver,
                           );
                         },
                       ),
@@ -61,7 +67,9 @@ class _UserTripsAndServicesScreenState
                     Expanded(child: Container()),
                   ],
                 ),
+
                 20.h.verticalSpace,
+
                 Expanded(
                   child: state is ErrorCompletedTripAndServiceState
                       ? Center(
@@ -70,6 +78,7 @@ class _UserTripsAndServicesScreenState
                             onTap: () async {
                               await cubit.getCompletedTripsAndServices(
                                 cubit2.serviceType!,
+                                widget.isDriver,
                               );
                             },
                           ),
@@ -77,14 +86,68 @@ class _UserTripsAndServicesScreenState
                       : state is LoadingCompletedTripAndServiceState ||
                             cubit.completedTripsModel?.data == null
                       ? const Center(child: CustomLoadingIndicator())
-                      : CustomTripsAndServicesDataList(
-                          homeModel: cubit.completedTripsModel,
-                          onRefresh: () async {
-                            await cubit.getCompletedTripsAndServices(
-                              cubit2.serviceType!,
-                            );
-                          },
-                          serviceType: cubit2.serviceType,
+                      : Column(
+                          children: [
+                            // 20.h.verticalSpace,
+                            if (widget.isDriver)
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'average_distance'.tr(),
+                                    style: getMediumStyle(fontSize: 18.sp),
+                                  ),
+                                  8.h.verticalSpace,
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: AppColors.primary,
+                                      borderRadius: BorderRadius.circular(12.r),
+                                    ),
+                                    padding: const EdgeInsets.all(8),
+                                    child: Column(
+                                      children: [
+                                        Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            MySvgWidget(
+                                              path: AppIcons.fromMapIcon,
+                                              width: 35.sp,
+                                              height: 35.sp,
+                                              // imageColor: AppColors.dark2Grey,
+                                            ),
+                                            10.w.horizontalSpace,
+                                            Flexible(
+                                              child: Text(
+                                                "${((cubit.completedTripsModel?.data?.avarageDistance?.length ?? 0) > 4 ? (cubit.completedTripsModel?.data?.avarageDistance ?? '').substring(0, 4) : (cubit.completedTripsModel?.data?.avarageDistance ?? ''))} ${'km'.tr()}",
+                                                style: getMediumStyle(
+                                                  fontSize: 14.sp,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            8.h.verticalSpace,
+                            Flexible(
+                              child: CustomTripsAndServicesDataList(
+                                isDriver: widget.isDriver,
+
+                                homeModel: cubit.completedTripsModel,
+                                onRefresh: () async {
+                                  await cubit.getCompletedTripsAndServices(
+                                    cubit2.serviceType!,
+                                    widget.isDriver,
+                                  );
+                                },
+                                serviceType: cubit2.serviceType,
+                              ),
+                            ),
+                          ],
                         ),
                 ),
               ],

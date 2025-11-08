@@ -6,6 +6,8 @@ import 'package:waslny/features/driver/trips/cubit/cubit.dart';
 import 'package:waslny/features/driver/trips/data/repo.dart';
 import 'package:waslny/features/general/change_password/cubit/change_password_cubit.dart';
 import 'package:waslny/features/general/change_password/data/change_password_repo.dart';
+import 'package:waslny/features/general/compound_services/cubit/cubit.dart';
+import 'package:waslny/features/general/compound_services/data/repo.dart';
 import 'package:waslny/features/user/home/cubit/cubit.dart';
 import 'package:waslny/features/user/home/data/repo.dart';
 import 'package:waslny/features/user/trip_and_services/cubit/cubit.dart';
@@ -52,11 +54,12 @@ Future<void> setupCubit() async {
   serviceLocator.registerFactory(() => AddNewTripCubit(serviceLocator()));
   serviceLocator.registerFactory(() => LocationCubit(serviceLocator()));
 
-  serviceLocator.registerFactory(() => ChatCubit(serviceLocator()));
-  serviceLocator.registerFactory(() => NotificationsCubit(serviceLocator()));
+  // serviceLocator.registerFactory(() => ChatCubit(serviceLocator()));
+  // serviceLocator.registerFactory(() => NotificationsCubit(serviceLocator()));
   serviceLocator.registerFactory(() => DriverDetailsCubit(serviceLocator()));
   serviceLocator.registerFactory(() => ChangePasswordCubit(serviceLocator()));
   serviceLocator.registerFactory(() => DriverProfileCubit(serviceLocator()));
+  serviceLocator.registerFactory(() => CompoundServicesCubit(serviceLocator()));
 }
 
 Future<void> setupRepo() async {
@@ -73,10 +76,10 @@ Future<void> setupRepo() async {
   serviceLocator.registerLazySingleton(() => ProfileRepo(serviceLocator()));
   serviceLocator.registerLazySingleton(() => AddNewTripRepo(serviceLocator()));
 
-  serviceLocator.registerLazySingleton(() => ChatRepo(serviceLocator()));
-  serviceLocator.registerLazySingleton(
-    () => NotificationsRepo(serviceLocator()),
-  );
+  // serviceLocator.registerLazySingleton(() => ChatRepo(serviceLocator()));
+  // serviceLocator.registerLazySingleton(
+  //   () => NotificationsRepo(serviceLocator()),
+  // );
   serviceLocator.registerLazySingleton(() => LocationRepo(serviceLocator()));
   serviceLocator.registerLazySingleton(
     () => DriverDetailsRepo(serviceLocator()),
@@ -86,6 +89,9 @@ Future<void> setupRepo() async {
   );
   serviceLocator.registerLazySingleton(
     () => DriverProfileRepo(serviceLocator()),
+  );
+  serviceLocator.registerLazySingleton(
+    () => CompoundServicesRepo(serviceLocator()),
   );
 }
 
