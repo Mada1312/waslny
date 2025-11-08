@@ -245,7 +245,7 @@ class _TripOrServiceItemWidgetState extends State<TripOrServiceItemWidget> {
                           10.w.horizontalSpace,
                           Flexible(
                             child: Text(
-                              "${(widget.tripOrService?.distance ?? '').substring(0, 4)} ${'km'.tr()}",
+                              "${((widget.tripOrService?.distance?.length ?? 0) > 4 ? (widget.tripOrService?.distance ?? '').substring(0, 4) : (widget.tripOrService?.distance ?? ''))} ${'km'.tr()}",
                               style: getMediumStyle(fontSize: 14.sp),
                             ),
                           ),

@@ -213,6 +213,9 @@
   "gallery": "المعرض",
   "camera": "الكاميرا",
   "km": "كم",
+  "average_distance": "المسافة الإجماليه للكابتن",
+  "compound_services": "خدمات المُجَمَّع",
+  "no_compound_services": "لا يوجد خدمات الان",
   "": "",
   "**": "**"
 }

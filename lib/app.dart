@@ -3,6 +3,7 @@ import 'package:waslny/features/driver/home/cubit/cubit.dart';
 import 'package:waslny/features/driver/my_profile/cubit/cubit.dart';
 import 'package:waslny/features/driver/trips/cubit/cubit.dart';
 import 'package:waslny/features/general/change_password/cubit/change_password_cubit.dart';
+import 'package:waslny/features/general/compound_services/cubit/cubit.dart';
 import 'package:waslny/features/user/home/cubit/cubit.dart';
 import 'package:waslny/features/user/trip_and_services/cubit/cubit.dart';
 import 'package:waslny/features/user/trip_and_services/screens/details/shipment_details_screen.dart';
@@ -66,10 +67,10 @@ class _MyAppState extends State<MyApp> {
         BlocProvider(create: (_) => injector.serviceLocator<AddNewTripCubit>()),
         BlocProvider(create: (_) => injector.serviceLocator<LocationCubit>()),
 
-        BlocProvider(create: (_) => injector.serviceLocator<ChatCubit>()),
-        BlocProvider(
-          create: (_) => injector.serviceLocator<NotificationsCubit>(),
-        ),
+        // BlocProvider(create: (_) => injector.serviceLocator<ChatCubit>()),
+        // BlocProvider(
+        //   create: (_) => injector.serviceLocator<NotificationsCubit>(),
+        // ),
         BlocProvider(
           create: (_) => injector.serviceLocator<DriverDetailsCubit>(),
         ),
@@ -78,6 +79,9 @@ class _MyAppState extends State<MyApp> {
         ),
         BlocProvider(
           create: (_) => injector.serviceLocator<DriverProfileCubit>(),
+        ),
+        BlocProvider(
+          create: (_) => injector.serviceLocator<CompoundServicesCubit>(),
         ),
       ],
       child: GetMaterialApp(
@@ -94,8 +98,7 @@ class _MyAppState extends State<MyApp> {
         onGenerateRoute: AppRoutes.onGenerateRoute,
         routes: {
           '/': (context) => initialMessageRcieved != null
-              ?
-               initialMessageRcieved?.data['reference_table'] == "shipments"
+              ? initialMessageRcieved?.data['reference_table'] == "shipments"
                     ?
                       //  initialMessageRcieved?.data['user_type'].toString() == "0"
                       //       ? UserShipmentDetailsScreen(
@@ -111,20 +114,19 @@ class _MyAppState extends State<MyApp> {
                       // is driver
                       // initialMessageRcieved?.data['is_current'].toString() ==
                       //         "1"
-                      //     ? 
-                          MainScreen(isDriver: true)
-                          // :
-                          //  DriverShipmentDetailsScreen(
-                          //     args: DriverSHipmentsArgs(
-                          //       shipmentId:
-                          //           initialMessageRcieved?.data['reference_id']
-                          //               .toString() ??
-                          //           "",
-                          //       isNotification: true,
-                          //     ),
-                          //   )
-                    :
-                     (initialMessageRcieved?.data['reference_table'] ==
+                      //     ?
+                      MainScreen(isDriver: true)
+                    // :
+                    //  DriverShipmentDetailsScreen(
+                    //     args: DriverSHipmentsArgs(
+                    //       shipmentId:
+                    //           initialMessageRcieved?.data['reference_id']
+                    //               .toString() ??
+                    //           "",
+                    //       isNotification: true,
+                    //     ),
+                    //   )
+                    : (initialMessageRcieved?.data['reference_table'] ==
                           "chat_rooms")
                     ? MessageScreen(
                         model: MainUserAndRoomChatModel(

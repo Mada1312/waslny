@@ -174,20 +174,19 @@ class ProfileScreen extends StatelessWidget {
                             child: Column(
                               children: [
                                 //! Done
-                                if (!isDriver)
-                                  CustomProfileRow(
-                                    onTap: () {
-                                      Navigator.pushNamed(
-                                        context,
-                                        Routes.userTripsAndServicesRoute,
-                                      );
+                                // if (!isDriver)
+                                //   CustomProfileRow(
+                                //     onTap: () {
+                                //       Navigator.pushNamed(
+                                //         context,
+                                //         Routes.userTripsAndServicesRoute,
+                                //       );
 
-                                      //!
-                                    },
-                                    title: 'trip_history',
-                                    path: AppIcons.shipmentLog,
-                                  ),
-
+                                //       //!
+                                //     },
+                                //     title: 'trip_history',
+                                //     path: AppIcons.shipmentLog,
+                                //   ),
                                 if (!isDriver)
                                   CustomProfileRow(
                                     title: 'favorites',

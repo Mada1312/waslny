@@ -38,18 +38,21 @@ class GetUserHomeModelData {
   int? isWebhookVerified;
   List<TripAndServiceModel>? trips;
   List<TripAndServiceModel>? services;
+  String? avarageDistance;
 
   GetUserHomeModelData({
     this.user,
     this.trips,
     this.services,
     this.isWebhookVerified,
+    this.avarageDistance,
   });
 
   factory GetUserHomeModelData.fromJson(Map<String, dynamic> json) =>
       GetUserHomeModelData(
         user: json["user"] == null ? null : User.fromJson(json["user"]),
         isWebhookVerified: json["is_webhook_verified"],
+        avarageDistance: json["average_distance"],
         trips: json["trips"] == null
             ? []
             : List<TripAndServiceModel>.from(
@@ -65,6 +68,7 @@ class GetUserHomeModelData {
   Map<String, dynamic> toJson() => {
     "user": user?.toJson(),
     "is_webhook_verified": isWebhookVerified,
+    "average_distance": avarageDistance,
     "trips": trips == null
         ? []
         : List<dynamic>.from(trips!.map((x) => x.toJson())),
@@ -209,6 +213,7 @@ class Driver {
     "name": name,
     "phone": phone,
     "image": image,
+
     "vehicle_plate_number": vehiclePlateNumber,
   };
 }

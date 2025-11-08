@@ -213,6 +213,9 @@
     "gallery": "Gallery",
     "camera": "Camera",
     "km": "Km",
+    "average_distance": "Total distance for the captain",
+    "compound_services": "Compound Services",
+    "no_compound_services": "No compound services",
     "": "",
     "**": "**"
 }
