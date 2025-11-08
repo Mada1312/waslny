@@ -67,10 +67,10 @@ class _MyAppState extends State<MyApp> {
         BlocProvider(create: (_) => injector.serviceLocator<AddNewTripCubit>()),
         BlocProvider(create: (_) => injector.serviceLocator<LocationCubit>()),
 
-        // BlocProvider(create: (_) => injector.serviceLocator<ChatCubit>()),
-        // BlocProvider(
-        //   create: (_) => injector.serviceLocator<NotificationsCubit>(),
-        // ),
+        BlocProvider(create: (_) => injector.serviceLocator<ChatCubit>()),
+        BlocProvider(
+          create: (_) => injector.serviceLocator<NotificationsCubit>(),
+        ),
         BlocProvider(
           create: (_) => injector.serviceLocator<DriverDetailsCubit>(),
         ),

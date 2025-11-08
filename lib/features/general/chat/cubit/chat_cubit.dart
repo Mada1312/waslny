@@ -48,8 +48,9 @@ class ChatCubit extends Cubit<ChatState> {
   Future<void> sendMessage({
     required String chatId,
     required String? receiverId,
+    bool isDriverArrived = false,
   }) async {
-    if (messageController.text.isEmpty) {
+    if (messageController.text.isEmpty && !isDriverArrived) {
       return;
     }
     try {
@@ -64,7 +65,9 @@ class ChatCubit extends Cubit<ChatState> {
       // Create message model
       final message = MessageModel(
         id: messageRef.id, // Set the ID explicitly
-        bodyMessage: messageController.text,
+        bodyMessage: isDriverArrived
+            ? "i_arrived".tr()
+            : messageController.text,
         chatId: chatId,
         senderId: userModel.data?.id?.toString(),
         receiverId: receiverId,
@@ -223,6 +226,8 @@ class ChatCubit extends Cubit<ChatState> {
   Future<void> updateTripStatus({
     required TripStep step,
     required bool isDriver,
+    String? receiverId,
+    String? chatId,
     required BuildContext context,
   }) async {
     if (step == TripStep.isDriverArrived) {
@@ -236,6 +241,7 @@ class ChatCubit extends Cubit<ChatState> {
         return;
       }
     }
+
     AppWidget.createProgressDialog(context, msg: "...");
     emit(UpdateTripStatusLoadingState());
     try {
@@ -290,6 +296,13 @@ class ChatCubit extends Cubit<ChatState> {
               );
               UserHomeCubit homeCubit = BlocProvider.of<UserHomeCubit>(context);
               homeCubit.getHome(context);
+            }
+            if (step == TripStep.isDriverArrived) {
+              sendMessage(
+                isDriverArrived: true,
+                chatId: chatId ?? "",
+                receiverId: receiverId,
+              );
             }
           } else {
             errorGetBar(response.msg ?? "Failed to cancel trip");

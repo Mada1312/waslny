@@ -54,7 +54,7 @@ Future<void> setupCubit() async {
   serviceLocator.registerFactory(() => AddNewTripCubit(serviceLocator()));
   serviceLocator.registerFactory(() => LocationCubit(serviceLocator()));
 
-  // serviceLocator.registerFactory(() => ChatCubit(serviceLocator()));
+  serviceLocator.registerFactory(() => ChatCubit(serviceLocator()));
   // serviceLocator.registerFactory(() => NotificationsCubit(serviceLocator()));
   serviceLocator.registerFactory(() => DriverDetailsCubit(serviceLocator()));
   serviceLocator.registerFactory(() => ChangePasswordCubit(serviceLocator()));
@@ -76,7 +76,7 @@ Future<void> setupRepo() async {
   serviceLocator.registerLazySingleton(() => ProfileRepo(serviceLocator()));
   serviceLocator.registerLazySingleton(() => AddNewTripRepo(serviceLocator()));
 
-  // serviceLocator.registerLazySingleton(() => ChatRepo(serviceLocator()));
+  serviceLocator.registerLazySingleton(() => ChatRepo(serviceLocator()));
   // serviceLocator.registerLazySingleton(
   //   () => NotificationsRepo(serviceLocator()),
   // );

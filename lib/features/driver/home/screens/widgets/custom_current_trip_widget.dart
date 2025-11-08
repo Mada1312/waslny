@@ -192,6 +192,8 @@ class CustomsSheduledTripWidet extends StatelessWidget {
                                 id: trip?.id ?? 0,
                                 step: TripStep.isDriverArrived,
                                 context: context,
+                                receiverId: trip?.userId.toString(),
+                                chatId: trip?.roomToken,
                               );
                             },
                           );
@@ -234,7 +236,7 @@ class CustomsSheduledTripWidet extends StatelessWidget {
                         btnColor: AppColors.red,
                         textColor: AppColors.white,
                         isDisabled:
-                            trip?.isService == 1 && trip?.isUserStartTrip == 0,
+                            trip?.isService == 0 && trip?.isUserStartTrip == 0,
                         onPressed: () {
                           warningDialog(
                             context,

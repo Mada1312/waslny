@@ -52,7 +52,9 @@ class GetUserHomeModelData {
       GetUserHomeModelData(
         user: json["user"] == null ? null : User.fromJson(json["user"]),
         isWebhookVerified: json["is_webhook_verified"],
-        avarageDistance: json["average_distance"],
+        avarageDistance: json["average_distance"]?.toString().isEmpty == true
+            ? '0'
+            : json["average_distance"],
         trips: json["trips"] == null
             ? []
             : List<TripAndServiceModel>.from(

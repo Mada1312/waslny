@@ -155,6 +155,7 @@ class _CustomDriverInfoState extends State<CustomDriverInfo> {
               driverId:
                   widget.driver?.id?.toString() ??
                   widget.driver?.id?.toString(),
+              receiverId: widget.driver?.id?.toString() ?? '',
               name: widget.driver?.name ?? '',
               tripId: widget.tripId,
               roomToken: widget.roomToken,

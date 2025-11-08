@@ -163,7 +163,8 @@ class DriverHomeCubit extends Cubit<DriverHomeState> {
   Future<void> updateTripStatus({
     required TripStep step,
     required int id,
-    required BuildContext context,
+    required BuildContext context,  String? receiverId,
+    String? chatId,
   }) async {
     if (step == TripStep.isDriverArrived) {
       if (context.read<LocationCubit>().currentLocation == null) {
@@ -201,6 +202,13 @@ class DriverHomeCubit extends Cubit<DriverHomeState> {
             successGetBar(response.msg ?? "Trip cancelled successfully");
 
             getDriverHomeData(context);
+               if (step == TripStep.isDriverArrived) {
+             context.read<ChatCubit>(). sendMessage(
+                isDriverArrived: true,
+                chatId: chatId??"",
+                receiverId: receiverId,
+              );
+            }
           } else {
             errorGetBar(response.msg ?? "Failed to cancel trip");
           }

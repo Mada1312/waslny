@@ -195,6 +195,17 @@ class CustomChatHeader extends StatelessWidget {
                                     cubit.updateTripStatus(
                                       isDriver: isDriver,
                                       step: TripStep.isDriverArrived,
+                                      receiverId: cubit
+                                          .getTripDetailsModel
+                                          ?.data
+                                          ?.user
+                                          ?.id
+                                          .toString(),
+                                      chatId: cubit
+                                          .getTripDetailsModel
+                                          ?.data
+                                          ?.roomToken,
+
                                       context: context,
                                     );
                                   },
@@ -249,7 +260,7 @@ class CustomChatHeader extends StatelessWidget {
                               textColor: AppColors.white,
                               isDisabled:
                                   cubit.getTripDetailsModel?.data?.isService ==
-                                      1 &&
+                                      0 &&
                                   cubit
                                           .getTripDetailsModel
                                           ?.data
@@ -305,8 +316,7 @@ class CustomChatHeader extends StatelessWidget {
                   )
                 : Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: 
-                    Row(
+                    child: Row(
                       children: [
                         if (cubit.getTripDetailsModel?.data?.isUserAccept ==
                             0) ...[
@@ -371,10 +381,11 @@ class CustomChatHeader extends StatelessWidget {
                           ),
                           10.w.horizontalSpace,
                         ],
-                        if (
-                        cubit.getTripDetailsModel?.data?.isUserChangeCaptain ==
-                            0                  
-                        )
+                        if (cubit
+                                .getTripDetailsModel
+                                ?.data
+                                ?.isUserChangeCaptain ==
+                            0)
                           Flexible(
                             flex: 2,
                             child: CustomButton(
@@ -400,7 +411,6 @@ class CustomChatHeader extends StatelessWidget {
                           ),
                       ],
                     ),
-                  
                   ),
           ],
         );
