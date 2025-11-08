@@ -279,15 +279,57 @@ class _TripOrServiceItemWidgetState extends State<TripOrServiceItemWidget> {
                             roomToken: null,
                             shipmentCode: widget.tripOrService?.code,
                             tripId: widget.tripOrService?.id?.toString() ?? '',
+                            trip: widget.tripOrService,
                           )
                         : Center(
                             child: Column(
                               children: [
                                 CustomDivider(),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Center(
+                                        child: Text(
+                                          'searching_for_driver'.tr(),
+                                          style: getRegularStyle(
+                                            fontSize: 14.sp,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    10.w.horizontalSpace,
+                                    Expanded(
+                                      child: CustomButton(
+                                        title: "cancel_trip".tr(),
+                                        onPressed: () {
+                                          warningDialog(
+                                            context,
+                                            btnOkText: 'confirm'.tr(),
+                                            title:
+                                                'are_you_sure_you_want_to_cancel_the_trip'
+                                                    .tr(),
+                                            onPressedOk: () {
+                                              context
+                                                  .read<
+                                                    UserTripAndServicesCubit
+                                                  >()
+                                                  .cancelTrip(
+                                                    widget.tripOrService?.id
+                                                            .toString() ??
+                                                        '',
+                                                  );
+                                              context
+                                                  .read<UserHomeCubit>()
+                                                  .getHome(context);
+                                            },
+                                          );
+                                        },
 
-                                Text(
-                                  'searching_for_driver'.tr(),
-                                  style: getRegularStyle(fontSize: 14.sp),
+                                        btnColor: AppColors.red,
+                                        textColor: AppColors.white,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),

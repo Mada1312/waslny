@@ -145,7 +145,7 @@
   "purchases": "مشتريات",
   "date_is_required": "ادخل تاريخ الرحلة",
   "time_is_required": "ادخل وقت الرحلة",
-  "service_to": "خدمة إلي",
+  "service_to": "نوع الخدمة",
   "searching_for_driver": "جاري البحث عن كابتن",
   "no_driver_found": "لم يتم العثور على كابتن",
   "select_location_from_map": "حدد الموقع علي الخريطة",
@@ -216,6 +216,7 @@
   "average_distance": "المسافة الإجماليه للكابتن",
   "compound_services": "خدمات المُجَمَّع",
   "no_compound_services": "لا يوجد خدمات الان",
+  "i_arrived": "لقد وصلت",
   "": "",
   "**": "**"
 }

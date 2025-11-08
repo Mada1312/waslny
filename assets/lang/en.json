@@ -145,7 +145,8 @@
     "purchases": "Purchase",
     "date_is_required": "Enter the date of the trip",
     "time_is_required": "Enter the time of the trip",
-    "service_to": "Service To",
+    
+    "service_to": "Service Type",
     "searching_for_driver": "Looking for a captain",
     "no_driver_found": "No captain found",
     "select_location_from_map": "Locate the location on the map",
@@ -216,6 +217,7 @@
     "average_distance": "Total distance for the captain",
     "compound_services": "Compound Services",
     "no_compound_services": "No compound services",
-    "": "",
+    "i_arrived" : "Arrived","": "",
+    
     "**": "**"
 }

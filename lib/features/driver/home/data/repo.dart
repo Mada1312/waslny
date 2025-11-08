@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:waslny/core/exports.dart';
+import 'package:waslny/features/general/chat/cubit/chat_cubit.dart';
 
 import 'models/driver_home_model.dart';
 import 'package:dio/dio.dart';
@@ -48,6 +49,29 @@ class DriverHomeRepo {
       final response = await api.post(
         EndPoints.driverCancelTripUrl,
         body: {"trip_id": id},
+      );
+      return Right(DefaultPostModel.fromJson(response));
+    } on ServerException {
+      return Left(ServerFailure());
+    }
+  }
+  Future<Either<Failure, DefaultPostModel>> updateTripStatus({
+    required int id,
+    required TripStep step,
+      double? arrivalLat,
+      double? arrivalLong,
+  }) async {
+    try {
+      final response = await api.post(
+        EndPoints.updateTripStepsUrl,
+        body: {
+          "trip_id": id,
+          "step": step
+              .stepValue, // is_user_accept|is_driver_accept|is_driver_arrived|is_user_start_trip|is_driver_start_trip
+          "value": 1, // 1,0,
+            "arrival_lat" : arrivalLat,
+          "arrival_long" : arrivalLong,
+        },
       );
       return Right(DefaultPostModel.fromJson(response));
     } on ServerException {

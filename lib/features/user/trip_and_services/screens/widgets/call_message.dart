@@ -12,6 +12,8 @@ class CustomCallAndMessageWidget extends StatelessWidget {
     this.driverId,
     this.roomToken,
     this.name,
+    this.receiverId,
+    this.isDriver = false,
   });
   final String? phoneNumber;
   final String? roomToken;
@@ -19,6 +21,8 @@ class CustomCallAndMessageWidget extends StatelessWidget {
   final String? tripId;
   final String? driverId;
   final String? name;
+  final String? receiverId;
+ final bool isDriver;
 
   @override
   Widget build(BuildContext context) {
@@ -35,8 +39,10 @@ class CustomCallAndMessageWidget extends StatelessWidget {
                   model: MainUserAndRoomChatModel(
                     driverId: driverId,
                     tripId: tripId,
+                    receiverId: receiverId,
                     chatId: roomToken,
                     title: "#${shipmentCode ?? ''}-$name",
+                    isDriver: isDriver,
                   ),
                 ),
               ),

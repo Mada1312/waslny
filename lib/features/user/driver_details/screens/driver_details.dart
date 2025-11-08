@@ -157,6 +157,8 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
                               name: driver?.name ?? '',
                               tripId: tripId,
                               shipmentCode: shipmentCode,
+                              isDriver: false,
+                              receiverId: driver?.id.toString() ?? '',
                             ),
                           ),
                           5.w.horizontalSpace,

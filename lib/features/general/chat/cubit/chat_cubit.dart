@@ -1,11 +1,15 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:developer';
 
+import 'package:location/location.dart';
 import 'package:waslny/core/exports.dart';
 import 'package:waslny/core/preferences/preferences.dart';
 import 'package:waslny/features/general/chat/cubit/chat_state.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:waslny/features/general/chat/data/model/get_trips_model.dart';
+import 'package:waslny/features/general/location/cubit/location_cubit.dart';
 import 'package:waslny/features/user/home/cubit/cubit.dart';
 
 import '../../../driver/home/cubit/cubit.dart';
@@ -44,7 +48,11 @@ class ChatCubit extends Cubit<ChatState> {
   Future<void> sendMessage({
     required String chatId,
     required String? receiverId,
+    bool isDriverArrived = false,
   }) async {
+    if (messageController.text.isEmpty && !isDriverArrived) {
+      return;
+    }
     try {
       final userModel = await Preferences.instance.getUserModel();
       // Create a new document reference
@@ -57,7 +65,9 @@ class ChatCubit extends Cubit<ChatState> {
       // Create message model
       final message = MessageModel(
         id: messageRef.id, // Set the ID explicitly
-        bodyMessage: messageController.text,
+        bodyMessage: isDriverArrived
+            ? "i_arrived".tr()
+            : messageController.text,
         chatId: chatId,
         senderId: userModel.data?.id?.toString(),
         receiverId: receiverId,
@@ -216,14 +226,34 @@ class ChatCubit extends Cubit<ChatState> {
   Future<void> updateTripStatus({
     required TripStep step,
     required bool isDriver,
+    String? receiverId,
+    String? chatId,
     required BuildContext context,
   }) async {
+    if (step == TripStep.isDriverArrived) {
+      if (context.read<LocationCubit>().currentLocation == null) {
+        await context.read<LocationCubit>().checkAndRequestLocationPermission(
+          context,
+        );
+      }
+      if (context.read<LocationCubit>().currentLocation == null) {
+        errorGetBar("location_required".tr());
+        return;
+      }
+    }
+
     AppWidget.createProgressDialog(context, msg: "...");
     emit(UpdateTripStatusLoadingState());
     try {
       final response = await chatRepo.updateTripStatus(
         id: getTripDetailsModel?.data?.id ?? 0,
         step: step,
+        arrivalLat: step != TripStep.isDriverArrived
+            ? null
+            : context.read<LocationCubit>().currentLocation?.latitude,
+        arrivalLong: step != TripStep.isDriverArrived
+            ? null
+            : context.read<LocationCubit>().currentLocation?.longitude,
       );
       response.fold(
         (failure) {
@@ -267,6 +297,13 @@ class ChatCubit extends Cubit<ChatState> {
               UserHomeCubit homeCubit = BlocProvider.of<UserHomeCubit>(context);
               homeCubit.getHome(context);
             }
+            if (step == TripStep.isDriverArrived) {
+              sendMessage(
+                isDriverArrived: true,
+                chatId: chatId ?? "",
+                receiverId: receiverId,
+              );
+            }
           } else {
             errorGetBar(response.msg ?? "Failed to cancel trip");
           }
@@ -274,6 +311,67 @@ class ChatCubit extends Cubit<ChatState> {
       );
     } catch (e) {
       log("Error in cancelShipment: $e");
+      emit(UpdateTripStatusErrorState());
+    }
+  }
+
+  Future<void> startTrip({
+    required int tripId,
+    required BuildContext context,
+  }) async {
+    AppWidget.createProgressDialog(context, msg: "...");
+    emit(UpdateTripStatusLoadingState());
+    try {
+      final response = await chatRepo.startTrip(id: tripId);
+      response.fold(
+        (failure) {
+          Navigator.pop(context); // Close the progress dialog
+          emit(UpdateTripStatusErrorState());
+        },
+        (response) {
+          Navigator.pop(context); // Close the progress dialog
+          if (response.status == 200 || response.status == 201) {
+            emit(UpdateTripStatusSuccessState());
+            successGetBar(response.msg ?? "Trip started successfully");
+            getTripDetails(id: tripId.toString());
+            context.read<DriverHomeCubit>().getDriverHomeData(context);
+          } else {
+            errorGetBar(response.msg ?? "Failed to start trip");
+          }
+        },
+      );
+    } catch (e) {
+      log("Error in startTrip: $e");
+      emit(UpdateTripStatusErrorState());
+    }
+  }
+
+  Future<void> endTrip({
+    required int tripId,
+    required BuildContext context,
+  }) async {
+    AppWidget.createProgressDialog(context, msg: "...");
+    emit(UpdateTripStatusLoadingState());
+    try {
+      final response = await chatRepo.endTrip(id: tripId);
+      response.fold(
+        (failure) {
+          Navigator.pop(context); // Close the progress dialog
+          emit(UpdateTripStatusErrorState());
+        },
+        (response) {
+          Navigator.pop(context); // Close the progress dialog
+          if (response.status == 200 || response.status == 201) {
+            emit(UpdateTripStatusSuccessState());
+            successGetBar(response.msg ?? "Trip ended successfully");
+            Navigator.pushNamed(context, Routes.mainRoute, arguments: true);
+          } else {
+            errorGetBar(response.msg ?? "Failed to end trip");
+          }
+        },
+      );
+    } catch (e) {
+      log("Error in endTrip: $e");
       emit(UpdateTripStatusErrorState());
     }
   }
@@ -292,11 +390,9 @@ class ChatCubit extends Cubit<ChatState> {
           if (response.status == 200 || response.status == 201) {
             emit(GetTripStatusSuccessState());
             getTripDetailsModel = response;
-           
           } else {
             errorGetBar(response.msg ?? "Failed to get trip details");
             emit(GetTripStatusErrorState());
-           
           }
         },
       );

@@ -52,7 +52,9 @@ class GetUserHomeModelData {
       GetUserHomeModelData(
         user: json["user"] == null ? null : User.fromJson(json["user"]),
         isWebhookVerified: json["is_webhook_verified"],
-        avarageDistance: json["average_distance"],
+        avarageDistance: json["average_distance"]?.toString().isEmpty == true
+            ? '0'
+            : json["average_distance"],
         trips: json["trips"] == null
             ? []
             : List<TripAndServiceModel>.from(
@@ -104,6 +106,7 @@ class TripAndServiceModel {
   int? isDriverAccept;
   int? isUserChangeCaptain;
   int? isDriverAnotherTrip;
+  int? isService;
   TripAndServiceModel({
     this.id,
     this.code,
@@ -130,6 +133,7 @@ class TripAndServiceModel {
     this.isUserChangeCaptain,
     this.isDriverAnotherTrip,
     this.cannotFindDriver,
+    this.isService,
   });
 
   factory TripAndServiceModel.fromJson(Map<String, dynamic> json) =>
@@ -159,6 +163,7 @@ class TripAndServiceModel {
         isDriverAccept: json["is_driver_accept"],
         isUserChangeCaptain: json["is_user_change_captain"],
         isDriverAnotherTrip: json["is_driver_another_trip"],
+        isService: json["is_service"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -188,6 +193,7 @@ class TripAndServiceModel {
     "is_driver_accept": isDriverAccept,
     "is_user_change_captain": isUserChangeCaptain,
     "is_driver_another_trip": isDriverAnotherTrip,
+    "is_service": isService,
   };
 }
 

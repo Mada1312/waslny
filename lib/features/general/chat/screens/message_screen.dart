@@ -209,27 +209,16 @@ class _MessageScreenState extends State<MessageScreen> {
                                                 ),
                                                 Expanded(
                                                   child: TextField(
-                                                    onSubmitted: (value) {
-                                                      if (cubit
-                                                          .messageController
-                                                          .text
-                                                          .isNotEmpty) {
-                                                        cubit.sendMessage(
-                                                          receiverId: widget
-                                                              .model
-                                                              .receiverId,
-                                                          chatId:
-                                                              widget
-                                                                  .model
-                                                                  .chatId ??
-                                                              cubit
-                                                                  .createChatRoomModel
-                                                                  ?.data
-                                                                  ?.roomToken ??
-                                                              '',
-                                                        );
-                                                      }
-                                                    },
+                                                    keyboardType:
+                                                        TextInputType.multiline,
+                                                    maxLines: null,
+                                                    minLines: 1,
+                                                    cursorColor:
+                                                        AppColors.secondPrimary,
+                                                    cursorWidth: 2.w,
+                                                    textInputAction:
+                                                        TextInputAction.newline,
+
                                                     controller:
                                                         cubit.messageController,
                                                     decoration: InputDecoration(

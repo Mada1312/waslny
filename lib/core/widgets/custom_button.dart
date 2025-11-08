@@ -9,6 +9,8 @@ class CustomButton extends StatelessWidget {
   final double? width;
   final double? radius;
   final EdgeInsetsGeometry? padding;
+  final double? height;
+  final double? fontSize;
 
   const CustomButton({
     super.key,
@@ -20,15 +22,16 @@ class CustomButton extends StatelessWidget {
     this.btnColor,
     this.textColor,
     this.width,
+    this.height,
+    this.fontSize,
   });
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: isDisabled ? null : onPressed,
-      // borderRadius: BorderRadius.circular(30.sp),
       child: Container(
-        height: 50.h,
+        height: height ?? 50.h,
         width: width ?? double.infinity,
         alignment: Alignment.center,
         padding: padding ?? EdgeInsets.symmetric(horizontal: 5.w),
@@ -44,7 +47,7 @@ class CustomButton extends StatelessWidget {
           maxLines: 1,
           style: getBoldStyle(
             color: textColor ?? AppColors.secondPrimary,
-            fontSize: 16.sp,
+            fontSize: fontSize ?? 16.sp,
           ),
         ),
       ),
