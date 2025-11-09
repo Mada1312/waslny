@@ -22,11 +22,12 @@ class CustomCallAndMessageWidget extends StatelessWidget {
   final String? driverId;
   final String? name;
   final String? receiverId;
- final bool isDriver;
+  final bool isDriver;
 
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         GestureDetector(
           onTap: () {

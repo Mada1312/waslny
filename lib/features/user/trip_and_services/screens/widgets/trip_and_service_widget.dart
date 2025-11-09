@@ -300,7 +300,13 @@ class _TripOrServiceItemWidgetState extends State<TripOrServiceItemWidget> {
                                     10.w.horizontalSpace,
                                     Expanded(
                                       child: CustomButton(
-                                        title: "cancel_trip".tr(),
+                                        title:
+                                            widget.tripOrService?.isService == 1
+                                            ? "cancel_service".tr()
+                                            : "cancel_trip".tr(),
+                                        height: 40.h,
+                                        fontSize: 14.sp,
+
                                         onPressed: () {
                                           warningDialog(
                                             context,

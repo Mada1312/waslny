@@ -207,7 +207,9 @@ class CustomsSheduledTripWidet extends StatelessWidget {
                       trip?.isDriverArrived == 1) ...[
                     Flexible(
                       child: CustomButton(
-                        title: "start_trip".tr(),
+                        title: trip?.isService == 1
+                            ? "start_service".tr()
+                            : "start_trip".tr(),
                         isDisabled: trip?.isUserAccept == 0,
                         onPressed: () {
                           warningDialog(
@@ -232,7 +234,8 @@ class CustomsSheduledTripWidet extends StatelessWidget {
                       trip?.isDriverArrived == 1) ...[
                     Flexible(
                       child: CustomButton(
-                        title: "end_trip".tr(),
+                        title:
+                            trip?.isService == 1 ? "end_service".tr() : "end_trip".tr(),
                         btnColor: AppColors.red,
                         textColor: AppColors.white,
                         isDisabled:
