@@ -222,7 +222,11 @@ class CustomChatHeader extends StatelessWidget {
                                 1) ...[
                           Flexible(
                             child: CustomButton(
-                              title: "start_trip".tr(),
+                              title:
+                                  cubit.getTripDetailsModel?.data?.isService ==
+                                      1
+                                  ? "start_service".tr()
+                                  : "start_trip".tr(),
                               isDisabled:
                                   cubit
                                       .getTripDetailsModel
@@ -255,7 +259,11 @@ class CustomChatHeader extends StatelessWidget {
                                 1) ...[
                           Flexible(
                             child: CustomButton(
-                              title: "end_trip".tr(),
+                              title:
+                                  cubit.getTripDetailsModel?.data?.isService ==
+                                      1
+                                  ? "end_service".tr()
+                                  : "end_trip".tr(),
                               btnColor: AppColors.red,
                               textColor: AppColors.white,
                               isDisabled:
@@ -323,7 +331,11 @@ class CustomChatHeader extends StatelessWidget {
                           Flexible(
                             flex: 3,
                             child: CustomButton(
-                              title: "accept_trip".tr(),
+                              title:
+                                  cubit.getTripDetailsModel?.data?.isService ==
+                                      1
+                                  ? "accept_service".tr()
+                                  : "accept_trip".tr(),
                               onPressed: () {
                                 warningDialog(
                                   context,

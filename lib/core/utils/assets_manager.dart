@@ -44,6 +44,8 @@ class ImageAssets {
   static const String driverDone = '$imagePath/driver_done.png';
   static const String shipmentLog = '$imagePath/shipment_log.png';
   static const String servicesIcon = '$imagePath/services.png';
+  static const String trip = '$imagePath/trip.png';
+  static const String service = '$imagePath/service.png';
 
   //Lottie
 

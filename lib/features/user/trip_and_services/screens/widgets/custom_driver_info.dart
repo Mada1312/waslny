@@ -42,10 +42,38 @@ class _CustomDriverInfoState extends State<CustomDriverInfo> {
     var cubit = context.read<UserTripAndServicesCubit>();
     return Column(
       children: [
-        CustomDriverCardInfo(
-          driver: widget.driver,
-          shipmentCode: widget.shipmentCode,
-          tripId: widget.tripId,
+        IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Container(
+                margin: EdgeInsets.symmetric(vertical: 30.h),
+                padding: EdgeInsets.only(left: 8.w, right: 8.w),
+                decoration: BoxDecoration(
+                  color: AppColors.second5Primary,
+                  borderRadius: BorderRadius.circular(10.r),
+                ),
+                child: Image.asset(
+                  widget.trip?.isService == 1
+                      ? ImageAssets.service
+                      : ImageAssets.trip,
+
+                  height: 30.sp,
+                  width: 30.sp,
+
+                  // imageColor: AppColors.secondPrimary,
+                ),
+              ),
+              10.w.horizontalSpace,
+              Expanded(
+                child: CustomDriverCardInfo(
+                  driver: widget.driver,
+                  shipmentCode: widget.shipmentCode,
+                  tripId: widget.tripId,
+                ),
+              ),
+            ],
+          ),
         ),
 
         10.w.horizontalSpace,
@@ -55,7 +83,9 @@ class _CustomDriverInfoState extends State<CustomDriverInfo> {
               Flexible(
                 flex: 3,
                 child: CustomButton(
-                  title: "accept_trip".tr(),
+                  title: widget.trip?.isService == 1
+                      ? "accept_service".tr()
+                      : "accept_trip".tr(),
                   height: 40.h,
                   fontSize: 14.sp,
 
@@ -83,7 +113,9 @@ class _CustomDriverInfoState extends State<CustomDriverInfo> {
               Flexible(
                 flex: 3,
                 child: CustomButton(
-                  title: "start_trip".tr(),
+                  title: widget.trip?.isService == 1
+                      ? "start_service".tr()
+                      : "start_trip".tr(),
                   height: 40.h,
                   fontSize: 14.sp,
 
@@ -140,9 +172,12 @@ class _CustomDriverInfoState extends State<CustomDriverInfo> {
             // !widget.isCancelable
             //     ? SizedBox()
             //     :
-            Expanded(
+            Flexible(
+              flex: 3,
               child: CustomButton(
-                title: "cancel_trip".tr(),
+                title: widget.trip?.isService == 1
+                    ? "cancel_service".tr()
+                    : "cancel_trip".tr(),
                 onPressed: widget.onTapToCancelTrip,
                 height: 40.h,
                 fontSize: 14.sp,
@@ -150,17 +185,22 @@ class _CustomDriverInfoState extends State<CustomDriverInfo> {
                 textColor: AppColors.white,
               ),
             ),
-            20.h.horizontalSpace,
-            CustomCallAndMessageWidget(
-              driverId:
-                  widget.driver?.id?.toString() ??
-                  widget.driver?.id?.toString(),
-              receiverId: widget.driver?.id?.toString() ?? '',
-              name: widget.driver?.name ?? '',
-              tripId: widget.tripId,
-              roomToken: widget.roomToken,
-              shipmentCode: widget.shipmentCode,
-              phoneNumber: widget.driver?.phone.toString(),
+            10.h.horizontalSpace,
+            Flexible(
+              flex: 2,
+              child: Center(
+                child: CustomCallAndMessageWidget(
+                  driverId:
+                      widget.driver?.id?.toString() ??
+                      widget.driver?.id?.toString(),
+                  receiverId: widget.driver?.id?.toString() ?? '',
+                  name: widget.driver?.name ?? '',
+                  tripId: widget.tripId,
+                  roomToken: widget.roomToken,
+                  shipmentCode: widget.shipmentCode,
+                  phoneNumber: widget.driver?.phone.toString(),
+                ),
+              ),
             ),
           ],
         ),
