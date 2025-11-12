@@ -122,7 +122,8 @@ class CustomsSheduledTripWidet extends StatelessWidget {
                       10.w.horizontalSpace,
                       Flexible(
                         child: Text(
-                          "${(trip?.distance ?? '').substring(0, 4)} ${'km'.tr()}",
+                          "${((trip?.distance?.length ?? 0) > 4 ? (trip?.distance ?? '').substring(0, 4) : (trip?.distance ?? ''))} ${'km'.tr()}",
+
                           style: getMediumStyle(fontSize: 15.sp),
                         ),
                       ),
@@ -234,8 +235,9 @@ class CustomsSheduledTripWidet extends StatelessWidget {
                       trip?.isDriverArrived == 1) ...[
                     Flexible(
                       child: CustomButton(
-                        title:
-                            trip?.isService == 1 ? "end_service".tr() : "end_trip".tr(),
+                        title: trip?.isService == 1
+                            ? "end_service".tr()
+                            : "end_trip".tr(),
                         btnColor: AppColors.red,
                         textColor: AppColors.white,
                         isDisabled:
