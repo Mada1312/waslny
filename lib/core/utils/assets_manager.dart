@@ -55,6 +55,8 @@ class ImageAssets {
 class AppIcons {
   // icons
   static const String call = '$iconsPath/call.svg';
+  static const String call2 = '$iconsPath/call2.svg';
+  static const String whatsApp2 = '$iconsPath/whatsapp2.svg';
   static const String contactUs = '$iconsPath/contact_us.svg';
   static const String date = '$iconsPath/date.svg';
   static const String dateTrip = '$iconsPath/date_trip.svg';

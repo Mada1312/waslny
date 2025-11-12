@@ -10,6 +10,7 @@ class AppColors {
   static Color second3Primary = HexColor('#ccd8d5');
   static Color second4Primary = HexColor('#b8c9c5');
   static Color second5Primary = HexColor('#a6bbb7');
+  static Color pink = HexColor('#D61395');
 
   static Color lightGrey = HexColor('#F2F2F2');
 

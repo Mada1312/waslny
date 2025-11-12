@@ -138,11 +138,10 @@ class ContactCard extends StatelessWidget {
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Call Icon Button
                 _ContactActionButton(
                   icon: SvgPicture.asset(
-                    AppIcons.call,
-                    color: AppColors.secondPrimary,
+                    AppIcons.call2,
+                    // color: AppColors.secondPrimary,
                   ),
 
                   onPressed: _launchCaller,
@@ -153,8 +152,8 @@ class ContactCard extends StatelessWidget {
                 // WhatsApp Icon Button
                 _ContactActionButton(
                   icon: SvgPicture.asset(
-                    AppIcons.whatsapp,
-                    color: AppColors.green,
+                    AppIcons.whatsApp2,
+                    // color: AppColors.green,
                   ),
 
                   onPressed: _launchWhatsApp,
@@ -180,7 +179,7 @@ class _ContactActionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.greyFieldColor,
+        color: AppColors.secondPrimary,
         shape: BoxShape.circle,
         border: Border.all(color: AppColors.grey2.withAlpha(9), width: 1.5),
       ),

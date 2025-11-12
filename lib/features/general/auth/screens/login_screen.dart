@@ -51,42 +51,26 @@ class _LoginScreenState extends State<LoginScreen> {
                               String nationalNumber = phone.number;
 
                               if (phone.countryISOCode == 'EG' &&
-                                  nationalNumber.startsWith('0') &&
-                                  nationalNumber.length == 11) {
-                                // If it's an 11-digit EG number, remove the leading '0'
-                                // "01012345678" -> "1012345678"
+                                  nationalNumber.startsWith('0')) {
+                                cubit.phoneNumberController.text =
+                                    nationalNumber.substring(1);
+
                                 nationalNumber = nationalNumber.substring(1);
+                                errorGetBar('enter_valid_egyptian_number'.tr());
                               }
 
-                              // Get the country code without the '+' (e.g., "+20" -> "20")
                               String countryCode = phone.countryCode.replaceAll(
                                 '+',
                                 '',
                               );
 
-                              // Combine them to get the full number your Cubit/API expects
-                              // "20" + "1012345678" = "201012345678"
                               cubit.fullPhoneNumber =
                                   "$countryCode$nationalNumber";
                             });
-                            // setState(() {
-                            //   cubit.fullPhoneNumber =
-                            //       p0.completeNumber.replaceAll('+', '');
-                            // });
-                            // log('Phone completeNumber ${p0.completeNumber}');
-                            // log('Phone fullPhoneNumber ${cubit.fullPhoneNumber}');
-                            // log('Phone countryCode ${p0.countryCode}');
-                            // log('Phone number ${p0.number}');
+                           
                           },
                         ),
-                        // 80.h.verticalSpace,
-                        // CustomTextField(
-                        //   title: 'phone_number'.tr(),
-                        //   keyboardType: TextInputType.phone,
-                        //   controller: cubit.phoneNumberController,
-                        //   hintText: 'enter_your_number'.tr(),
-                        //   validationMessage: 'enter_your_number'.tr(),
-                        // ),
+                        
                         10.h.verticalSpace,
                         CustomTextField(
                           title: 'password'.tr(),

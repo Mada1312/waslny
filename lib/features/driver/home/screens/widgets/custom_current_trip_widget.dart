@@ -63,49 +63,7 @@ class CustomsSheduledTripWidet extends StatelessWidget {
                       isService: trip?.isService == 1,
                     ),
                   ),
-
-                  // if (trip?.description != "")
-                  //   IconButton(
-                  //     onPressed: () {
-                  //       showDialog(
-                  //         context: context,
-                  //         builder: (BuildContext context) {
-                  //           return AlertDialog(
-                  //             insetPadding: const EdgeInsets.all(8),
-                  //             shape: RoundedRectangleBorder(
-                  //               borderRadius: BorderRadius.circular(10.r),
-                  //             ),
-                  //             title: Row(
-                  //               mainAxisAlignment:
-                  //                   MainAxisAlignment.spaceBetween,
-                  //               children: [
-                  //                 Text(
-                  //                   "enter_trip_desc".tr(),
-                  //                   style: TextStyle(
-                  //                     fontSize: 18.sp,
-                  //                     fontWeight: FontWeight.bold,
-                  //                   ),
-                  //                 ),
-                  //                 InkWell(
-                  //                   child: Icon(
-                  //                     Icons.close,
-                  //                     color: Colors.black,
-                  //                   ),
-                  //                   onTap: () => Navigator.pop(context),
-                  //                 ),
-                  //               ],
-                  //             ),
-                  //             content: Text(
-                  //               trip?.description ?? '',
-                  //               style: TextStyle(fontSize: 14.sp),
-                  //             ),
-                  //           );
-                  //         },
-                  //       );
-                  //     },
-                  //     icon: Icon(Icons.info, color: AppColors.secondPrimary),
-                  //   ),
-                ],
+                  ],
               ),
               if (trip?.distance != null && trip?.distance?.isNotEmpty == true)
                 Padding(
@@ -122,7 +80,8 @@ class CustomsSheduledTripWidet extends StatelessWidget {
                       10.w.horizontalSpace,
                       Flexible(
                         child: Text(
-                          "${(trip?.distance ?? '').substring(0, 4)} ${'km'.tr()}",
+                          "${((trip?.distance?.length ?? 0) > 4 ? (trip?.distance ?? '').substring(0, 4) : (trip?.distance ?? ''))} ${'km'.tr()}",
+
                           style: getMediumStyle(fontSize: 15.sp),
                         ),
                       ),
@@ -234,8 +193,9 @@ class CustomsSheduledTripWidet extends StatelessWidget {
                       trip?.isDriverArrived == 1) ...[
                     Flexible(
                       child: CustomButton(
-                        title:
-                            trip?.isService == 1 ? "end_service".tr() : "end_trip".tr(),
+                        title: trip?.isService == 1
+                            ? "end_service".tr()
+                            : "end_trip".tr(),
                         btnColor: AppColors.red,
                         textColor: AppColors.white,
                         isDisabled:

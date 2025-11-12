@@ -24,7 +24,7 @@ class ChooseLoginScreen extends StatelessWidget {
               LoginAsWidget(type: 'driver'),
               LoginAsWidget(type: 'user'),
             ],
-          )
+          ),
         ],
       ),
     );
@@ -32,10 +32,7 @@ class ChooseLoginScreen extends StatelessWidget {
 }
 
 class LoginAsWidget extends StatelessWidget {
-  const LoginAsWidget({
-    super.key,
-    required this.type,
-  });
+  const LoginAsWidget({super.key, required this.type});
 
   final String type;
   @override
@@ -45,47 +42,49 @@ class LoginAsWidget extends StatelessWidget {
       height: getHeightSize(context) * 0.3,
       margin: EdgeInsets.symmetric(horizontal: 20.w),
       decoration: BoxDecoration(
-          color: AppColors.white.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(24.sp),
-          image: DecorationImage(
-            image: AssetImage(
-              type == 'driver'
-                  ? ImageAssets.driverLogin
-                  : ImageAssets.userLogin,
-            ),
-            fit: BoxFit.cover,
-          )),
-      padding: EdgeInsets.symmetric(horizontal: 35.w, vertical: 20.h),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Flexible(
-          //   fit: FlexFit.tight,
-          //   child: Image.asset(
-          //     type == 'driver'
-          //         ? ImageAssets.driverLogin
-          //         : ImageAssets.userLogin,
-          //   ),
-          // ),
-          // SizedBox(height: 20.h),
-          CustomButton(
-              padding: EdgeInsets.symmetric(
-                horizontal: 15.w,
-                vertical: 5,
+        borderRadius: BorderRadius.circular(24.sp),
+        image: DecorationImage(
+          image: AssetImage(
+            type == 'driver' ? ImageAssets.driverLogin : ImageAssets.userLogin,
+          ),
+          fit: BoxFit.cover,
+        ),
+      ),
+
+      child: Container(
+        color: AppColors.secondPrimary.withOpacity(0.2),
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 35.w, vertical: 20.h),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Flexible(
+              //   fit: FlexFit.tight,
+              //   child: Image.asset(
+              //     type == 'driver'
+              //         ? ImageAssets.driverLogin
+              //         : ImageAssets.userLogin,
+              //   ),
+              // ),
+              // SizedBox(height: 20.h),
+              CustomButton(
+                padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 5),
+                title: type == 'driver'
+                    ? "login_as_driver".tr()
+                    : "login_as_user".tr(),
+                radius: 10.sp,
+                onPressed: () {
+                  Navigator.pushNamed(
+                    context,
+                    Routes.loginRoute,
+                    arguments: type == 'driver',
+                  );
+                },
               ),
-              title: type == 'driver'
-                  ? "login_as_driver".tr()
-                  : "login_as_user".tr(),
-              radius: 10.sp,
-              onPressed: () {
-                Navigator.pushNamed(
-                  context,
-                  Routes.loginRoute,
-                  arguments: type == 'driver',
-                );
-              }),
-        ],
+            ],
+          ),
+        ),
       ),
     );
   }

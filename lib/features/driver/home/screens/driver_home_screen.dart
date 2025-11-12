@@ -31,8 +31,9 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
 
     _fcmSubscription = FirebaseMessaging.onMessage.listen((message) async {
       if (!mounted) return;
-
-      context.read<DriverHomeCubit>().getDriverHomeData(context);
+      if (message.data['reference_table'] == "trips") {
+        context.read<DriverHomeCubit>().getDriverHomeData(context);
+      }
     });
   }
 
