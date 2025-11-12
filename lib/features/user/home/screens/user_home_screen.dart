@@ -29,8 +29,9 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
     context.read<UserHomeCubit>().getHome(context);
     _fcmSubscription = FirebaseMessaging.onMessage.listen((message) async {
       if (!mounted) return;
-
-      context.read<UserHomeCubit>().getHome(context);
+      if (message.data['reference_table'] == "trips") {
+        context.read<UserHomeCubit>().getHome(context);
+      }
     });
   }
 

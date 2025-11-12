@@ -1,11 +1,14 @@
+import 'dart:async';
 import 'dart:developer';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:waslny/core/exports.dart';
 import 'package:waslny/core/notification_services/notification_service.dart';
+import 'package:waslny/features/driver/home/cubit/cubit.dart';
 import 'package:waslny/features/general/auth/cubit/cubit.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:waslny/features/general/chat/screens/widgets/trip_details.dart';
+import 'package:waslny/features/user/home/cubit/cubit.dart';
 import '../cubit/chat_cubit.dart';
 import '../cubit/chat_state.dart';
 import 'widgets/chat_bubble_widget.dart';
@@ -38,6 +41,7 @@ class MessageScreen extends StatefulWidget {
 }
 
 class _MessageScreenState extends State<MessageScreen> {
+  StreamSubscription? _fcmSubscription;
   @override
   void initState() {
     super.initState();
@@ -57,17 +61,25 @@ class _MessageScreenState extends State<MessageScreen> {
     }
 
     context.read<ChatCubit>().getTripDetails(id: widget.model.tripId ?? '');
-    FirebaseMessaging.onMessage.listen((message) async {
-      // if () {
-      context.read<ChatCubit>().getTripDetails(
-        id: widget.model.tripId ?? '',
-      ); // }
+
+    _fcmSubscription = FirebaseMessaging.onMessage.listen((message) async {
+      if (!mounted) return;
+      if (message.data['reference_table'] == "trips") {
+        context.read<ChatCubit>().getTripDetails(id: widget.model.tripId ?? '');
+        if (widget.model.isDriver == true) {
+          context.read<DriverHomeCubit>().getDriverHomeData(context);
+        } else {
+          context.read<UserHomeCubit>().getHome(context);
+        }
+      }
     });
   }
 
   @override
   dispose() {
     super.dispose();
+    _fcmSubscription?.cancel();
+
     MessageStateManager().leaveChatRoom('0');
   }
 

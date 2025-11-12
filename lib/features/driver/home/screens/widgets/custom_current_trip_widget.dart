@@ -63,49 +63,7 @@ class CustomsSheduledTripWidet extends StatelessWidget {
                       isService: trip?.isService == 1,
                     ),
                   ),
-
-                  // if (trip?.description != "")
-                  //   IconButton(
-                  //     onPressed: () {
-                  //       showDialog(
-                  //         context: context,
-                  //         builder: (BuildContext context) {
-                  //           return AlertDialog(
-                  //             insetPadding: const EdgeInsets.all(8),
-                  //             shape: RoundedRectangleBorder(
-                  //               borderRadius: BorderRadius.circular(10.r),
-                  //             ),
-                  //             title: Row(
-                  //               mainAxisAlignment:
-                  //                   MainAxisAlignment.spaceBetween,
-                  //               children: [
-                  //                 Text(
-                  //                   "enter_trip_desc".tr(),
-                  //                   style: TextStyle(
-                  //                     fontSize: 18.sp,
-                  //                     fontWeight: FontWeight.bold,
-                  //                   ),
-                  //                 ),
-                  //                 InkWell(
-                  //                   child: Icon(
-                  //                     Icons.close,
-                  //                     color: Colors.black,
-                  //                   ),
-                  //                   onTap: () => Navigator.pop(context),
-                  //                 ),
-                  //               ],
-                  //             ),
-                  //             content: Text(
-                  //               trip?.description ?? '',
-                  //               style: TextStyle(fontSize: 14.sp),
-                  //             ),
-                  //           );
-                  //         },
-                  //       );
-                  //     },
-                  //     icon: Icon(Icons.info, color: AppColors.secondPrimary),
-                  //   ),
-                ],
+                  ],
               ),
               if (trip?.distance != null && trip?.distance?.isNotEmpty == true)
                 Padding(

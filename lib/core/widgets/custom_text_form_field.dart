@@ -179,7 +179,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                       : widget.suffixIcon,
                   contentPadding: EdgeInsets.symmetric(
                     horizontal: 8,
-                    vertical: 8.h,
+                    vertical: 12.h,
                   ),
                   hintStyle: getRegularStyle(
                     fontSize: 14.sp,
@@ -296,10 +296,13 @@ class CustomPhoneFormField extends StatelessWidget {
               child: IntlPhoneField(
                 controller: controller,
                 showCountryFlag: false,
-                style: getMediumStyle(color: AppColors.secondPrimary),
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                style: getRegularStyle(color: AppColors.secondPrimary),
 
                 // invalidNumberMessage: "dasdas",
-                dropdownTextStyle: getBoldStyle(fontSize: 13.sp),
+                dropdownTextStyle: getRegularStyle(
+                  color: AppColors.secondPrimary,
+                ),
 
                 // validator: (value) {
                 //   if (value == null ) {

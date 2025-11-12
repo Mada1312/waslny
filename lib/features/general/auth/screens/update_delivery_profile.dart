@@ -99,9 +99,9 @@ class _UpdateDeliveryProfileState extends State<UpdateDeliveryProfile> {
                                             AutoSizeText(
                                               'edit_account'.tr(),
                                               maxLines: 1,
-                                              style: getRegularStyle(
+                                              style: getSemiBoldStyle(
                                                 color: AppColors.white,
-                                                fontSize: 16.sp,
+                                                fontSize: 18.sp,
                                               ),
                                             ),
                                           ],
@@ -167,7 +167,7 @@ class _UpdateDeliveryProfileState extends State<UpdateDeliveryProfile> {
                                                   AppColors.primary,
                                               child: Icon(
                                                 Icons.camera_alt_outlined,
-                                                color: AppColors.white,
+                                                color: AppColors.secondPrimary,
                                                 size: 20.sp,
                                               ),
                                             ),

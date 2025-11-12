@@ -174,7 +174,6 @@ class _AddNewTripScreenState extends State<AddNewTripScreen> {
                     selectedGenderType: cubit.selectedGenderType,
                     selectedTimeType: cubit.selectedTimeType,
                     selectedVehicleType: cubit.selectedVehicleType,
-
                     onTimeTypeChanged: (value) {
                       setState(() {
                         cubit.selectedTimeType = value;
@@ -188,6 +187,7 @@ class _AddNewTripScreenState extends State<AddNewTripScreen> {
                     },
                     onGenderTypeChanged: (value) {
                       cubit.selectedGenderType = value;
+                      setState(() {});
                     },
                     onVehicleTypeChanged: (value) {
                       cubit.selectedVehicleType = value;
@@ -353,6 +353,12 @@ class _AddNewTripScreenState extends State<AddNewTripScreen> {
                   10.h.verticalSpace,
                   CustomButton(
                     title: 'add'.tr(),
+                    btnColor: cubit.selectedGenderType == Gender.male
+                        ? AppColors.primary
+                        : AppColors.pink,
+                    textColor: cubit.selectedGenderType == Gender.male
+                        ? AppColors.secondPrimary
+                        : AppColors.white,
                     onPressed: () async {
                       if (formKey.currentState?.validate() ?? false) {
                         if (cubit.selectedDateController.text.isEmpty &&

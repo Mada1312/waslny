@@ -81,9 +81,9 @@ class ProfileScreen extends StatelessWidget {
                                     child: AutoSizeText(
                                       'my_account'.tr(),
                                       maxLines: 1,
-                                      style: getRegularStyle(
+                                      style: getSemiBoldStyle(
                                         color: AppColors.white,
-                                        fontSize: 16.sp,
+                                        fontSize: 18.sp,
                                       ),
                                     ),
                                   ),

@@ -41,15 +41,9 @@ class _OnBoardinScreenState extends State<OnBoardinScreen> {
                           cubit.onPageChanged(page);
                         },
                         children: [
-                          OnBoardingWidget(
-                            page: 1,
-                          ),
-                          OnBoardingWidget(
-                            page: 2,
-                          ),
-                          OnBoardingWidget(
-                            page: 3,
-                          ),
+                          OnBoardingWidget(page: 1),
+                          OnBoardingWidget(page: 2),
+                          OnBoardingWidget(page: 3),
                         ],
                       ),
                       SizedBox(
@@ -67,8 +61,9 @@ class _OnBoardinScreenState extends State<OnBoardinScreen> {
                                 children: List.generate(
                                   3,
                                   (index) => Container(
-                                    margin:
-                                        EdgeInsets.symmetric(horizontal: 3.w),
+                                    margin: EdgeInsets.symmetric(
+                                      horizontal: 3.w,
+                                    ),
                                     width: 35.w,
                                     height: getHeightSize(context) * 0.006,
                                     decoration: BoxDecoration(
@@ -81,9 +76,7 @@ class _OnBoardinScreenState extends State<OnBoardinScreen> {
                                 ),
                               ),
                             ),
-                            SizedBox(
-                              height: getHeightSize(context) * 0.03,
-                            ),
+                            SizedBox(height: getHeightSize(context) * 0.03),
                             Padding(
                               padding: EdgeInsets.symmetric(
                                 horizontal: getHorizontalPadding(context),
@@ -97,33 +90,38 @@ class _OnBoardinScreenState extends State<OnBoardinScreen> {
                                       : InkWell(
                                           onTap: () async {
                                             SharedPreferences pref =
-                                                await SharedPreferences
-                                                    .getInstance();
+                                                await SharedPreferences.getInstance();
                                             pref.setBool('onBoarding', true);
 
                                             Navigator.pushNamedAndRemoveUntil(
-                                                context,
-                                                Routes.chooseLoginRoute,
-                                                (route) => false);
+                                              context,
+                                              Routes.chooseLoginRoute,
+                                              (route) => false,
+                                            );
                                           },
-                                          child: Text("skip".tr(),
-                                              style: getRegularStyle(
-                                                  color: AppColors.white))),
+                                          child: Text(
+                                            "skip".tr(),
+                                            style: getRegularStyle(
+                                              color: AppColors.white,
+                                            ),
+                                          ),
+                                        ),
                                   InkWell(
                                     onTap: () async {
                                       if (cubit.currentPage == 2) {
                                         SharedPreferences pref =
-                                            await SharedPreferences
-                                                .getInstance();
+                                            await SharedPreferences.getInstance();
                                         pref.setBool('onBoarding', true);
                                         Navigator.pushNamedAndRemoveUntil(
-                                            context,
-                                            Routes.chooseLoginRoute,
-                                            (route) => false);
+                                          context,
+                                          Routes.chooseLoginRoute,
+                                          (route) => false,
+                                        );
                                       } else {
                                         cubit.pageController.nextPage(
-                                          duration:
-                                              const Duration(milliseconds: 300),
+                                          duration: const Duration(
+                                            milliseconds: 300,
+                                          ),
                                           curve: Curves.easeIn,
                                         );
                                       }
@@ -131,8 +129,9 @@ class _OnBoardinScreenState extends State<OnBoardinScreen> {
                                     child: Container(
                                       decoration: BoxDecoration(
                                         color: AppColors.primary,
-                                        borderRadius:
-                                            BorderRadius.circular(10.r),
+                                        borderRadius: BorderRadius.circular(
+                                          10.r,
+                                        ),
                                       ),
                                       padding: EdgeInsets.symmetric(
                                         horizontal: 30.w,
@@ -140,7 +139,7 @@ class _OnBoardinScreenState extends State<OnBoardinScreen> {
                                       ),
                                       child: Icon(
                                         Icons.arrow_forward_ios_rounded,
-                                        color: AppColors.white,
+                                        color: AppColors.secondPrimary,
                                         // size: 20.r,
                                       ),
                                     ),

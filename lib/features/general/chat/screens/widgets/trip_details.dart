@@ -4,6 +4,7 @@ import 'package:waslny/core/utils/call_method.dart';
 import 'package:waslny/core/widgets/network_image.dart';
 import 'package:waslny/features/general/chat/cubit/chat_cubit.dart';
 import 'package:waslny/features/general/chat/cubit/chat_state.dart';
+import 'package:waslny/features/user/driver_details/screens/driver_details.dart';
 
 class CustomChatHeader extends StatelessWidget {
   const CustomChatHeader({
@@ -56,50 +57,99 @@ class CustomChatHeader extends StatelessWidget {
                     if (state is GetTripStatusLoadingState)
                       SizedBox.shrink()
                     else ...[
-                      Container(
-                        padding: EdgeInsets.all(4.sp),
-                        decoration: BoxDecoration(
-                          color: AppColors.secondPrimary,
-                          borderRadius: BorderRadius.circular(1000),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.2),
-                              spreadRadius: 1,
-                              blurRadius: 5,
-                              offset: Offset(
-                                0,
-                                3,
-                              ), // changes position of shadow
-                            ),
-                          ],
-                        ),
-                        child: CustomNetworkImage(
-                          image: isDriver
-                              ? cubit.getTripDetailsModel?.data?.user?.image ??
-                                    ""
-                              : cubit
-                                        .getTripDetailsModel
-                                        ?.data
-                                        ?.driver
-                                        ?.image ??
-                                    "",
-                          isUser: true,
-                          height: 50.sp,
-                          width: 50.sp,
-                          borderRadius: 1000,
-                        ),
-                      ),
-                      12.horizontalSpace,
                       Expanded(
-                        child: Text(
-                          isDriver == true
-                              ? cubit.getTripDetailsModel?.data?.user?.name ??
-                                    ""
-                              : cubit.getTripDetailsModel?.data?.driver?.name ??
-                                    "",
-                          style: getBoldStyle(),
+                        child: GestureDetector(
+                          onTap: () {
+                            if (isDriver == false) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => DriverProfileScreen(
+                                    driverId:
+                                        cubit
+                                            .getTripDetailsModel
+                                            ?.data
+                                            ?.driver
+                                            ?.id
+                                            .toString() ??
+                                        "",
+
+                                    tripId:
+                                        cubit.getTripDetailsModel?.data?.id
+                                            .toString() ??
+                                        "",
+                                    shipmentCode:
+                                        cubit.getTripDetailsModel?.data?.code
+                                            .toString() ??
+                                        "",
+                                  ),
+                                ),
+                              );
+                            }
+                          },
+                          child: Row(
+                            children: [
+                              Container(
+                                padding: EdgeInsets.all(4.sp),
+                                decoration: BoxDecoration(
+                                  color: AppColors.secondPrimary,
+                                  borderRadius: BorderRadius.circular(1000),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.withOpacity(0.2),
+                                      spreadRadius: 1,
+                                      blurRadius: 5,
+                                      offset: Offset(
+                                        0,
+                                        3,
+                                      ), // changes position of shadow
+                                    ),
+                                  ],
+                                ),
+                                child: CustomNetworkImage(
+                                  image: isDriver
+                                      ? cubit
+                                                .getTripDetailsModel
+                                                ?.data
+                                                ?.user
+                                                ?.image ??
+                                            ""
+                                      : cubit
+                                                .getTripDetailsModel
+                                                ?.data
+                                                ?.driver
+                                                ?.image ??
+                                            "",
+                                  isUser: true,
+                                  height: 50.sp,
+                                  width: 50.sp,
+                                  borderRadius: 1000,
+                                ),
+                              ),
+                              12.horizontalSpace,
+                              Expanded(
+                                child: Text(
+                                  isDriver == true
+                                      ? cubit
+                                                .getTripDetailsModel
+                                                ?.data
+                                                ?.user
+                                                ?.name ??
+                                            ""
+                                      : cubit
+                                                .getTripDetailsModel
+                                                ?.data
+                                                ?.driver
+                                                ?.name ??
+                                            "",
+                                  style: getBoldStyle(),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
+
                       GestureDetector(
                         onTap: () {
                           String? phoneNumber = isDriver

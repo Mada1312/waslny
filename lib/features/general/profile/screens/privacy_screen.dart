@@ -29,10 +29,28 @@ class _PrivacyAndTermsScreenState extends State<PrivacyAndTermsScreen> {
           appBar: AppBar(title: Text('terms_and_conditions'.tr())),
           body: state is LoadingContactUsState
               ? Center(child: CustomLoadingIndicator())
-              : ListView(
-                  children: [
-                    Html(data: cubit.settings?.data?.privacy.toString() ?? ''),
-                  ],
+              : Container(
+                  color: AppColors.white,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 5.w,
+                      vertical: 10.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.unSeen,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(30.sp),
+                        topRight: Radius.circular(30.sp),
+                      ),
+                    ),
+                    child: ListView(
+                      children: [
+                        Html(
+                          data: cubit.settings?.data?.privacy.toString() ?? '',
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
         );
       },
