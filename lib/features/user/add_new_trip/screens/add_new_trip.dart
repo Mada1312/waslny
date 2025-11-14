@@ -169,7 +169,7 @@ class _AddNewTripScreenState extends State<AddNewTripScreen> {
                   5.h.verticalSpace,
 
                   ///! Time - Gender - Vehicle
-                  ResponsiveTimeGenderVehicleDropdowns(
+                  ResponsiveTimeGenderVehicleDropdowns( 
                     isService: widget.args?.isService ?? false,
                     selectedGenderType: cubit.selectedGenderType,
                     selectedTimeType: cubit.selectedTimeType,

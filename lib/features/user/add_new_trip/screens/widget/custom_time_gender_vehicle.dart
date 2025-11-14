@@ -40,7 +40,7 @@ class ResponsiveTimeGenderVehicleDropdowns extends StatelessWidget {
         width: (screenWidth / 2) - spacing,
         child: CustomDropdownButtonFormField<T>(
           items: items,
-          borderRadius: 45.r,
+          borderRadius: 22.r,
           itemBuilder: itemBuilder,
           value: value,
           onChanged: onChanged,
