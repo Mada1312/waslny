@@ -255,6 +255,8 @@ class AddNewTripCubit extends Cubit<AddNewTripState> {
         "latitude": double.parse(item.toLat ?? "0.0"),
         "longitude": double.parse(item.toLong ?? "0.0"),
       });
+
+      distance = num.tryParse(item.distance ?? '0.0') ?? 0.0;
     }
 
     emit(SuccessSelectedLocationToFields());

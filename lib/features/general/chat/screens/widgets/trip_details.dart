@@ -235,6 +235,12 @@ class CustomChatHeader extends StatelessWidget {
                               title: "arrived".tr(),
                               btnColor: AppColors.secondPrimary,
                               textColor: AppColors.primary,
+                              isDisabled:
+                                  cubit
+                                      .getTripDetailsModel
+                                      ?.data
+                                      ?.isUserAccept ==
+                                  0,
                               onPressed: () {
                                 warningDialog(
                                   context,
@@ -421,10 +427,15 @@ class CustomChatHeader extends StatelessWidget {
                               title: "start_trip".tr(),
                               isDisabled:
                                   cubit
-                                      .getTripDetailsModel
-                                      ?.data
-                                      ?.isDriverAccept ==
-                                  0,
+                                          .getTripDetailsModel
+                                          ?.data
+                                          ?.isDriverAccept ==
+                                      0 ||
+                                  cubit
+                                          .getTripDetailsModel
+                                          ?.data
+                                          ?.isDriverArrived ==
+                                      0,
                               onPressed: () {
                                 warningDialog(
                                   context,
