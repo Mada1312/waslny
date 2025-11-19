@@ -63,7 +63,7 @@ class CustomsSheduledTripWidet extends StatelessWidget {
                       isService: trip?.isService == 1,
                     ),
                   ),
-                  ],
+                ],
               ),
               if (trip?.distance != null && trip?.distance?.isNotEmpty == true)
                 Padding(
@@ -141,6 +141,7 @@ class CustomsSheduledTripWidet extends StatelessWidget {
                         title: "arrived".tr(),
                         btnColor: AppColors.secondPrimary,
                         textColor: AppColors.primary,
+                        isDisabled: trip?.isUserAccept == 0,
                         onPressed: () {
                           warningDialog(
                             context,

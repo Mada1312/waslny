@@ -37,6 +37,7 @@ class GetMainLastestLocationData {
   int? isService;
   int? serviceTo;
   String? serviceToName;
+  String? distance;
 
   GetMainLastestLocationData({
     this.from,
@@ -48,6 +49,7 @@ class GetMainLastestLocationData {
     this.isService,
     this.serviceTo,
     this.serviceToName,
+    this.distance,
   });
 
   factory GetMainLastestLocationData.fromJson(Map<String, dynamic> json) =>
@@ -61,6 +63,7 @@ class GetMainLastestLocationData {
         isService: json["is_service"],
         serviceTo: json["service_to"],
         serviceToName: json["service_to_name"],
+        distance: json["distance"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -73,5 +76,6 @@ class GetMainLastestLocationData {
     "is_service": isService,
     "service_to": serviceTo,
     "service_to_name": serviceToName,
+    "distance": distance,
   };
 }

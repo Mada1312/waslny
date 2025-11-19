@@ -276,7 +276,7 @@ class _TripOrServiceItemWidgetState extends State<TripOrServiceItemWidget> {
                               );
                             },
                             driver: widget.tripOrService?.driver,
-                            roomToken: null,
+                            roomToken: widget.tripOrService?.roomToken,
                             shipmentCode: widget.tripOrService?.code,
                             tripId: widget.tripOrService?.id?.toString() ?? '',
                             trip: widget.tripOrService,
@@ -290,7 +290,12 @@ class _TripOrServiceItemWidgetState extends State<TripOrServiceItemWidget> {
                                     Expanded(
                                       child: Center(
                                         child: Text(
-                                          'searching_for_driver'.tr(),
+                                          widget
+                                                      .tripOrService
+                                                      ?.cannotFindDriver ==
+                                                  0
+                                              ? 'searching_for_driver'.tr()
+                                              : 'cannot_search_driver'.tr(),
                                           style: getRegularStyle(
                                             fontSize: 14.sp,
                                           ),

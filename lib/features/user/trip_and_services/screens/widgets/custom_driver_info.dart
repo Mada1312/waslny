@@ -119,7 +119,10 @@ class _CustomDriverInfoState extends State<CustomDriverInfo> {
                   height: 40.h,
                   fontSize: 14.sp,
 
-                  isDisabled: widget.trip?.isDriverAccept == 0,
+                  isDisabled:
+                      widget.trip?.isDriverAccept == 0 ||
+                      widget.trip?.isDriverArrived == 0,
+                  //
                   onPressed: () {
                     warningDialog(
                       context,
@@ -137,7 +140,8 @@ class _CustomDriverInfoState extends State<CustomDriverInfo> {
               ),
               10.w.horizontalSpace,
             ],
-            if (widget.trip?.isUserChangeCaptain == 0)
+            if (widget.trip?.isUserChangeCaptain == 0 &&
+                widget.trip?.isUserStartTrip == 0)
               Flexible(
                 flex: 2,
                 child: CustomButton(
