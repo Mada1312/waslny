@@ -136,7 +136,7 @@ class LoginCubit extends Cubit<LoginState> {
               arguments: [isDriver, false],
             );
 
-            await _launchWhatsApp(context);
+            // await _launchWhatsApp(context);
           } else {
             Navigator.pop(context);
 
@@ -153,50 +153,50 @@ class LoginCubit extends Cubit<LoginState> {
     }
   }
 
-  Future<void> _launchWhatsApp(BuildContext context) async {
-    Future<void> launchUrlMethod(String? phone) async {
-      if (phone == null || phone.isEmpty) {
-        throw 'Phone number is not available';
-      }
-      final message = "Hello, I want to sign up for Waslny App";
-      final Uri whatsappUri = Uri(
-        scheme: 'https',
-        host: 'wa.me',
-        path: phone,
-        queryParameters: {'text': message},
-      );
+  // Future<void> _launchWhatsApp(BuildContext context) async {
+  //   Future<void> launchUrlMethod(String? phone) async {
+  //     if (phone == null || phone.isEmpty) {
+  //       throw 'Phone number is not available';
+  //     }
+  //     final message = "Hello, I want to sign up for Waslny App";
+  //     final Uri whatsappUri = Uri(
+  //       scheme: 'https',
+  //       host: 'wa.me',
+  //       path: phone,
+  //       queryParameters: {'text': message},
+  //     );
 
-      if (!await launchUrl(whatsappUri)) {
-        throw 'Could not launch $whatsappUri';
-      }
-    }
+  //     if (!await launchUrl(whatsappUri)) {
+  //       throw 'Could not launch $whatsappUri';
+  //     }
+  //   }
 
-    final profileCubit = context.read<ProfileCubit>();
-    if (profileCubit.settings != null) {
-      await launchUrlMethod(profileCubit.settings?.data?.waapiPhone);
-    } else {
-      await profileCubit.getSettings(context);
-      await launchUrlMethod(profileCubit.settings?.data?.waapiPhone);
-    }
-    await sendOtp();
-  }
+  //   final profileCubit = context.read<ProfileCubit>();
+  //   if (profileCubit.settings != null) {
+  //     await launchUrlMethod(profileCubit.settings?.data?.waapiPhone);
+  //   } else {
+  //     await profileCubit.getSettings(context);
+  //     await launchUrlMethod(profileCubit.settings?.data?.waapiPhone);
+  //   }
+  //   await sendOtp();
+  // }
 
-  Future<void> sendOtp() async {
-    await Future.delayed(Duration(seconds: 2), () async {
-      final res = await api.sendOtp(phone: fullPhoneNumber ?? '');
-      res.fold(
-        
-        (l) {
-          log('Error');
-          print('Error ${l.toString()}');
-        },
-        (r) {
-          log('SUCCESS');
-          print('SUCCESS ${r.toString()}}');
-        },
-      );
-    });
-  }
+  // Future<void> sendOtp() async {
+  //   await Future.delayed(Duration(seconds: 2), () async {
+  //     final res = await api.sendOtp(phone: fullPhoneNumber ?? '');
+  //     res.fold(
+
+  //       (l) {
+  //         log('Error');
+  //         print('Error ${l.toString()}');
+  //       },
+  //       (r) {
+  //         log('SUCCESS');
+  //         print('SUCCESS ${r.toString()}}');
+  //       },
+  //     );
+  //   });
+  // }
 
   Future<void> register(BuildContext context, bool isDriver) async {
     AppWidget.createProgressDialog(context, msg: 'loading'.tr());
