@@ -1,6 +1,7 @@
 import 'package:waslny/core/exports.dart';
 import 'package:waslny/features/driver/home/data/models/driver_home_model.dart';
 import 'package:waslny/features/driver/trips/cubit/cubit.dart';
+import 'package:waslny/features/general/chat/screens/message_screen.dart';
 import 'package:waslny/features/user/trip_and_services/screens/widgets/custom_from_to.dart';
 
 // import 'custom_exporter_info.dart';
@@ -89,7 +90,22 @@ class DriverTripPrServiceItemWidget extends StatelessWidget {
               children: [
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MessageScreen(
+                            model: MainUserAndRoomChatModel(
+                              driverId: trip?.driverId.toString(),
+                              receiverId: trip?.userId.toString(),
+                              chatId: trip?.roomToken,
+
+                              isDriver: true,
+                            ),
+                          ),
+                        ),
+                      );
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.secondPrimary,
                       shape: RoundedRectangleBorder(

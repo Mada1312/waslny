@@ -40,8 +40,8 @@
     "cancel": "Cancel",
     "confirm": "Confirm",
     "select_this_driver_sure": "Are you sure you want to select this captian?",
-    "rate_driver": "Rate Captian",
-    "write_comment": "Write a comment",
+    "rate_driver": "What is your rating for the previous captian?",
+    "write_comment": "Write Comment (Optional)",
     "send": "Send",
     "drivers_count": "Captians: ",
     "trips_count": "Trips: ",
@@ -151,6 +151,7 @@
     
     "service_to": "Service Type",
     "searching_for_driver": "Looking for a captain",
+    "cannot_search_driver": "No captain found",
     "no_driver_found": "No captain found",
     "select_location_from_map": "Locate the location on the map",
     "from_map": "From my location",

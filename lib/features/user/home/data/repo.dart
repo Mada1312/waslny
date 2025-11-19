@@ -14,4 +14,41 @@ class UserHomeRepo {
       return Left(ServerFailure());
     }
   }
+    Future<Either<Failure, DefaultPostModel>> addRateForDriver({
+    required String tripId,
+    required double rate,
+    required String comment,
+  }) async {
+    try {
+      final response = await api.post(
+        EndPoints.addRateUrl,
+        body: {
+          "trip_id": tripId,
+          "rate": rate,
+          if (comment.isNotEmpty) "comment": comment,
+          "key": "addRate",
+        },
+      );
+      return Right(DefaultPostModel.fromJson(response));
+    } on ServerException {
+      return Left(ServerFailure());
+    }
+  }
+    Future<Either<Failure, DefaultPostModel>> skipRate({
+    required String tripId,
+  }) async {
+    try {
+      final response = await api.post(
+        EndPoints.skipRateUrl,
+        body: {
+          "trip_id": tripId,
+         
+          "key": "skipRateTrip",
+        },
+      );
+      return Right(DefaultPostModel.fromJson(response));
+    } on ServerException {
+      return Left(ServerFailure());
+    }
+  }
 }

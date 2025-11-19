@@ -39,6 +39,7 @@ class GetUserHomeModelData {
   List<TripAndServiceModel>? trips;
   List<TripAndServiceModel>? services;
   String? avarageDistance;
+  int? unRatedTripId;
 
   GetUserHomeModelData({
     this.user,
@@ -46,12 +47,14 @@ class GetUserHomeModelData {
     this.services,
     this.isWebhookVerified,
     this.avarageDistance,
+    this.unRatedTripId,
   });
 
   factory GetUserHomeModelData.fromJson(Map<String, dynamic> json) =>
       GetUserHomeModelData(
         user: json["user"] == null ? null : User.fromJson(json["user"]),
         isWebhookVerified: json["is_webhook_verified"],
+        unRatedTripId: json["unrated_trip_id"],
         avarageDistance: json["average_distance"]?.toString().isEmpty == true
             ? '0'
             : json["average_distance"],
@@ -70,6 +73,7 @@ class GetUserHomeModelData {
   Map<String, dynamic> toJson() => {
     "user": user?.toJson(),
     "is_webhook_verified": isWebhookVerified,
+    "unrated_trip_id": unRatedTripId,
     "average_distance": avarageDistance,
     "trips": trips == null
         ? []

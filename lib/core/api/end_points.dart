@@ -44,6 +44,7 @@ class EndPoints {
   static const String addShipmentLocationUrl =
       '${baseUrl}add-shipment-location';
   static const String addRateUrl = '${baseUrl}add-rate';
+  static const String skipRateUrl = '${baseUrl}skip-rate-trip';
 
   static const String forgetPasswordUrl = '${baseUrl}forget-password';
   static const String resetPasswordUrl = '${baseUrl}reset-password';
