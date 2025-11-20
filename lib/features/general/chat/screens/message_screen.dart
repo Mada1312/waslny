@@ -50,9 +50,11 @@ class _MessageScreenState extends State<MessageScreen> {
     log('999999999 ${widget.model.chatId}');
     log('8888888888 ${widget.model.driverId.toString()}');
     log('7777777777 ${widget.model.tripId.toString()}');
+
     if (widget.model.chatId != null) {
       log('999999999 8888888888 ${widget.model.chatId}');
       context.read<ChatCubit>().listenForMessages(widget.model.chatId ?? '');
+      context.read<ChatCubit>().markMessagesAsRead(widget.model.chatId ?? '');
     } else {
       context.read<ChatCubit>().createChatRoom(
         driverId: widget.model.driverId ?? '',
