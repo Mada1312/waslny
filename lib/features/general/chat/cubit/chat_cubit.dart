@@ -3,6 +3,7 @@
 import 'dart:developer';
 
 import 'package:location/location.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:waslny/core/exports.dart';
 import 'package:waslny/core/preferences/preferences.dart';
 import 'package:waslny/features/general/chat/cubit/chat_state.dart';
@@ -27,6 +28,15 @@ class ChatCubit extends Cubit<ChatState> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   TextEditingController messageController = TextEditingController();
   List<MessageModel> messages = [];
+  Future<String?> _getCurrentUserId() async {
+    try {
+      final userModel = await Preferences.instance.getUserModel();
+      return userModel.data?.id?.toString();
+    } catch (e) {
+      log('Error getting current user ID: $e');
+      return null;
+    }
+  } /*
   void listenForMessages(String chatId) {
     emit(LoadingGetNewMessagteState());
     _firestore
@@ -43,9 +53,161 @@ class ChatCubit extends Cubit<ChatState> {
           emit(ChatLoaded(messages));
         });
   }
+*/
+
+  void listenForMessages(String chatId) {
+    emit(LoadingGetNewMessagteState());
+    _firestore
+        .collection('rooms')
+        .doc(chatId)
+        .collection('messages')
+        .orderBy('time', descending: true)
+        .snapshots()
+        .listen((snapshot) {
+          messages = snapshot.docs
+              .map((doc) => MessageModel.fromJson(doc.data()))
+              .toList();
+          log('messages length : ${messages.length}');
+          emit(ChatLoaded(messages));
+        })
+        .onError((e) {
+          log('Error listening to messages: $e');
+          // يمكنك إصدار حالة خطأ هنا
+        });
+  }
+
+  //!
+  // --- 2. إرسال رسالة (تم تعديلها لإضافة حقل 'readBy') ---
+  Future<void> sendMessage({
+    required String chatId,
+    required String? receiverId,
+    bool isDriverArrived = false,
+  }) async {
+    final currentUserId = await _getCurrentUserId();
+
+    if (currentUserId == null ||
+        (messageController.text.isEmpty && !isDriverArrived)) {
+      return;
+    }
+
+    try {
+      // Create a new document reference
+      final messageRef = _firestore
+          .collection('rooms')
+          .doc(chatId)
+          .collection('messages')
+          .doc();
+
+      // Create message model
+      final message = MessageModel(
+        id: messageRef.id, // Set the ID explicitly
+        bodyMessage: isDriverArrived
+            ? "i_arrived".tr()
+            : messageController.text,
+        chatId: chatId,
+        senderId: currentUserId,
+        receiverId: receiverId,
+        time: Timestamp.now(),
+        // 💡 التعديل: المرسل هو أول من قرأ الرسالة
+        readBy: [currentUserId],
+      );
+      messageController.clear();
+
+      // Save to Firestore
+      await messageRef.set(message.toJson());
+
+      // نفترض أن دالة الإشعارات تعمل بشكل صحيح
+      // await sentNotification(...)
+    } catch (e) {
+      log('Error sending message: $e');
+      emit(MessageErrorState());
+    }
+  }
+
+  Stream<int> getUnreadMessagesCountStream(String roomId) {
+    // 💡 نستخدم switchMap من rxdart للتعامل مع الـ Future قبل الـ Stream
+    // يجب أن يكون الـ import موجودًا لكي يعمل الـ switchMap
+    return Stream.fromFuture(_getCurrentUserId()).switchMap((currentUserId) {
+      if (currentUserId == null) {
+        return Stream.value(0); // لو مفيش ID، رجع صفر
+      }
+
+      return _firestore
+          .collection('rooms')
+          .doc(roomId)
+          .collection('messages')
+          .snapshots()
+          .map((snapshot) {
+            int unreadCount = 0;
+            for (var doc in snapshot.docs) {
+              final data = doc.data();
+              final List<String> readBy = List<String>.from(
+                data['readBy'] ?? [],
+              );
+
+              if (data['senderId'] != currentUserId &&
+                  !readBy.contains(currentUserId)) {
+                unreadCount++;
+              }
+            }
+            return unreadCount;
+          })
+          .handleError((error) {
+            log('Error listening to unread count for $roomId: $error');
+            return 0;
+          });
+    });
+  }
+
+  // --- 4. الدالة التي تضع علامة "مقروءة" (عند فتح الشات) ---
+  /// 💡 Method: تحديث حالة الرسائل غير المقروءة إلى "مقروءة"
+  /// يتم استدعاؤها بمجرد فتح المستخدم لشاشة الشات
+  Future<void> markMessagesAsRead(String chatId) async {
+    final currentUserId = await _getCurrentUserId();
+    if (currentUserId == null) return;
+
+    final messagesRef = _firestore
+        .collection('rooms')
+        .doc(chatId)
+        .collection('messages');
+
+    try {
+      // 1. نجيب الرسائل اللي مبعوته من طرف آخر (SenderId != CurrentUserId)
+      final querySnapshot = await messagesRef
+          .where('senderId', isNotEqualTo: currentUserId)
+          .get();
+
+      final batch = _firestore.batch();
+      bool needsUpdate = false;
+
+      for (var doc in querySnapshot.docs) {
+        final data = doc.data();
+        final List<String> readBy = List<String>.from(data['readBy'] ?? []);
+
+        // لو الـ ID بتاعنا مش موجود في الـ readBy، نعمل تحديث
+        if (!readBy.contains(currentUserId)) {
+          // نستخدم FieldValue.arrayUnion عشان نضيف الـ ID بتاعنا
+          batch.update(doc.reference, {
+            'readBy': FieldValue.arrayUnion([currentUserId]),
+          });
+          needsUpdate = true;
+        }
+      }
+
+      // 3. ننفذ الـ Batch لو فيه أي تحديثات
+      if (needsUpdate) {
+        await batch.commit();
+        log(
+          'Batch commit: Messages in $chatId marked as read by $currentUserId',
+        );
+      }
+    } catch (e) {
+      log('Error marking messages as read: $e');
+    }
+  }
 
   //////////!
-  Future<void> sendMessage({
+  /* Future<void> sendMessage({
     required String chatId,
     required String? receiverId,
     bool isDriverArrived = false,
@@ -87,7 +249,7 @@ class ChatCubit extends Cubit<ChatState> {
       emit(MessageErrorState());
     }
   }
-
+*/
   sentNotification({
     required String message,
     required String chatId,
@@ -199,9 +361,12 @@ class ChatCubit extends Cubit<ChatState> {
       (l) {
         emit(ErrorCreateChatRoomState());
       },
-      (r) {
+      (r) async {
         messages = [];
+
         listenForMessages(r.data?.roomToken ?? '');
+        await markMessagesAsRead(r.data?.roomToken ?? '');
+
         createChatRoomModel = r;
         emit(LoadedCreateChatRoomState());
       },
