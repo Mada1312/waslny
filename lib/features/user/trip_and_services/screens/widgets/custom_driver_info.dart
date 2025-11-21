@@ -135,25 +135,24 @@ class _CustomDriverInfoState extends State<CustomDriverInfo> {
                             step: TripStep.isUserStartTrip,
                             context: context,
                           )
-                        :
-                    warningDialog(
-                      context,
-                      title: "are_you_sure_you_want_to_start_trip".tr(),
-                      onPressedOk: () {
-                        cubit.updateTripStatus(
-                          id: widget.trip?.id ?? 0,
-                          step: TripStep.isUserStartTrip,
-                          context: context,
-                        );
-                      },
-                    );
+                        : warningDialog(
+                            context,
+                            title: "are_you_sure_you_want_to_start_trip".tr(),
+                            onPressedOk: () {
+                              cubit.updateTripStatus(
+                                id: widget.trip?.id ?? 0,
+                                step: TripStep.isUserStartTrip,
+                                context: context,
+                              );
+                            },
+                          );
                   },
                 ),
               ),
               10.w.horizontalSpace,
             ],
             if (widget.trip?.isUserChangeCaptain == 0 &&
-                widget.trip?.isUserStartTrip == 0)
+                widget.trip?.isDriverAccept == 0)
               Flexible(
                 flex: 2,
                 child: CustomButton(
@@ -185,7 +184,7 @@ class _CustomDriverInfoState extends State<CustomDriverInfo> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if (widget.trip?.isUserStartTrip == 0) ...[
+            if (widget.trip?.isDriverStartTrip == 0) ...[
               Flexible(
                 flex: 3,
                 child: CustomButton(

@@ -83,7 +83,6 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
     );
   }
 }
-
 class DriverHomeUI extends StatelessWidget {
   const DriverHomeUI({super.key});
 

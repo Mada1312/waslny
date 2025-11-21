@@ -361,7 +361,7 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
                   child: Padding(
                     padding: const EdgeInsetsDirectional.only(start: 8.0),
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           (review.user ?? 'مستخدم'), // من الموديل

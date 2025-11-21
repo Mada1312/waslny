@@ -497,7 +497,7 @@ class CustomChatHeader extends StatelessWidget {
                                 .getTripDetailsModel
                                 ?.data
                                 ?.isUserChangeCaptain ==
-                            0)
+                            0 &&  cubit.getTripDetailsModel?.data?.isDriverStartTrip == 0)
                           Flexible(
                             flex: 2,
                             child: CustomButton(
