@@ -135,7 +135,7 @@ Future<void> rateTripDialog(
                                   child: GestureDetector(
                                     onTap: () {
                                       Navigator.pop(context);
-                                      // cubit.skipRate();
+                                      cubit.skipRate();
                                     },
                                     child: Icon(
                                       Icons.close,

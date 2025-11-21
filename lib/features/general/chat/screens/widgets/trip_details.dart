@@ -202,24 +202,31 @@ class CustomChatHeader extends StatelessWidget {
                             child: CustomButton(
                               title: "accept".tr(),
                               onPressed: () {
-                                warningDialog(
-                                  context,
-                                  title: "are_you_sure_you_want_to_accept_trip"
-                                      .tr(),
-                                  onPressedOk: () {
-                                    cubit.updateTripStatus(
-                                      isDriver: isDriver,
-                                      step: TripStep.isDriverAccept,
-                                      context: context,
-                                    );
-                                  },
-                                );
+                                cubit.getTripDetailsModel?.data?.isService == 1
+                                    ? cubit.updateTripStatus(
+                                        isDriver: isDriver,
+                                        step: TripStep.isDriverAccept,
+                                        context: context,
+                                      )
+                                    : warningDialog(
+                                        context,
+                                        title:
+                                            "are_you_sure_you_want_to_accept_trip"
+                                                .tr(),
+                                        onPressedOk: () {
+                                          cubit.updateTripStatus(
+                                            isDriver: isDriver,
+                                            step: TripStep.isDriverAccept,
+                                            context: context,
+                                          );
+                                        },
+                                      );
                               },
                             ),
                           ),
                           10.w.horizontalSpace,
                         ],
-                        if (cubit.getTripDetailsModel?.data?.status == 0 &&
+                        if (cubit.getTripDetailsModel?.data?.isService == 0 &&
                             cubit.getTripDetailsModel?.data?.isDriverArrived ==
                                 0 &&
                             cubit.getTripDetailsModel?.data?.isDriverAccept ==
@@ -274,8 +281,10 @@ class CustomChatHeader extends StatelessWidget {
                         if (cubit.getTripDetailsModel?.data?.status == 0 &&
                             cubit.getTripDetailsModel?.data?.isDriverAccept ==
                                 1 &&
-                            cubit.getTripDetailsModel?.data?.isDriverArrived ==
-                                1) ...[
+                            (cubit.getTripDetailsModel?.data?.isDriverArrived ==
+                                    1 ||
+                                cubit.getTripDetailsModel?.data?.isService ==
+                                    1)) ...[
                           Flexible(
                             child: CustomButton(
                               title:
@@ -290,19 +299,33 @@ class CustomChatHeader extends StatelessWidget {
                                       ?.isUserAccept ==
                                   0,
                               onPressed: () {
-                                warningDialog(
-                                  context,
-                                  title: "are_you_sure_you_want_to_start_trip"
-                                      .tr(),
-                                  onPressedOk: () {
-                                    cubit.startTrip(
-                                      tripId:
-                                          cubit.getTripDetailsModel?.data?.id ??
-                                          0,
-                                      context: context,
-                                    );
-                                  },
-                                );
+                                cubit.getTripDetailsModel?.data?.isService == 1
+                                    ? cubit.startTrip(
+                                        tripId:
+                                            cubit
+                                                .getTripDetailsModel
+                                                ?.data
+                                                ?.id ??
+                                            0,
+                                        context: context,
+                                      )
+                                    : warningDialog(
+                                        context,
+                                        title:
+                                            "are_you_sure_you_want_to_start_trip"
+                                                .tr(),
+                                        onPressedOk: () {
+                                          cubit.startTrip(
+                                            tripId:
+                                                cubit
+                                                    .getTripDetailsModel
+                                                    ?.data
+                                                    ?.id ??
+                                                0,
+                                            context: context,
+                                          );
+                                        },
+                                      );
                               },
                             ),
                           ),
@@ -311,8 +334,10 @@ class CustomChatHeader extends StatelessWidget {
                         if (cubit.getTripDetailsModel?.data?.status == 1 &&
                             cubit.getTripDetailsModel?.data?.isDriverAccept ==
                                 1 &&
-                            cubit.getTripDetailsModel?.data?.isDriverArrived ==
-                                1) ...[
+                            (cubit.getTripDetailsModel?.data?.isDriverArrived ==
+                                    1 ||
+                                cubit.getTripDetailsModel?.data?.isService ==
+                                    1)) ...[
                           Flexible(
                             child: CustomButton(
                               title:
@@ -331,19 +356,33 @@ class CustomChatHeader extends StatelessWidget {
                                           ?.isUserStartTrip ==
                                       0,
                               onPressed: () {
-                                warningDialog(
-                                  context,
-                                  title: "are_you_sure_you_want_to_end_trip"
-                                      .tr(),
-                                  onPressedOk: () {
-                                    cubit.endTrip(
-                                      tripId:
-                                          cubit.getTripDetailsModel?.data?.id ??
-                                          0,
-                                      context: context,
-                                    );
-                                  },
-                                );
+                                cubit.getTripDetailsModel?.data?.isService == 1
+                                    ? cubit.endTrip(
+                                        tripId:
+                                            cubit
+                                                .getTripDetailsModel
+                                                ?.data
+                                                ?.id ??
+                                            0,
+                                        context: context,
+                                      )
+                                    : warningDialog(
+                                        context,
+                                        title:
+                                            "are_you_sure_you_want_to_end_trip"
+                                                .tr(),
+                                        onPressedOk: () {
+                                          cubit.endTrip(
+                                            tripId:
+                                                cubit
+                                                    .getTripDetailsModel
+                                                    ?.data
+                                                    ?.id ??
+                                                0,
+                                            context: context,
+                                          );
+                                        },
+                                      );
                               },
                             ),
                           ),

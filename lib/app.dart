@@ -132,8 +132,13 @@ class _MyAppState extends State<MyApp> {
                         model: MainUserAndRoomChatModel(
                           chatId: initialMessageRcieved?.data['reference_id']
                               .toString(),
-                          driverId: initialMessageRcieved?.data['user_id']
+                          driverId: initialMessageRcieved?.data['driver_id']
                               .toString(),
+                          receiverId: ['user_type'].toString() == "1"
+                              ? initialMessageRcieved?.data['user_id']
+                                    .toString()
+                              : initialMessageRcieved?.data['user_id']
+                                    .toString(),
                           isDriver: ['user_type'].toString() == "1",
                           isNotification: true,
                           title: initialMessageRcieved?.data['user_name']
