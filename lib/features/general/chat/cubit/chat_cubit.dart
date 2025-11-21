@@ -116,7 +116,7 @@ class ChatCubit extends Cubit<ChatState> {
 
       // Save to Firestore
       await messageRef.set(message.toJson());
-
+      print("messageRef.id : ${messageRef.id}");
       unawaited(
         sentNotification(
           message: message.bodyMessage ?? '',

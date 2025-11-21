@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:waslny/core/exports.dart';
 import 'package:waslny/core/notification_services/notification_service.dart';
+import 'package:waslny/core/preferences/preferences.dart';
 import 'package:waslny/features/driver/home/cubit/cubit.dart';
 import 'package:waslny/features/general/auth/cubit/cubit.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
@@ -45,6 +46,7 @@ class _MessageScreenState extends State<MessageScreen> {
   @override
   void initState() {
     super.initState();
+    getUserModel();
     MessageStateManager().enterChatRoom("0");
     // MessageStateManager().enterChatRoom(widget.model.chatId ?? '');
     log('999999999 ${widget.model.chatId}');
@@ -85,6 +87,12 @@ class _MessageScreenState extends State<MessageScreen> {
     MessageStateManager().leaveChatRoom('0');
   }
 
+  LoginModel? loginModel;
+  getUserModel() async {
+    loginModel = await Preferences.instance.getUserModel();
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ChatCubit, ChatState>(
@@ -113,25 +121,6 @@ class _MessageScreenState extends State<MessageScreen> {
               child: Scaffold(
                 resizeToAvoidBottomInset: true,
 
-                // appBar: customAppBar(
-                //   context,
-                //   title: widget.model.title ?? '',
-                //   leading: IconButton(
-                //     icon: Icon(Icons.arrow_back_ios_new, size: 20.sp),
-                //     onPressed: () {
-                //       MessageStateManager().isInChatRoom("1");
-                //       if (widget.model.isNotification == true) {
-                //         Navigator.pushReplacementNamed(
-                //           context,
-                //           Routes.mainRoute,
-                //           arguments: widget.model.isDriver == true,
-                //         );
-                //       } else {
-                //         Navigator.pop(context);
-                //       }
-                //     },
-                //   ),
-                // ),
                 body:
                     (state is LoadingGetNewMessagteState ||
                         state is LoadingCreateChatRoomState)
@@ -169,12 +158,7 @@ class _MessageScreenState extends State<MessageScreen> {
                                         chatId: item.chatId ?? '',
                                         messageId: item.id,
                                         isSender:
-                                            ((context
-                                                .read<LoginCubit>()
-                                                .authData
-                                                ?.data
-                                                ?.id
-                                                .toString() ==
+                                            ((loginModel?.data?.id.toString() ==
                                             item.senderId.toString())),
                                         // image: item.fileUrl,
                                         message: item.bodyMessage ?? '',

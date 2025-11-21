@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:waslny/core/notification_services/notification_service.dart';
 import 'package:waslny/features/driver/home/cubit/cubit.dart';
 import 'package:waslny/features/driver/my_profile/cubit/cubit.dart';
@@ -84,74 +85,79 @@ class _MyAppState extends State<MyApp> {
           create: (_) => injector.serviceLocator<CompoundServicesCubit>(),
         ),
       ],
-      child: GetMaterialApp(
-        supportedLocales: context.supportedLocales,
-        navigatorKey: notificationService.navigatorKey,
-        locale: context.locale,
-        theme: appTheme(),
-        themeMode: ThemeMode.light,
-        darkTheme: ThemeData.light(),
-        // standard dark theme
-        localizationsDelegates: context.localizationDelegates,
-        debugShowCheckedModeBanner: false,
-        title: AppStrings.appName,
-        onGenerateRoute: AppRoutes.onGenerateRoute,
-        routes: {
-          '/': (context) => initialMessageRcieved != null
-              ?
-              //  initialMessageRcieved?.data['reference_table'] == "shipments"
-              //       ?
-              //         //  initialMessageRcieved?.data['user_type'].toString() == "0"
-              //         //       ? UserShipmentDetailsScreen(
-              //         //           args: UserShipmentDetailsArgs(
-              //         //             shipmentId:
-              //         //                 initialMessageRcieved?.data['reference_id']
-              //         //                     .toString() ??
-              //         //                 "",
-              //         //             isFromNotification: true,
-              //         //           ),
-              //         //         )
-              //         //       :
-              //         // is driver
-              //         // initialMessageRcieved?.data['is_current'].toString() ==
-              //         //         "1"
-              //         //     ?
-              //         MainScreen(isDriver: true)
-              //       // :
-              //       //  DriverShipmentDetailsScreen(
-              //       //     args: DriverSHipmentsArgs(
-              //       //       shipmentId:
-              //       //           initialMessageRcieved?.data['reference_id']
-              //       //               .toString() ??
-              //       //           "",
-              //       //       isNotification: true,
-              //       //     ),
-              //       //   )
-              //       :
-                     (initialMessageRcieved?.data['reference_table'] ==
-                          "chat_rooms")
-                    ? MessageScreen(
-                        model: MainUserAndRoomChatModel(
-                          chatId: initialMessageRcieved?.data['reference_id']
-                              .toString(),
-                          driverId: initialMessageRcieved?.data['driver_id']
-                              .toString(),
-                          receiverId: ['user_type'].toString() == "1"
-                              ? initialMessageRcieved?.data['user_id']
-                                    .toString()
-                              : initialMessageRcieved?.data['user_id']
-                                    .toString(),
-                                    tripId : initialMessageRcieved?.data['trip_id']
-                                    .toString(),
-                          isDriver: ['user_type'].toString() == "1",
-                          isNotification: true,
-                          title: initialMessageRcieved?.data['user_name']
-                              .toString(),
-                        ),
-                      )
-                    : const SplashScreen()
-              : const SplashScreen(),
-        },
+      child: FutureBuilder<RemoteMessage?>(
+      future: NotificationService.getInitialMessage(),
+      builder: (context, snapshot) {
+          return GetMaterialApp(
+            supportedLocales: context.supportedLocales,
+            navigatorKey: notificationService.navigatorKey,
+            locale: context.locale,
+            theme: appTheme(),
+            themeMode: ThemeMode.light,
+            darkTheme: ThemeData.light(),
+            // standard dark theme
+            localizationsDelegates: context.localizationDelegates,
+            debugShowCheckedModeBanner: false,
+            title: AppStrings.appName,
+            onGenerateRoute: AppRoutes.onGenerateRoute,
+               routes: {
+                '/': (context) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const SplashScreen(); // Show splash while loading
+                  }
+                  
+                  final initialMessage = snapshot.data;
+                  
+                  if (initialMessage != null && 
+                      initialMessage.data['reference_table'] == "chat_rooms") {
+                    final data = initialMessage.data;
+                    final isDriver = data['user_type']?.toString() == "1";
+                    
+                    return MessageScreen(
+                      model: MainUserAndRoomChatModel(
+                        chatId: data['reference_id']?.toString() ?? '',
+                        driverId: data['driver_id']?.toString() ?? '',
+                        receiverId: isDriver 
+                            ? (data['user_id']?.toString() ?? '')
+                            : (data['driver_id']?.toString() ?? ''),
+                        tripId: data['trip_id']?.toString() ?? '',
+                        isDriver: isDriver,
+                        isNotification: true,
+                        title: data['user_name']?.toString() ?? '',
+                      ),
+                    );
+                  }
+                  
+                  return const SplashScreen();
+                },
+            // routes: {
+            //   '/': (context) => initialMessageRcieved != null
+            //       ? (initialMessageRcieved?.data['reference_table'] == "chat_rooms")
+            //             ? MessageScreen(
+            //                 model: MainUserAndRoomChatModel(
+            //                   chatId: initialMessageRcieved?.data['reference_id']
+            //                       .toString(),
+            //                   driverId: initialMessageRcieved?.data['driver_id']
+            //                       .toString(),
+            //                   receiverId: ['user_type'].toString() == "1"
+            //                       ? initialMessageRcieved?.data['user_id']
+            //                             .toString()
+            //                       : initialMessageRcieved?.data['driver_id']
+            //                             .toString(),
+            //                   tripId: initialMessageRcieved?.data['trip_id']
+            //                       .toString(),
+            //                   isDriver: ['user_type'].toString() == "1",
+            //                   isNotification: true,
+            //                   title: initialMessageRcieved?.data['user_name']
+            //                       .toString(),
+            //                 ),
+            //               )
+            //             : const SplashScreen()
+            //       : const SplashScreen(),
+             },
+          );
+        } 
+        
       ),
     );
   }
