@@ -311,7 +311,6 @@ class _TripOrServiceItemWidgetState extends State<TripOrServiceItemWidget> {
                                             : "cancel_trip".tr(),
                                         height: 40.h,
                                         fontSize: 14.sp,
-
                                         onPressed: () {
                                           warningDialog(
                                             context,

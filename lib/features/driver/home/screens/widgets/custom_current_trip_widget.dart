@@ -115,23 +115,30 @@ class CustomsSheduledTripWidet extends StatelessWidget {
                       child: CustomButton(
                         title: "accept".tr(),
                         onPressed: () {
-                          warningDialog(
-                            context,
-                            title: "are_you_sure_you_want_to_accept_trip".tr(),
-                            onPressedOk: () {
-                              cubit.updateTripStatus(
-                                id: trip?.id ?? 0,
-                                step: TripStep.isDriverAccept,
-                                context: context,
-                              );
-                            },
-                          );
+                          trip?.isService == 1
+                              ? cubit.updateTripStatus(
+                                  id: trip?.id ?? 0,
+                                  step: TripStep.isDriverAccept,
+                                  context: context,
+                                )
+                              : warningDialog(
+                                  context,
+                                  title: "are_you_sure_you_want_to_accept_trip"
+                                      .tr(),
+                                  onPressedOk: () {
+                                    cubit.updateTripStatus(
+                                      id: trip?.id ?? 0,
+                                      step: TripStep.isDriverAccept,
+                                      context: context,
+                                    );
+                                  },
+                                );
                         },
                       ),
                     ),
                     10.w.horizontalSpace,
                   ],
-                  if (trip?.status == 0 &&
+                  if (trip?.isService == 0 &&
                       trip?.isDriverArrived == 0 &&
                       trip?.isDriverAccept == 1 &&
                       trip?.isDriverAnotherTrip == 0) ...[
@@ -164,7 +171,7 @@ class CustomsSheduledTripWidet extends StatelessWidget {
                   ],
                   if (trip?.status == 0 &&
                       trip?.isDriverAccept == 1 &&
-                      trip?.isDriverArrived == 1) ...[
+                      (trip?.isDriverArrived == 1 || trip?.isService == 1)) ...[
                     Flexible(
                       child: CustomButton(
                         title: trip?.isService == 1
@@ -172,16 +179,22 @@ class CustomsSheduledTripWidet extends StatelessWidget {
                             : "start_trip".tr(),
                         isDisabled: trip?.isUserAccept == 0,
                         onPressed: () {
-                          warningDialog(
-                            context,
-                            title: "are_you_sure_you_want_to_start_trip".tr(),
-                            onPressedOk: () {
-                              context.read<DriverHomeCubit>().startTrip(
-                                tripId: trip?.id ?? 0,
-                                context: context,
-                              );
-                            },
-                          );
+                          trip?.isService == 1
+                              ? cubit.startTrip(
+                                  tripId: trip?.id ?? 0,
+                                  context: context,
+                                )
+                              : warningDialog(
+                                  context,
+                                  title: "are_you_sure_you_want_to_start_trip"
+                                      .tr(),
+                                  onPressedOk: () {
+                                    context.read<DriverHomeCubit>().startTrip(
+                                      tripId: trip?.id ?? 0,
+                                      context: context,
+                                    );
+                                  },
+                                );
                         },
                         // btnColor: AppColors.secondPrimary,
                         // textColor: AppColors.primary,
@@ -191,7 +204,7 @@ class CustomsSheduledTripWidet extends StatelessWidget {
                   ],
                   if (trip?.status == 1 &&
                       trip?.isDriverAccept == 1 &&
-                      trip?.isDriverArrived == 1) ...[
+                     ( trip?.isDriverArrived == 1 || trip?.isService == 1)) ...[
                     Flexible(
                       child: CustomButton(
                         title: trip?.isService == 1
@@ -202,16 +215,22 @@ class CustomsSheduledTripWidet extends StatelessWidget {
                         isDisabled:
                             trip?.isService == 0 && trip?.isUserStartTrip == 0,
                         onPressed: () {
-                          warningDialog(
-                            context,
-                            title: "are_you_sure_you_want_to_end_trip".tr(),
-                            onPressedOk: () {
-                              context.read<DriverHomeCubit>().endTrip(
-                                tripId: trip?.id ?? 0,
-                                context: context,
-                              );
-                            },
-                          );
+                          trip?.isService == 1
+                              ? cubit.endTrip(
+                                  tripId: trip?.id ?? 0,
+                                  context: context,
+                                )
+                              : warningDialog(
+                                  context,
+                                  title: "are_you_sure_you_want_to_end_trip"
+                                      .tr(),
+                                  onPressedOk: () {
+                                    context.read<DriverHomeCubit>().endTrip(
+                                      tripId: trip?.id ?? 0,
+                                      context: context,
+                                    );
+                                  },
+                                );
                         },
                       ),
                     ),
@@ -244,7 +263,6 @@ class CustomsSheduledTripWidet extends StatelessWidget {
                     driverId: trip?.driverId.toString(),
                     receiverId: trip?.userId.toString(),
                     isDriver: true,
-
                     roomToken: trip?.roomToken,
                     phoneNumber: trip?.user?.phone.toString(),
                   ),

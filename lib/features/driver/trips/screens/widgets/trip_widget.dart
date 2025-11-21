@@ -1,9 +1,10 @@
 import 'package:waslny/core/exports.dart';
 import 'package:waslny/features/driver/home/data/models/driver_home_model.dart';
 import 'package:waslny/features/driver/trips/cubit/cubit.dart';
+import 'package:waslny/features/general/chat/cubit/chat_cubit.dart';
 import 'package:waslny/features/general/chat/screens/message_screen.dart';
 import 'package:waslny/features/user/trip_and_services/screens/widgets/custom_from_to.dart';
-
+import 'package:badges/badges.dart' as badges;
 // import 'custom_exporter_info.dart';
 
 class DriverTripPrServiceItemWidget extends StatelessWidget {
@@ -89,33 +90,41 @@ class DriverTripPrServiceItemWidget extends StatelessWidget {
             child: Row(
               children: [
                 Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => MessageScreen(
-                            model: MainUserAndRoomChatModel(
-                              driverId: trip?.driverId.toString(),
-                              receiverId: trip?.userId.toString(),
-                              chatId: trip?.roomToken,
+                  child: StreamBuilder<int>(
+                    stream: context
+                        .watch<ChatCubit>()
+                        .getUnreadMessagesCountStream(trip?.roomToken ?? ''),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return yourOriginalIconWidget(context);
+                      }
 
-                              isDriver: true,
-                            ),
-                          ),
+                      final unreadCount = snapshot.data ?? 0;
+
+                      return badges.Badge(
+                        badgeContent: Text(
+                          unreadCount.toString(),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
+                          ), // Add style for visibility
+                        ),
+
+                        showBadge: trip?.roomToken != null && unreadCount > 0,
+
+                        badgeStyle: badges.BadgeStyle(
+                          badgeColor: AppColors
+                              .error, // Use a contrasting color like error/red
+                          padding: EdgeInsets.all(5),
+                        ),
+
+                        child: SizedBox(
+                          width: double.infinity,
+
+                          child: yourOriginalIconWidget(context),
                         ),
                       );
                     },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.secondPrimary,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: Text(
-                      "chat".tr(),
-                      style: getRegularStyle(color: AppColors.primary),
-                    ),
                   ),
                 ),
                 const SizedBox(width: 10),
@@ -158,6 +167,38 @@ class DriverTripPrServiceItemWidget extends StatelessWidget {
           //   tripId: trip?.id.toString(),
           // ),
         ],
+      ),
+    );
+  }
+
+  ElevatedButton yourOriginalIconWidget(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => MessageScreen(
+              model: MainUserAndRoomChatModel(
+                driverId: trip?.driverId.toString(),
+                receiverId: trip?.userId.toString(),
+                chatId: trip?.roomToken,
+                tripId: trip?.id.toString(),
+                title: "#${trip?.code ?? ''}",
+
+                isDriver: true,
+              ),
+            ),
+          ),
+        );
+      },
+
+      style: ElevatedButton.styleFrom(
+        backgroundColor: AppColors.secondPrimary,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      ),
+      child: Text(
+        "chat".tr(),
+        style: getRegularStyle(color: AppColors.primary),
       ),
     );
   }

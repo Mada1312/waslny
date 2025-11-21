@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:location/location.dart';
@@ -116,8 +117,13 @@ class ChatCubit extends Cubit<ChatState> {
       // Save to Firestore
       await messageRef.set(message.toJson());
 
-      // نفترض أن دالة الإشعارات تعمل بشكل صحيح
-      // await sentNotification(...)
+      unawaited(
+        sentNotification(
+          message: message.bodyMessage ?? '',
+          chatId: chatId,
+          receiverId: receiverId,
+        ),
+      );
     } catch (e) {
       log('Error sending message: $e');
       emit(MessageErrorState());

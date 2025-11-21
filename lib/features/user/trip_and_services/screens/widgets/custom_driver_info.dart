@@ -57,10 +57,8 @@ class _CustomDriverInfoState extends State<CustomDriverInfo> {
                   widget.trip?.isService == 1
                       ? ImageAssets.service
                       : ImageAssets.trip,
-
                   height: 30.sp,
                   width: 30.sp,
-
                   // imageColor: AppColors.secondPrimary,
                 ),
               ),
@@ -87,20 +85,27 @@ class _CustomDriverInfoState extends State<CustomDriverInfo> {
                       ? "accept_service".tr()
                       : "accept_trip".tr(),
                   height: 40.h,
+
                   fontSize: 14.sp,
 
                   onPressed: () {
-                    warningDialog(
-                      context,
-                      title: "are_you_sure_you_want_to_accept_trip".tr(),
-                      onPressedOk: () {
-                        cubit.updateTripStatus(
-                          id: widget.trip?.id ?? 0,
-                          step: TripStep.isUserAccept,
-                          context: context,
-                        );
-                      },
-                    );
+                    widget.trip?.isService == 1
+                        ? cubit.updateTripStatus(
+                            id: widget.trip?.id ?? 0,
+                            step: TripStep.isUserAccept,
+                            context: context,
+                          )
+                        : warningDialog(
+                            context,
+                            title: "are_you_sure_you_want_to_accept_trip".tr(),
+                            onPressedOk: () {
+                              cubit.updateTripStatus(
+                                id: widget.trip?.id ?? 0,
+                                step: TripStep.isUserAccept,
+                                context: context,
+                              );
+                            },
+                          );
                   },
                 ),
               ),
@@ -124,6 +129,13 @@ class _CustomDriverInfoState extends State<CustomDriverInfo> {
                       widget.trip?.isDriverArrived == 0,
                   //
                   onPressed: () {
+                    widget.trip?.isService == 1
+                        ? cubit.updateTripStatus(
+                            id: widget.trip?.id ?? 0,
+                            step: TripStep.isUserStartTrip,
+                            context: context,
+                          )
+                        :
                     warningDialog(
                       context,
                       title: "are_you_sure_you_want_to_start_trip".tr(),
@@ -173,23 +185,22 @@ class _CustomDriverInfoState extends State<CustomDriverInfo> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // !widget.isCancelable
-            //     ? SizedBox()
-            //     :
-            Flexible(
-              flex: 3,
-              child: CustomButton(
-                title: widget.trip?.isService == 1
-                    ? "cancel_service".tr()
-                    : "cancel_trip".tr(),
-                onPressed: widget.onTapToCancelTrip,
-                height: 40.h,
-                fontSize: 14.sp,
-                btnColor: AppColors.red,
-                textColor: AppColors.white,
+            if (widget.trip?.isUserStartTrip == 0) ...[
+              Flexible(
+                flex: 3,
+                child: CustomButton(
+                  title: widget.trip?.isService == 1
+                      ? "cancel_service".tr()
+                      : "cancel_trip".tr(),
+                  onPressed: widget.onTapToCancelTrip,
+                  height: 40.h,
+                  fontSize: 14.sp,
+                  btnColor: AppColors.red,
+                  textColor: AppColors.white,
+                ),
               ),
-            ),
-            10.h.horizontalSpace,
+              10.h.horizontalSpace,
+            ],
             Flexible(
               flex: 2,
               child: Center(

@@ -148,8 +148,9 @@ class NotificationService {
       /// Check if the message is from a chat room
       final roomId = message.data['reference_id']?.toString();
 
-      if (MessageStateManager().isInChatRoom("0") &&
-          message.data['reference_table'] == "chat_rooms") {
+      if (
+      MessageStateManager().isInChatRoom("0") &&
+      message.data['reference_table'] == "chat_rooms") {
         log("Already in chat room $roomId - skipping notification");
         return;
       }
@@ -305,7 +306,8 @@ class NotificationService {
                   Routes.messageRoute,
                   arguments: MainUserAndRoomChatModel(
                     chatId: message['reference_id'].toString(),
-                    driverId: message['user_id'].toString(),
+                    driverId: message['driver_id'].toString(),
+                    receiverId: message['driver_id'].toString(),
                     isDriver: false,
                     isNotification: false,
                     title: message['user_name'].toString(),
@@ -317,7 +319,8 @@ class NotificationService {
                   Routes.messageRoute,
                   arguments: MainUserAndRoomChatModel(
                     chatId: message['reference_id'].toString(),
-                    driverId: message['user_id'].toString(),
+                    driverId: message['driver_id'].toString(),
+                    receiverId: message['user_id'].toString() ,
                     isDriver: true,
                     isNotification: false,
                     title: message['user_name'].toString(),
