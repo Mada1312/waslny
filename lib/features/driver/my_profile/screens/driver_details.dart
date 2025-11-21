@@ -362,7 +362,7 @@ class _DriverDetailsScreenState extends State<DriverDetailsScreen> {
                   child: Padding(
                     padding: const EdgeInsetsDirectional.only(start: 8.0),
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           (review.user ?? 'مستخدم'), // من الموديل

@@ -98,35 +98,37 @@ class _MyAppState extends State<MyApp> {
         onGenerateRoute: AppRoutes.onGenerateRoute,
         routes: {
           '/': (context) => initialMessageRcieved != null
-              ? initialMessageRcieved?.data['reference_table'] == "shipments"
-                    ?
-                      //  initialMessageRcieved?.data['user_type'].toString() == "0"
-                      //       ? UserShipmentDetailsScreen(
-                      //           args: UserShipmentDetailsArgs(
-                      //             shipmentId:
-                      //                 initialMessageRcieved?.data['reference_id']
-                      //                     .toString() ??
-                      //                 "",
-                      //             isFromNotification: true,
-                      //           ),
-                      //         )
-                      //       :
-                      // is driver
-                      // initialMessageRcieved?.data['is_current'].toString() ==
-                      //         "1"
-                      //     ?
-                      MainScreen(isDriver: true)
-                    // :
-                    //  DriverShipmentDetailsScreen(
-                    //     args: DriverSHipmentsArgs(
-                    //       shipmentId:
-                    //           initialMessageRcieved?.data['reference_id']
-                    //               .toString() ??
-                    //           "",
-                    //       isNotification: true,
-                    //     ),
-                    //   )
-                    : (initialMessageRcieved?.data['reference_table'] ==
+              ?
+              //  initialMessageRcieved?.data['reference_table'] == "shipments"
+              //       ?
+              //         //  initialMessageRcieved?.data['user_type'].toString() == "0"
+              //         //       ? UserShipmentDetailsScreen(
+              //         //           args: UserShipmentDetailsArgs(
+              //         //             shipmentId:
+              //         //                 initialMessageRcieved?.data['reference_id']
+              //         //                     .toString() ??
+              //         //                 "",
+              //         //             isFromNotification: true,
+              //         //           ),
+              //         //         )
+              //         //       :
+              //         // is driver
+              //         // initialMessageRcieved?.data['is_current'].toString() ==
+              //         //         "1"
+              //         //     ?
+              //         MainScreen(isDriver: true)
+              //       // :
+              //       //  DriverShipmentDetailsScreen(
+              //       //     args: DriverSHipmentsArgs(
+              //       //       shipmentId:
+              //       //           initialMessageRcieved?.data['reference_id']
+              //       //               .toString() ??
+              //       //           "",
+              //       //       isNotification: true,
+              //       //     ),
+              //       //   )
+              //       :
+                     (initialMessageRcieved?.data['reference_table'] ==
                           "chat_rooms")
                     ? MessageScreen(
                         model: MainUserAndRoomChatModel(
@@ -138,6 +140,8 @@ class _MyAppState extends State<MyApp> {
                               ? initialMessageRcieved?.data['user_id']
                                     .toString()
                               : initialMessageRcieved?.data['user_id']
+                                    .toString(),
+                                    tripId : initialMessageRcieved?.data['trip_id']
                                     .toString(),
                           isDriver: ['user_type'].toString() == "1",
                           isNotification: true,

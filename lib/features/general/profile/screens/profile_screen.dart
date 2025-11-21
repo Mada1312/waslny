@@ -59,8 +59,8 @@ class ProfileScreen extends StatelessWidget {
                               ),
                             ),
                           ),
-                          PositionedDirectional(
-                            start: 16.w,
+                          Positioned(
+                            right: 16.w,
                             top: 20.h,
                             child: isDriver
                                 ? GestureDetector(
