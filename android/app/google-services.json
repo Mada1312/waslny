@@ -7,6 +7,25 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:529666208195:android:c262d799c7649fcb370d76",
+        "android_client_info": {
+          "package_name": "com.asom.wasalny"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCITWm0_AGYS-uMSYGZmYY-a3awu6dypdk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:529666208195:android:eaaade554675ccee370d76",
         "android_client_info": {
           "package_name": "net.octopusteam.waslny"

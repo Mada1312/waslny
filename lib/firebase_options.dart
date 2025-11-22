@@ -51,7 +51,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyCITWm0_AGYS-uMSYGZmYY-a3awu6dypdk',
-    appId: '1:529666208195:android:eaaade554675ccee370d76',
+    appId: '1:529666208195:android:c262d799c7649fcb370d76',
     messagingSenderId: '529666208195',
     projectId: 'waslny-da16f',
     storageBucket: 'waslny-da16f.firebasestorage.app',
@@ -59,11 +59,11 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyB3cuZEKVzlXiTLpqHDTvygmSdL9tWJ160',
-    appId: '1:529666208195:ios:94e4d7304ba3c522370d76',
+    appId: '1:529666208195:ios:b0fff636580f32b2370d76',
     messagingSenderId: '529666208195',
     projectId: 'waslny-da16f',
     storageBucket: 'waslny-da16f.firebasestorage.app',
-    iosBundleId: 'net.octopusteam.waslny',
+    iosBundleId: 'com.asom.wasalny',
   );
 
 }
