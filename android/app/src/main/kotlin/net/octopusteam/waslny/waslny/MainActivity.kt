@@ -1,4 +1,4 @@
-package net.octopusteam.waslny
+package com.asom.wasalny
 
 import io.flutter.embedding.android.FlutterActivity
 

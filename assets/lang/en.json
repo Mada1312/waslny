@@ -1,5 +1,5 @@
 {
-    "app_name": "Waslny",
+    "app_name": "Wasalny",
     "hi": "Hello",
     "loading": "Loading",
     "choose": "Choose",
@@ -129,7 +129,7 @@
     "enter_valid_number": "Eenter a valid number",
     "enter_valid_egyptian_number": "Please enter a valid phone number without 0",
     "change_langauge": "Change Language",
-    "------------------------------------": "-------------------Waslny----------------------",
+    "------------------------------------": "-------------------Wasalny----------------------",
     "Male": "Male",
     "Female": "Female",
     "type": "Gender",
