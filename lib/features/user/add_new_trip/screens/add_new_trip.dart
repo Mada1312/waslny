@@ -1,3 +1,4 @@
+import 'package:flutter_meta_sdk/flutter_meta_sdk.dart';
 import 'package:waslny/core/exports.dart';
 import 'package:waslny/core/utils/general_enum.dart';
 import 'package:waslny/core/widgets/custom_divider.dart';
@@ -37,78 +38,10 @@ class _AddNewTripScreenState extends State<AddNewTripScreen> {
     cubit2.clearRouteData();
     cubit.clearTripData();
     cubit.gettMainLastestLocation((widget.args?.isService ?? false));
-    // final shipment = widget.args?.shipment;
-
-    // _initializeCountries(cubit, shipment);
-    // _initializeTruckTypes(cubit, shipment);
-
-    // if (shipment != null) {
-    //   _populateControllers(cubit, shipment);
-    // }
   }
 
-  // void _initializeCountries(AddNewTripCubit cubit, UserShipmentData? shipment) {
-  //   if (cubit.allCountries == null) {
-  //     cubit.getCountriesAndTruckType(false).then((_) {
-  //       _assignToCountry(cubit, shipment);
-  //     });
-  //   } else {
-  //     _assignToCountry(cubit, shipment);
-  //   }
-  // }
-
-  // void _initializeTruckTypes(
-  //   AddNewTripCubit cubit,
-  //   UserShipmentData? shipment,
-  // ) {
-  //   if (cubit.allTruckType == null) {
-  //     cubit.getCountriesAndTruckType(true).then((_) {
-  //       _assignTruckType(cubit, shipment);
-  //     });
-  //   } else {
-  //     _assignTruckType(cubit, shipment);
-  //   }
-  // }
-
-  // void _assignToCountry(AddNewTripCubit cubit, UserShipmentData? shipment) {
-  //   if (shipment == null) return;
-
-  //   final countries = cubit.allCountries?.data;
-  //   if (countries != null && countries.isNotEmpty) {
-  //     for (var country in countries) {
-  //       if (country.id == shipment.to?.id) {
-  //         cubit.toCountry = country;
-  //         break;
-  //       }
-  //     }
-  //   }
-  // }
-
-  // void _assignTruckType(AddNewTripCubit cubit, UserShipmentData? shipment) {
-  //   if (shipment == null) return;
-
-  //   final truckTypes = cubit.allTruckType?.data;
-  //   if (truckTypes != null && truckTypes.isNotEmpty) {
-  //     for (var type in truckTypes) {
-  //       if (type.id == shipment.truckType?.id) {
-  //         cubit.shipmentType = type;
-  //         break;
-  //       }
-  //     }
-  //   }
-  // }
-
-  // void _populateControllers(AddNewTripCubit cubit, UserShipmentData shipment) {
-  //   cubit.fromAddressController.text = shipment.from ?? '';
-  //   cubit.descriptionController.text = shipment.description ?? '';
-  //   cubit.shipmentTypeController.text = shipment.goodsType ?? '';
-  //   cubit.selectedTimeController.text = shipment.shipmentDateTime ?? '';
-  //   cubit.toQtyController.text = shipment.toSize?.toString() ?? '';
-  //   cubit.fromQtyController.text = shipment.fromSize?.toString() ?? '';
-  // }
-
   var formKey = GlobalKey<FormState>();
-  // static final metaSdk = FlutterMetaSdk();
+  static final metaSdk = FlutterMetaSdk();
 
   @override
   Widget build(BuildContext context) {
@@ -169,7 +102,7 @@ class _AddNewTripScreenState extends State<AddNewTripScreen> {
                   5.h.verticalSpace,
 
                   ///! Time - Gender - Vehicle
-                  ResponsiveTimeGenderVehicleDropdowns( 
+                  ResponsiveTimeGenderVehicleDropdowns(
                     isService: widget.args?.isService ?? false,
                     selectedGenderType: cubit.selectedGenderType,
                     selectedTimeType: cubit.selectedTimeType,
@@ -368,23 +301,79 @@ class _AddNewTripScreenState extends State<AddNewTripScreen> {
                             cubit.selectedTimeType == TimeType.later) {
                           errorGetBar('time_is_required'.tr());
                         } else {
-                          cubit.addNewTrip(
+                          await cubit.addNewTrip(
                             context,
                             isService: widget.args?.isService ?? false,
                           );
-                          // await metaSdk.logEvent(
-                          //   name: 'add_new_shipment',
-                          //   parameters: {
-                          //     'from': cubit.fromAddressController.text,
-                          //     'to': cubit.toCountry?.name ?? '',
-                          //     'shipment_type': cubit.shipmentType?.name ?? '',
-                          //     'from_qty': cubit.fromQtyController.text,
-                          //     'to_qty': cubit.toQtyController.text,
-                          //     'goods_type': cubit.shipmentTypeController.text,
-                          //     'loading_time': cubit.selectedTimeController.text,
-                          //     'description': cubit.descriptionController.text,
-                          //   },
-                          // );
+                          await metaSdk.logEvent(
+                            name: 'add_trip',
+                            parameters: {
+                              "trip_type": widget.args?.isService == true
+                                  ? 'service'
+                                  : 'trip',
+                              'from': cubit.fromAddressController.text,
+                              'to': cubit.toAddressController.text,
+                              'description': cubit.descriptionController.text,
+
+                              if (((widget.args?.isService ?? false) == true) ==
+                                      false &&
+                                  cubit.distance != null)
+                                "distance": ((cubit.distance ?? 0) / 1000),
+                              if (cubit.fromSelectedLocation?.latitude != null)
+                                "from_lat":
+                                    cubit.fromSelectedLocation?.latitude,
+                              if (cubit.fromSelectedLocation?.longitude != null)
+                                "from_long":
+                                    cubit.fromSelectedLocation?.longitude,
+
+                              if (((widget.args?.isService ?? false) == true) ==
+                                  false)
+                                "to": cubit.selectedServiceTo?.name,
+                              if (cubit.toSelectedLocation?.latitude != null &&
+                                  ((widget.args?.isService ?? false) == true) ==
+                                      false)
+                                "to_lat": cubit.toSelectedLocation?.latitude,
+                              if (cubit.toSelectedLocation?.latitude != null &&
+                                  ((widget.args?.isService ?? false) == true) ==
+                                      false)
+                                "to_long": cubit.toSelectedLocation?.latitude,
+
+                              "prefer_driver_gender":
+                                  cubit.selectedGenderType?.name,
+                              "vehicle_type": cubit.selectedVehicleType?.name,
+
+                              "type":
+                                  (cubit.selectedTimeType?.name ==
+                                      TimeType.later.name)
+                                  ? "later"
+                                  : "now",
+                              if (cubit.selectedTimeType?.name ==
+                                  TimeType.later.name)
+                                "schedule_time":
+                                    cubit.selectedTimeType?.name ==
+                                        TimeType.later.name
+                                    ? DateFormat(
+                                        'yyyy-MM-dd HH:mm:ss',
+                                        'en',
+                                      ).format(
+                                        DateTime(
+                                          cubit.selectedDate!.year,
+                                          cubit.selectedDate!.month,
+                                          cubit.selectedDate!.day,
+                                          cubit.selectedTime!.hour,
+                                          cubit.selectedTime!.minute,
+                                        ),
+                                      )
+                                    : null,
+
+                              "is_service": widget.args?.isService ?? false
+                                  ? "1"
+                                  : "0",
+                              if ((widget.args?.isService ?? false) == true)
+                                "service_to": cubit.selectedServiceTo?.name
+                                    .toString(),
+                            },
+                          );
                         }
                       }
                     },

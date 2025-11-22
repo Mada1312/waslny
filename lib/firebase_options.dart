@@ -63,7 +63,6 @@ class DefaultFirebaseOptions {
     messagingSenderId: '529666208195',
     projectId: 'waslny-da16f',
     storageBucket: 'waslny-da16f.firebasestorage.app',
-    iosBundleId: 'com.asom.wasalny',
+    iosBundleId: 'com.asom.waslny',
   );
-
 }

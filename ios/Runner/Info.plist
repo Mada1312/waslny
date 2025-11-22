@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Wasalny</string>
+	<string>Waslny</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -13,8 +13,24 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>wasalny</string>
-	
+	<string>Waslny</string>
+	<key>CFBundleURLTypes</key>
+<array>
+  <dict>
+  <key>CFBundleURLSchemes</key>
+  <array>
+    <string>fb1197661808922095</string>
+  </array>
+  </dict>
+</array>
+<key>FacebookAppID</key>
+<string>1197661808922095</string>
+<key>FacebookClientToken</key>
+<string>0957ca9c3911a92cdd14a7167cd0e489</string>
+<key>FacebookDisplayName</key>
+<string>Waslny</string>
+
+
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>

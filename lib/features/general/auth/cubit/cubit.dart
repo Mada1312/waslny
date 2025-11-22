@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:flutter_meta_sdk/flutter_meta_sdk.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:waslny/core/utils/general_enum.dart';
 import 'package:waslny/features/driver/home/cubit/cubit.dart';
@@ -32,6 +33,8 @@ class LoginCubit extends Cubit<LoginState> {
   bool acceptTermsAndConditions = false;
   Gender? gender;
   VehicleType? vehicleType;
+  static final metaSdk = FlutterMetaSdk();
+
   onChangeStatus() {
     acceptTermsAndConditions = !acceptTermsAndConditions;
     emit(OnChangeStatusOfLogin());
@@ -234,6 +237,15 @@ class LoginCubit extends Cubit<LoginState> {
             (route) => false,
             arguments: isDriver,
           );
+          metaSdk.logEvent(
+            name: 'user_data',
+            parameters: {
+              'name': nameController.text,
+              'phone': fullPhoneNumber ?? '',
+              'user_type': isDriver ? 'Driver' : 'Customer',
+            },
+          );
+
           clearData();
         } else {
           Navigator.pop(context);

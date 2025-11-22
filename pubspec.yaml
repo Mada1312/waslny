@@ -93,6 +93,7 @@ dependencies:
   flutter_html: ^3.0.0
   rxdart: ^0.28.0
   badges: ^3.1.2
+  flutter_meta_sdk: ^1.0.5
   # flutter_meta_sdk: ^1.0.5
 dev_dependencies:
   flutter_test:
