@@ -1,531 +1,408 @@
-// import 'dart:convert';
-// import 'dart:developer';
-// import 'dart:io';
-// import 'package:waslny/features/general/chat/screens/message_screen.dart';
-// import 'package:firebase_messaging/firebase_messaging.dart';
-// import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-// import '../exports.dart';
-
-// RemoteMessage? initialMessageRcieved;
-
-// class NotificationService {
-//   static final NotificationService _instance = NotificationService._internal();
-
-//   factory NotificationService() => _instance;
-
-//   NotificationService._internal();
-
-//   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
-
-//   final FirebaseMessaging _messaging = FirebaseMessaging.instance;
-
-//   final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
-//       FlutterLocalNotificationsPlugin();
-
-//   int _notificationCounter = 0;
-
-//   Future<void> initialize() async {
-//     await _initializeFirebaseMessaging();
-//     await _initializeLocalNotifications();
-//   }
-
-//   /// **Firebase Messaging Initialization**
-//   Future<void> _initializeFirebaseMessaging() async {
-//     RemoteMessage? initialMessage = await _messaging.getInitialMessage();
-//     if (initialMessage != null) {
-//       initialMessageRcieved = initialMessage;
-//     }
-
-//     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-//     FirebaseMessaging.onMessageOpenedApp.listen((message) {
-//       initialMessageRcieved = message;
-
-//       if (message.data['reference_table'] == "chat_rooms") {
-//         if (message.data['user_type'].toString() == "0") {
-//           // User
-//           navigatorKey.currentState?.pushNamed(
-//             Routes.messageRoute,
-//             arguments: MainUserAndRoomChatModel(
-//               chatId: message.data['reference_id'].toString(),
-//               driverId: message.data['driver_id'].toString(),
-//               receiverId: message.data['driver_id'].toString(),
-//               tripId: message.data['trip_id'].toString(),
-//               isDriver: false,
-//               isNotification: false,
-//               title: message.data['user_name'].toString(),
-//             ),
-//           );
-//         } else {
-//           // Driver
-//           navigatorKey.currentState?.pushNamed(
-//             Routes.messageRoute,
-//             arguments: MainUserAndRoomChatModel(
-//               chatId: message.data['reference_id'].toString(),
-//               driverId: message.data['driver_id'].toString(),
-//               receiverId: message.data['user_id'].toString(),
-//               tripId: message.data['trip_id'].toString(),
-//               isDriver: true,
-//               isNotification: false,
-//               title: message.data['user_name'].toString(),
-//             ),
-//           );
-//         }
-//       }
-//     });
-
-//     NotificationSettings settings = await _messaging.requestPermission(
-//       alert: true,
-//       badge: true,
-//       sound: true,
-//     );
-//     log('User granted permission: ${settings.authorizationStatus}');
-
-//     FirebaseMessaging.onMessage.listen((message) async {
-//       log("Foreground Message Received: ${message.notification?.title}");
-//       log("Message Data: ${message.data}");
-
-//       /// Check if the message is from a chat room
-//       final roomId = message.data['reference_id']?.toString();
-
-//       if (MessageStateManager().isInChatRoom("0")
-//       // &&          message.data['reference_table'] == "chat_rooms"
-//       ) {
-//         log("Already in chat room $roomId - skipping notification");
-//         return;
-//       }
-//       _showLocalNotification(
-//         title: message.notification?.title ?? '',
-//         body: message.notification?.body ?? '',
-//         payload: jsonEncode(message.data), // message.data.toString(),
-//       );
-//     });
-    
-//   }
-
-//   /// **Handles Background Notifications**
-//   @pragma('vm:entry-point')
-//   static Future<void> _firebaseMessagingBackgroundHandler(
-//     RemoteMessage message,
-//   ) async {
-//     log("Background Message Received: ${message.data}");
-//     try {
-//       initialMessageRcieved = message;
-//     } catch (e) {
-//       log("Error starting background location service: $e");
-//     }
-//   }
-
-  
-//   /// **Local Notifications Initialization**
-//   Future<void> _initializeLocalNotifications() async {
-//     const AndroidInitializationSettings androidSettings =
-//         AndroidInitializationSettings('@mipmap/ic_launcher');
-
-//     final DarwinInitializationSettings iosSettings =
-//         DarwinInitializationSettings(
-//           requestAlertPermission: true,
-//           requestBadgePermission: true,
-//           requestSoundPermission: true,
-//         );
-
-//     final InitializationSettings initSettings = InitializationSettings(
-//       android: androidSettings,
-//       iOS: iosSettings,
-//     );
-
-//     await _flutterLocalNotificationsPlugin.initialize(
-//       initSettings,
-
-//       ///! [ON CLIECK LOCAL NOTFICATION]
-//       onDidReceiveNotificationResponse: (details) {
-//         final payload = details.payload;
-
-//         log('Notification payload: $payload userType==>');
-//         log('Notification payload: ${details.payload}');
-//         try {
-//           if (payload != null) {
-//             Map<String, dynamic> message = {};
-//             message = jsonDecode(payload);
-
-//             initialMessageRcieved = RemoteMessage(data: message);
-//             log('Parsed notification payload: $message');
-//             if (message['reference_table'] == "chat_rooms") {
-//               if (message['user_type'].toString() == "0") {
-//                 // User
-//                 navigatorKey.currentState?.pushNamed(
-//                   Routes.messageRoute,
-//                   arguments: MainUserAndRoomChatModel(
-//                     chatId: message['reference_id'].toString(),
-//                     driverId: message['driver_id'].toString(),
-//                     receiverId: message['driver_id'].toString(),
-//                     tripId: message['trip_id'].toString(),
-//                     isDriver: false,
-//                     isNotification: false,
-//                     title: message['user_name'].toString(),
-//                   ),
-//                 );
-//               } else {
-//                 // Driver
-//                 navigatorKey.currentState?.pushNamed(
-//                   Routes.messageRoute,
-//                   arguments: MainUserAndRoomChatModel(
-//                     chatId: message['reference_id'].toString(),
-//                     driverId: message['driver_id'].toString(),
-//                     receiverId: message['user_id'].toString(),
-//                     tripId: message['trip_id'].toString(),
-//                     isDriver: true,
-//                     isNotification: false,
-//                     title: message['user_name'].toString(),
-//                   ),
-//                 );
-//               }
-//             }
-//           }
-//         } catch (e) {
-//           log('Error parsing notification payload: $e');
-//           // navigatorKey.currentState
-//           //     ?.pushNamed(Routes.notificationRoute, );
-//         }
-//       },
-//     );
-
-//     if (Platform.isAndroid) {
-//       await _flutterLocalNotificationsPlugin
-//           .resolvePlatformSpecificImplementation<
-//             AndroidFlutterLocalNotificationsPlugin
-//           >()
-//           ?.requestNotificationsPermission();
-//     }
-
-//     if (Platform.isIOS) {
-//       await _flutterLocalNotificationsPlugin
-//           .resolvePlatformSpecificImplementation<
-//             IOSFlutterLocalNotificationsPlugin
-//           >()
-//           ?.requestPermissions(alert: true, badge: true, sound: true);
-//     }
-//   }
-
-//   AndroidNotificationDetails androidDetails = const AndroidNotificationDetails(
-//     'your_channel_id_waslny',
-//     'your_channel_name_waslny',
-//     channelDescription: 'your_channel_description_waslny',
-//     importance: Importance.max,
-//     priority: Priority.high,
-//     icon: '@mipmap/ic_launcher',
-//     ticker: 'ticker',
-//   );
-
-//   Future<void> _showLocalNotification({
-//     required String title,
-//     required String body,
-//     String? payload,
-//   }) async {
-//     NotificationDetails notificationDetails = NotificationDetails(
-//       android: androidDetails,
-//     );
-
-//     await _flutterLocalNotificationsPlugin.show(
-//       _notificationCounter++,
-//       title,
-//       body,
-//       notificationDetails,
-//       payload: payload,
-//     );
-//   }
-// }
-
-// class MessageStateManager {
-//   static final MessageStateManager _instance = MessageStateManager._internal();
-//   factory MessageStateManager() => _instance;
-//   MessageStateManager._internal();
-
-//   // Track active chat room IDs
-//   final Set<String> _activeChatRoomIds = {};
-
-//   // Methods to update state
-//   void enterChatRoom(String roomId) {
-//     _activeChatRoomIds.add(roomId);
-//     log("Entered chat room: $roomId");
-//   }
-
-//   void leaveChatRoom(String roomId) {
-//     _activeChatRoomIds.remove(roomId);
-//     log("Left chat room: $roomId");
-//   }
-
-//   // Check if we're in a specific chat room
-//   bool isInChatRoom(String? roomId) {
-//     return roomId != null && _activeChatRoomIds.contains(roomId);
-//   }
-// }
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
-import 'package:waslny/features/general/chat/screens/message_screen.dart';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../exports.dart';
+import '../../features/general/chat/screens/message_screen.dart';
+import '../../features/driver/home/cubit/cubit.dart';
+import '../../features/user/home/cubit/cubit.dart';
 
-RemoteMessage? initialMessageRcieved;
+/// ===============================================================
+/// GLOBAL INITIAL MESSAGE
+/// ===============================================================
+RemoteMessage? initialMessageReceived;
 
-/// **Background Message Handler - MUST be top-level function**
+/// ===============================================================
+/// BACKGROUND HANDLER (Top-Level)
+/// ===============================================================
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  log("Background Message Received: ${message.data}");
-  
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await NotificationService.instance.showTripLocalNotification(message);
+
   try {
-    // Store the message data in SharedPreferences for persistence
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('initial_message', jsonEncode(message.data));
-    log("Stored background message data");
   } catch (e) {
-    log("Error storing background message: $e");
+    log('❌ Error saving initial message: $e');
   }
 }
 
-@pragma('vm:entry-point')
+/// ===============================================================
+/// NOTIFICATION SERVICE (Singleton)
+/// ===============================================================
 class NotificationService {
-  static final NotificationService _instance = NotificationService._internal();
-
-  factory NotificationService() => _instance;
-
   NotificationService._internal();
+  static final NotificationService instance = NotificationService._internal();
+
+  final FirebaseMessaging _messaging = FirebaseMessaging.instance;
+  final FlutterLocalNotificationsPlugin _local =
+      FlutterLocalNotificationsPlugin();
 
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
-  final FirebaseMessaging _messaging = FirebaseMessaging.instance;
+  bool _initialized = false;
+  int _idCounter = 0;
 
-  final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
+  static const String _channelId = 'waslni_trip_sound_v3';
 
-  int _notificationCounter = 0;
-
+  /// ===============================================================
+  /// INIT
+  /// ===============================================================
   Future<void> initialize() async {
+    if (_initialized) return;
+    _initialized = true;
+
     await _loadInitialMessage();
-    await _initializeFirebaseMessaging();
-    await _initializeLocalNotifications();
+    await _initLocalNotifications();
+    await _initFirebaseMessaging();
+
+    log('✅ NotificationService initialized');
   }
 
-  /// **Load initial message from SharedPreferences**
+  /// ===============================================================
+  /// LOAD INITIAL MESSAGE
+  /// ===============================================================
   Future<void> _loadInitialMessage() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final storedMessage = prefs.getString('initial_message');
-      
-      if (storedMessage != null) {
-        final messageData = jsonDecode(storedMessage) as Map<String, dynamic>;
-        initialMessageRcieved = RemoteMessage(data: messageData);
-        log("Loaded stored message: $messageData");
-        
-        // Clear the stored message after loading
+      final stored = prefs.getString('initial_message');
+
+      if (stored != null) {
+        initialMessageReceived = RemoteMessage(
+          data: jsonDecode(stored) as Map<String, dynamic>,
+        );
         await prefs.remove('initial_message');
       }
     } catch (e) {
-      log("Error loading initial message: $e");
+      log('❌ Error loading initial message: $e');
     }
   }
 
-  /// **Firebase Messaging Initialization**
-  Future<void> _initializeFirebaseMessaging() async {
-    // Check for message that opened the app from terminated state
-    RemoteMessage? initialMessage = await _messaging.getInitialMessage();
-    if (initialMessage != null) {
-      initialMessageRcieved = initialMessage;
-      log("Got initial message: ${initialMessage.data}");
+  /// ===============================================================
+  /// PUBLIC – GET INITIAL MESSAGE (USED IN app.dart)
+  /// ===============================================================
+  static Future<RemoteMessage?> getInitialMessage() async {
+    if (initialMessageReceived != null) {
+      return initialMessageReceived;
     }
 
-    // Register the background handler
-    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
-    
-    // Handle notification tap when app is in background
-    FirebaseMessaging.onMessageOpenedApp.listen((message) {
-      log("Message opened app: ${message.data}");
-      _handleNotificationNavigation(message.data);
-    });
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final stored = prefs.getString('initial_message');
 
-    // Request permissions
-    NotificationSettings settings = await _messaging.requestPermission(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
-    log('User granted permission: ${settings.authorizationStatus}');
-
-    // Handle foreground messages
-    FirebaseMessaging.onMessage.listen((message) async {
-      log("Foreground Message Received: ${message.notification?.title}");
-      log("Message Data: ${message.data}");
-
-      /// Check if the message is from a chat room
-      final roomId = message.data['reference_id']?.toString();
-
-      if (MessageStateManager().isInChatRoom("0")) {
-      // if (MessageStateManager().isInChatRoom(roomId)) {
-        log("Already in chat room $roomId - skipping notification");
-        return;
+      if (stored != null) {
+        final data = jsonDecode(stored) as Map<String, dynamic>;
+        return RemoteMessage(data: data);
       }
-      
-      _showLocalNotification(
-        title: message.notification?.title ?? '',
-        body: message.notification?.body ?? '',
-        payload: jsonEncode(message.data),
-      );
-    });
+    } catch (e) {
+      log('❌ Error getting initial message: $e');
+    }
+
+    return null;
   }
 
-  /// **Handle notification navigation**
-  void _handleNotificationNavigation(Map<String, dynamic> data) {
-    if (data['reference_table'] == "chat_rooms") {
-      final isDriver = data['user_type'].toString() == "1";
-      
-      navigatorKey.currentState?.pushNamed(
-        Routes.messageRoute,
-        arguments: MainUserAndRoomChatModel(
-          chatId: data['reference_id']?.toString() ?? '',
-          driverId: data['driver_id']?.toString() ?? '',
-          receiverId: isDriver 
-              ? (data['user_id']?.toString() ?? '')
-              : (data['driver_id']?.toString() ?? ''),
-          tripId: data['trip_id']?.toString() ?? '',
-          isDriver: isDriver,
-          isNotification: true,
-          title: data['user_name']?.toString() ?? '',
-        ),
-      );
+  /// ===============================================================
+  /// 🔥 FOREGROUND MESSAGE HANDLER
+  /// ===============================================================
+  void handleForegroundMessage(RemoteMessage message) {
+    final roomId = message.data['reference_id']?.toString();
+    if (MessageStateManager().isInChatRoom(roomId)) return;
+
+    // ✅ Show in-app banner
+    showFCMInAppBanner(message: message);
+
+    // ✅ Refresh relevant screens
+    if (message.data['reference_table'] == 'trips') {
+      refreshHomeData();
     }
   }
 
-  /// **Local Notifications Initialization**
-  Future<void> _initializeLocalNotifications() async {
-    const AndroidInitializationSettings androidSettings =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
+  /// Refresh home data based on user type
+  Future<void> refreshHomeData() async {
+    try {
+      final context = navigatorKey.currentContext;
+      if (context == null) return;
 
-    final DarwinInitializationSettings iosSettings =
-        DarwinInitializationSettings(
-      requestAlertPermission: true,
-      requestBadgePermission: true,
-      requestSoundPermission: true,
+      // ✅ حل أبسط - استخدم shared prefs مباشرة
+      final prefs = await SharedPreferences.getInstance();
+      final userType = prefs.getInt('user_type') ?? 0;
+      final isDriver = userType == 1;
+
+      if (isDriver) {
+        context.read<DriverHomeCubit>().getDriverHomeData(context);
+      } else {
+        context.read<UserHomeCubit>().getHome(context);
+      }
+    } catch (e) {
+      log('❌ Error refreshing home data: $e');
+    }
+  }
+
+  /// ===============================================================
+  /// IN-APP BANNER
+  /// ===============================================================
+  void showFCMInAppBanner({required RemoteMessage message}) {
+    final title =
+        message.notification?.title ?? message.data['title'] ?? 'اشعار جديد';
+    final body =
+        message.notification?.body ?? message.data['body'] ?? 'رسالة جديدة';
+
+    _showInAppBanner(
+      title: title,
+      body: body,
+      onTap: () => _handleNavigation(message.data),
     );
+  }
 
-    final InitializationSettings initSettings = InitializationSettings(
-      android: androidSettings,
-      iOS: iosSettings,
-    );
+  /// ===============================================================
+  /// FIREBASE MESSAGING
+  /// ===============================================================
+  Future<void> _initFirebaseMessaging() async {
+    await _messaging.requestPermission(alert: true, badge: true, sound: true);
 
-    await _flutterLocalNotificationsPlugin.initialize(
-      initSettings,
+    FirebaseMessaging.onMessageOpenedApp.listen((message) {
+      _handleNavigation(message.data);
+    });
+
+    // ✅ Foreground listener هنا (مش في main.dart)
+    FirebaseMessaging.onMessage.listen((message) {
+      handleForegroundMessage(message);
+    });
+  }
+
+  /// ===============================================================
+  /// LOCAL NOTIFICATIONS INIT
+  /// ===============================================================
+  Future<void> _initLocalNotifications() async {
+    const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
+    const iosInit = DarwinInitializationSettings();
+
+    await _local.initialize(
+      const InitializationSettings(android: androidInit, iOS: iosInit),
       onDidReceiveNotificationResponse: (details) {
-        final payload = details.payload;
-        log('Notification tapped with payload: $payload');
-        
-        try {
-          if (payload != null) {
-            Map<String, dynamic> data = jsonDecode(payload);
-            log('Parsed notification payload: $data');
-            
-            // Store for app restart scenario
-            SharedPreferences.getInstance().then((prefs) {
-              prefs.setString('initial_message', payload);
-            });
-            
-            _handleNotificationNavigation(data);
-          }
-        } catch (e) {
-          log('Error parsing notification payload: $e');
+        if (details.payload != null) {
+          _handleNavigation(jsonDecode(details.payload!));
         }
       },
     );
 
     if (Platform.isAndroid) {
-      await _flutterLocalNotificationsPlugin
+      await _local
           .resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>()
-          ?.requestNotificationsPermission();
-    }
-
-    if (Platform.isIOS) {
-      await _flutterLocalNotificationsPlugin
-          .resolvePlatformSpecificImplementation<
-              IOSFlutterLocalNotificationsPlugin>()
-          ?.requestPermissions(alert: true, badge: true, sound: true);
+            AndroidFlutterLocalNotificationsPlugin
+          >()
+          ?.createNotificationChannel(
+            const AndroidNotificationChannel(
+              _channelId,
+              'Trip Requests',
+              description: 'Trip alerts',
+              importance: Importance.max,
+              playSound: true,
+              sound: RawResourceAndroidNotificationSound('ringtone'),
+            ),
+          );
     }
   }
 
-  AndroidNotificationDetails androidDetails = const AndroidNotificationDetails(
-    'your_channel_id_waslny',
-    'your_channel_name_waslny',
-    channelDescription: 'your_channel_description_waslny',
-    importance: Importance.max,
-    priority: Priority.high,
-    icon: '@mipmap/ic_launcher',
-    ticker: 'ticker',
-  );
+  /// ===============================================================
+  /// BACKGROUND / TRIP NOTIFICATION
+  /// ===============================================================
+  Future<void> showTripLocalNotification(RemoteMessage message) async {
+    final title = message.data['title'] ?? '🚗 رحلة جديدة';
+    final body = message.data['body'] ?? 'فيه طلب رحلة جديد';
 
+    await _local.show(
+      DateTime.now().millisecondsSinceEpoch ~/ 1000,
+      title,
+      body,
+      _notificationDetails(),
+      payload: jsonEncode(message.data),
+    );
+  }
+
+  /// ===============================================================
+  /// LOCAL NOTIFICATION
+  /// ===============================================================
   Future<void> _showLocalNotification({
     required String title,
     required String body,
-    String? payload,
   }) async {
-    NotificationDetails notificationDetails = NotificationDetails(
-      android: androidDetails,
-      iOS: const DarwinNotificationDetails(
-        presentAlert: true,
-        presentBadge: true,
-        presentSound: true,
+    await _local.show(_idCounter++, title, body, _notificationDetails());
+  }
+
+  NotificationDetails _notificationDetails() {
+    return const NotificationDetails(
+      android: AndroidNotificationDetails(
+        _channelId,
+        'Trip Requests',
+        importance: Importance.max,
+        priority: Priority.high,
+        playSound: true,
+        sound: RawResourceAndroidNotificationSound('ringtone'),
+      ),
+      iOS: DarwinNotificationDetails(presentSound: true),
+    );
+  }
+
+  /// ===============================================================
+  /// IN-APP BANNER WIDGET
+  /// ===============================================================
+  void _showInAppBanner({
+    required String title,
+    required String body,
+    required VoidCallback onTap,
+  }) {
+    final overlay = navigatorKey.currentState?.overlay;
+    if (overlay == null) return;
+
+    late OverlayEntry entry;
+
+    entry = OverlayEntry(
+      builder: (_) => _TopBannerWidget(
+        title: title,
+        body: body,
+        onTap: () {
+          entry.remove();
+          onTap();
+        },
+        onClose: () => entry.remove(),
       ),
     );
 
-    await _flutterLocalNotificationsPlugin.show(
-      _notificationCounter++,
-      title,
-      body,
-      notificationDetails,
-      payload: payload,
-    );
+    overlay.insert(entry);
+
+    Timer(const Duration(seconds: 4), () {
+      if (entry.mounted) entry.remove();
+    });
   }
 
-  /// **Get initial message for routing**
-  static Future<RemoteMessage?> getInitialMessage() async {
-    if (initialMessageRcieved != null) {
-      return initialMessageRcieved;
+  /// ===============================================================
+  /// NAVIGATION
+  /// ===============================================================
+  void _handleNavigation(Map<String, dynamic> data) {
+    if (data['reference_table'] == 'chat_rooms') {
+      navigatorKey.currentState?.pushNamed(
+        Routes.messageRoute,
+        arguments: MainUserAndRoomChatModel(
+          chatId: data['reference_id'] ?? '',
+          driverId: data['driver_id'] ?? '',
+          receiverId: data['user_id'] ?? '',
+          tripId: data['trip_id'] ?? '',
+          isDriver: data['user_type'] == '1',
+          isNotification: true,
+          title: data['user_name'] ?? '',
+        ),
+      );
     }
-    
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final storedMessage = prefs.getString('initial_message');
-      
-      if (storedMessage != null) {
-        final messageData = jsonDecode(storedMessage) as Map<String, dynamic>;
-        return RemoteMessage(data: messageData);
-      }
-    } catch (e) {
-      log("Error getting initial message: $e");
-    }
-    
-    return null;
   }
 }
 
+/// ===============================================================
+/// IN-APP BANNER WIDGET
+/// ===============================================================
+class _TopBannerWidget extends StatelessWidget {
+  final String title;
+  final String body;
+  final VoidCallback onTap;
+  final VoidCallback onClose;
+
+  const _TopBannerWidget({
+    required this.title,
+    required this.body,
+    required this.onTap,
+    required this.onClose,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Align(
+        alignment: Alignment.topCenter,
+        child: Material(
+          color: Colors.transparent,
+          child: GestureDetector(
+            onTap: onTap,
+            child: Container(
+              margin: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(.95),
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          body,
+                          style: const TextStyle(color: Colors.white70),
+                        ),
+                      ],
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: onClose,
+                    icon: const Icon(Icons.close, color: Colors.white70),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// ===============================================================
+/// CHAT ROOM STATE MANAGER
+/// ===============================================================
 class MessageStateManager {
   static final MessageStateManager _instance = MessageStateManager._internal();
-  factory MessageStateManager() => _instance;
+
+  factory MessageStateManager() {
+    return _instance;
+  }
+
   MessageStateManager._internal();
 
-  final Set<String> _activeChatRoomIds = {};
+  /// chat rooms المفتوحة حاليًا
+  final Set<String> _activeChatRooms = {};
 
-  void enterChatRoom(String roomId) {
-    _activeChatRoomIds.add(roomId);
-    log("Entered chat room: $roomId");
+  /// عند الدخول لغرفة شات
+  void enterChatRoom(String chatId) {
+    _activeChatRooms.add(chatId);
+    log('🟢 Entered chat room: $chatId');
   }
 
-  void leaveChatRoom(String roomId) {
-    _activeChatRoomIds.remove(roomId);
-    log("Left chat room: $roomId");
+  /// عند الخروج من غرفة الشات
+  void leaveChatRoom(String chatId) {
+    _activeChatRooms.remove(chatId);
+    log('🔴 Left chat room: $chatId');
   }
 
-  bool isInChatRoom(String? roomId) {
-    return roomId != null && _activeChatRoomIds.contains(roomId);
+  /// هل المستخدم حاليًا داخل غرفة معينة؟
+  bool isInChatRoom(String? chatId) {
+    if (chatId == null) return false;
+    return _activeChatRooms.contains(chatId);
   }
 }

@@ -1,16 +1,8 @@
-import 'dart:async';
-import 'dart:developer' show log;
 import 'dart:ui';
-
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:waslny/core/exports.dart';
-import 'package:waslny/features/driver/home/data/models/driver_home_model.dart';
 import 'package:waslny/features/driver/home/screens/widgets/custom_current_trip_widget.dart';
-import 'package:waslny/features/general/chat/screens/message_screen.dart';
-import 'package:waslny/features/general/location/cubit/location_cubit.dart';
 import 'package:waslny/features/general/profile/screens/profile_screen.dart';
-
 import '../cubit/cubit.dart';
 import '../cubit/state.dart';
 
@@ -21,25 +13,16 @@ class DriverHomeScreen extends StatefulWidget {
 }
 
 class _DriverHomeScreenState extends State<DriverHomeScreen> {
-  StreamSubscription? _fcmSubscription;
-
   @override
   void initState() {
     super.initState();
 
+    // ✅ بس كده - NotificationService هتتعامل مع FCM
     context.read<DriverHomeCubit>().getDriverHomeData(context);
-
-    _fcmSubscription = FirebaseMessaging.onMessage.listen((message) async {
-      if (!mounted) return;
-      if (message.data['reference_table'] == "trips") {
-        context.read<DriverHomeCubit>().getDriverHomeData(context);
-      }
-    });
   }
 
   @override
   void dispose() {
-    _fcmSubscription?.cancel();
     super.dispose();
   }
 
@@ -83,6 +66,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
     );
   }
 }
+
 class DriverHomeUI extends StatelessWidget {
   const DriverHomeUI({super.key});
 
@@ -149,7 +133,6 @@ class DriverHomeUI extends StatelessWidget {
                                         ],
                                       ),
                                       padding: EdgeInsets.symmetric(
-                                        // vertical: 8.h,
                                         horizontal: 15.w,
                                       ),
                                       child: Row(
@@ -169,7 +152,6 @@ class DriverHomeUI extends StatelessWidget {
                                               ),
                                             ),
                                           ),
-
                                           state is LoadingChangeOnlineStatusState
                                               ? CircularProgressIndicator(
                                                   color:
@@ -183,10 +165,8 @@ class DriverHomeUI extends StatelessWidget {
                                                           ?.user
                                                           ?.isActive ==
                                                       1,
-
                                                   activeTrackColor:
                                                       AppColors.secondPrimary,
-
                                                   inactiveThumbColor:
                                                       AppColors.white,
                                                   thumbColor: AppColors.primary,
@@ -251,13 +231,11 @@ class DriverHomeUI extends StatelessWidget {
                             ),
                           ),
                         ),
-
                         if (cubit.homeModel?.data?.user?.isActive == 1 &&
                             cubit.homeModel?.data?.currentTrip != null)
                           Spacer(),
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 20.w),
-
                           child: IntrinsicHeight(
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -306,7 +284,6 @@ class DriverHomeUI extends StatelessWidget {
                                                       ?.currentTrip
                                                       ?.type ??
                                                   "",
-                                              // "scheduled".tr(),
                                               maxLines: 1,
                                               overflow: TextOverflow.ellipsis,
                                               style: getBoldStyle(
@@ -314,7 +291,6 @@ class DriverHomeUI extends StatelessWidget {
                                               ),
                                             ),
                                           ),
-
                                           Row(
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
@@ -336,7 +312,6 @@ class DriverHomeUI extends StatelessWidget {
                                               ),
                                             ],
                                           ),
-
                                           Row(
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
@@ -362,9 +337,7 @@ class DriverHomeUI extends StatelessWidget {
                                       ),
                                     ),
                                   ),
-
                                 12.w.horizontalSpace,
-
                                 GestureDetector(
                                   onTap: () {
                                     Navigator.pushNamed(

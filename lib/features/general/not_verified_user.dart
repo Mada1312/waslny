@@ -47,16 +47,13 @@ class _NotVerifiedUserScreenState extends State<NotVerifiedUserScreen> {
 
   Future<void> _onWhatsAppClick(BuildContext context) async {
     if (widget.isDriver) {
-      await context.read<DriverHomeCubit>().getDriverHomeData(
-        context,
-        isVerify: true,
-      );
+      await context.read<DriverHomeCubit>().getDriverHomeData(context);
       if (context.read<DriverHomeCubit>().homeModel?.data?.isWebhookVerified ==
           0) {
         await _launchWhatsApp(context);
       }
     } else {
-      await context.read<UserHomeCubit>().getHome(context, isVerify: true);
+      await context.read<UserHomeCubit>().getHome(context);
       if (context.read<UserHomeCubit>().homeModel?.data?.isWebhookVerified ==
           0) {
         await _launchWhatsApp(context);
@@ -115,6 +112,7 @@ class _NotVerifiedUserScreenState extends State<NotVerifiedUserScreen> {
     _countdownTimer?.cancel();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(

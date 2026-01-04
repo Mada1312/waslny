@@ -17,14 +17,16 @@ import '../data/repo.dart';
 import 'state.dart';
 
 class DriverHomeCubit extends Cubit<DriverHomeState> {
-  DriverHomeCubit(this.api) : super(DriverHomeInitial()) {
-    // _checkServiceStatus();
-    // _listenToServiceUpdates();
-  }
+  DriverHomeCubit(this.api) : super(DriverHomeInitial());
 
   DriverHomeRepo api;
   bool isDataVerifided = false;
   GetDriverHomeModel? homeModel;
+
+  // ================== Polling ==================
+  Timer? _idlePollingTimer;
+  static const Duration _idlePollingInterval = Duration(seconds: 5);
+
   Future<void> getDriverHomeData(
     BuildContext context, {
     bool? isVerify = false,
@@ -57,14 +59,152 @@ class DriverHomeCubit extends Cubit<DriverHomeState> {
             },
           );
         }
-        // }
-        // }
 
         emit(DriverHomeLoaded());
+
+        // ✅ ابدأ الـ polling دايمًا
+        _startIdlePolling();
       });
     } catch (e) {
       log("Error in getDriverHomeData: $e");
       emit(DriverHomeError());
+    }
+  }
+
+  /*============================================================================*/
+  /*                           SMART POLLING                                   */
+  /*============================================================================*/
+  void _startIdlePolling() {
+    // ✅ شرط: ميعملش polling غير لما الكابتن يكون متصل (isActive == 1)
+    if (homeModel?.data?.user?.isActive != 1) {
+      log('⏹️ Polling not started: Driver is offline (isActive != 1)');
+      _stopIdlePolling();
+      return;
+    }
+
+    // ✅ لو الـ polling يعمل بالفعل → لا تبدأ واحد جديد
+    if (_idlePollingTimer != null) {
+      log('✅ Polling already running');
+      return;
+    }
+
+    log('🔄 Starting Polling... (Driver is online)');
+
+    _idlePollingTimer = Timer.periodic(_idlePollingInterval, (_) async {
+      try {
+        // ✅ تحقق من الحالة قبل كل polling
+        if (homeModel?.data?.user?.isActive != 1) {
+          log('⏹️ Polling stopped: Driver went offline');
+          _stopIdlePolling();
+          return;
+        }
+
+        final result = await api.getHome();
+        result.fold(
+          (failure) {
+            log("⚠️ Polling error: API failed");
+          },
+          (data) {
+            try {
+              // ✅ قارن البيانات بشكل مفصّل
+              if (_isSameTripData(
+                homeModel?.data?.currentTrip,
+                data.data?.currentTrip,
+              )) {
+                log('📊 Polling: No changes detected');
+                return;
+              }
+
+              // ✅ إذا كانت هناك تغييرات → حدّث البيانات
+              homeModel = data;
+              emit(DriverHomeLoaded());
+
+              log(
+                '✅ بيانات محدّثة: trip = ${data.data?.currentTrip?.id ?? "none"}, status = ${data.data?.currentTrip?.status ?? "none"}',
+              );
+            } catch (e) {
+              log('⚠️ Error in polling comparison: $e');
+              homeModel = data;
+              emit(DriverHomeLoaded());
+            }
+          },
+        );
+      } catch (e) {
+        log("❌ Polling error: $e");
+      }
+    });
+  }
+
+  /*============================================================================*/
+  /*                    COMPARE TRIP DATA (SMART)                              */
+  /*============================================================================*/
+  bool _isSameTripData(DriverTripModel? oldTrip, DriverTripModel? newTrip) {
+    // لو كلاهما null = نفس
+    if (oldTrip == null && newTrip == null) return true;
+
+    // لو واحد null والآخر لا = مختلف
+    if (oldTrip == null || newTrip == null) return false;
+
+    try {
+      // ✅ قارن الـ properties الأساسية والمهمة
+      return oldTrip.id == newTrip.id &&
+          oldTrip.status == newTrip.status &&
+          oldTrip.statusName == newTrip.statusName &&
+          oldTrip.isDriverArrived == newTrip.isDriverArrived &&
+          oldTrip.isUserStartTrip == newTrip.isUserStartTrip &&
+          oldTrip.isDriverStartTrip == newTrip.isDriverStartTrip &&
+          oldTrip.isUserAccept == newTrip.isUserAccept &&
+          oldTrip.isDriverAccept == newTrip.isDriverAccept &&
+          oldTrip.isUserChangeCaptain == newTrip.isUserChangeCaptain &&
+          oldTrip.isDriverAnotherTrip == newTrip.isDriverAnotherTrip;
+    } catch (e) {
+      log('❌ Error comparing trips: $e');
+      return false;
+    }
+  }
+
+  /*============================================================================*/
+  /*                         STOP POLLING                                      */
+  /*============================================================================*/
+  void _stopIdlePolling() {
+    if (_idlePollingTimer != null) {
+      _idlePollingTimer?.cancel();
+      _idlePollingTimer = null;
+      log('⏹️ Polling stopped');
+    }
+  }
+
+  /*============================================================================*/
+  /*                   SILENT REFRESH (بدون loading dialog)                    */
+  /*============================================================================*/
+  Future<void> getDriverHomeDataSilent() async {
+    try {
+      final result = await api.getHome();
+      result.fold(
+        (failure) {
+          log("⚠️ Silent refresh failed");
+        },
+        (data) {
+          if (data.status == 200 || data.status == 201) {
+            homeModel = data;
+            emit(DriverHomeLoaded());
+
+            // ✅ لو صار متصل → ابدأ polling
+            if (homeModel?.data?.user?.isActive == 1) {
+              log('✅ Driver is now online - starting polling');
+              _startIdlePolling();
+            } else {
+              // ✅ لو صار offline → توقف polling
+              log('🔴 Driver is now offline - stopping polling');
+              _stopIdlePolling();
+            }
+
+            log('✅ Silent refresh: isActive = ${data.data?.user?.isActive}');
+          }
+        },
+      );
+    } catch (e) {
+      log("Error in getDriverHomeDataSilent: $e");
     }
   }
 
@@ -78,14 +218,15 @@ class DriverHomeCubit extends Cubit<DriverHomeState> {
       final response = await api.startTrip(id: tripId);
       response.fold(
         (failure) {
-          Navigator.pop(context); // Close the progress dialog
+          Navigator.pop(context);
           emit(UpdateTripStatusErrorState());
         },
         (response) {
-          Navigator.pop(context); // Close the progress dialog
+          Navigator.pop(context);
           if (response.status == 200 || response.status == 201) {
             emit(UpdateTripStatusSuccessState());
             successGetBar(response.msg ?? "Trip started successfully");
+            _stopIdlePolling();
             getDriverHomeData(context);
           } else {
             errorGetBar(response.msg ?? "Failed to start trip");
@@ -108,15 +249,16 @@ class DriverHomeCubit extends Cubit<DriverHomeState> {
       final response = await api.endTrip(id: tripId);
       response.fold(
         (failure) {
-          Navigator.pop(context); // Close the progress dialog
+          Navigator.pop(context);
           emit(UpdateTripStatusErrorState());
         },
         (response) {
-          Navigator.pop(context); // Close the progress dialog
+          Navigator.pop(context);
           if (response.status == 200 || response.status == 201) {
             emit(UpdateTripStatusSuccessState());
             successGetBar(response.msg ?? "Trip ended successfully");
             Navigator.pushNamed(context, Routes.mainRoute, arguments: true);
+            _stopIdlePolling();
             getDriverHomeData(context);
           } else {
             errorGetBar(response.msg ?? "Failed to end trip");
@@ -139,15 +281,16 @@ class DriverHomeCubit extends Cubit<DriverHomeState> {
       final response = await api.cancleTrip(id: tripId);
       response.fold(
         (failure) {
-          Navigator.pop(context); // Close the progress dialog
+          Navigator.pop(context);
           emit(UpdateTripStatusErrorState());
         },
         (response) {
-          Navigator.pop(context); // Close the progress dialog
+          Navigator.pop(context);
           if (response.status == 200 || response.status == 201) {
             emit(UpdateTripStatusSuccessState());
             successGetBar(response.msg ?? "Trip cancelled successfully");
             Navigator.pushNamed(context, Routes.mainRoute, arguments: true);
+            _stopIdlePolling();
             getDriverHomeData(context);
           } else {
             errorGetBar(response.msg ?? "Failed to cancel trip");
@@ -163,7 +306,8 @@ class DriverHomeCubit extends Cubit<DriverHomeState> {
   Future<void> updateTripStatus({
     required TripStep step,
     required int id,
-    required BuildContext context,  String? receiverId,
+    required BuildContext context,
+    String? receiverId,
     String? chatId,
   }) async {
     if (step == TripStep.isDriverArrived) {
@@ -201,11 +345,13 @@ class DriverHomeCubit extends Cubit<DriverHomeState> {
             emit(UpdateTripStatusSuccessState());
             successGetBar(response.msg ?? "Trip cancelled successfully");
 
+            _stopIdlePolling();
             getDriverHomeData(context);
-               if (step == TripStep.isDriverArrived) {
-             context.read<ChatCubit>(). sendMessage(
+
+            if (step == TripStep.isDriverArrived) {
+              context.read<ChatCubit>().sendMessage(
                 isDriverArrived: true,
-                chatId: chatId??"",
+                chatId: chatId ?? "",
                 receiverId: receiverId,
               );
             }
@@ -230,10 +376,24 @@ class DriverHomeCubit extends Cubit<DriverHomeState> {
       },
       (s) {
         if (s.status == 200) {
+          // ✅ Toggle الحالة محلياً
           homeModel?.data?.user?.isActive =
               (homeModel?.data?.user?.isActive == 1) ? 0 : 1;
+
           successGetBar(s.msg);
           emit(ChangeOnlineStatusState());
+
+          // ✅ ابدأ/توقف polling بناءً على الحالة الجديدة
+          if (homeModel?.data?.user?.isActive == 1) {
+            log('✅ Driver is now online - starting polling');
+            _startIdlePolling();
+          } else {
+            log('🔴 Driver went offline - stopping polling');
+            _stopIdlePolling();
+          }
+
+          // ✅ احصل على البيانات الجديدة من الـ server (بدون dialog)
+          getDriverHomeDataSilent();
         } else {
           emit(ErrorChangeOnlineStatusState());
         }
@@ -310,10 +470,8 @@ class DriverHomeCubit extends Cubit<DriverHomeState> {
   }
 
   Future<File?> compressImage(String path, {int quality = 70}) async {
-    // Get the system's temporary directory to store the output file
     final dir = await getTemporaryDirectory();
 
-    // Create a unique target path for the compressed file
     final targetPath =
         '${dir.absolute.path}/COMPRESSED_${DateTime.now().millisecondsSinceEpoch}.jpg';
     try {
@@ -334,7 +492,6 @@ class DriverHomeCubit extends Cubit<DriverHomeState> {
     return null;
   }
 
-  /// 2. Updated File Picker Method
   Future<void> pickImage(DriverDataImages imageType, bool isCamera) async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(
@@ -344,15 +501,10 @@ class DriverHomeCubit extends Cubit<DriverHomeState> {
     if (pickedFile != null) {
       final originalPath = pickedFile.path;
 
-      // Step 1: Attempt to compress the picked file
       final compressedFile = await compressImage(originalPath, quality: 70);
 
-      // Step 2: Decide which file to use
-      final fileToSet =
-          compressedFile ??
-          File(originalPath); // Use compressed, fallback to original
+      final fileToSet = compressedFile ?? File(originalPath);
 
-      // Step 3: Set the file and update state
       setImageFile(imageType, fileToSet);
     }
   }
@@ -438,6 +590,12 @@ class DriverHomeCubit extends Cubit<DriverHomeState> {
       log("Error in completeShipment: $e");
       emit(UploadDriverDataErrorState());
     }
+  }
+
+  @override
+  Future<void> close() {
+    _stopIdlePolling();
+    return super.close();
   }
 }
 

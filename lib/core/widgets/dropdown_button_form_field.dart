@@ -15,6 +15,7 @@ class CustomDropdownButtonFormField<T> extends StatelessWidget {
   final String? hintText;
   final Color? fillColor;
   final double? borderRadius;
+
   const CustomDropdownButtonFormField({
     super.key,
     required this.items,
@@ -64,7 +65,10 @@ class CustomDropdownButtonFormField<T> extends StatelessWidget {
             borderRadius: BorderRadius.all(
               Radius.circular(borderRadius ?? 10.r),
             ),
-            icon: Container(),
+            icon: Icon(
+              Icons.keyboard_arrow_down,
+              color: Colors.black, // ✅ لون السهم
+            ),
             value: value,
             menuMaxHeight: 300.h,
             validator: isRequired
@@ -128,11 +132,12 @@ class CustomDropdownButtonFormField<T> extends StatelessWidget {
                 padding: EdgeInsets.only(right: 8.w),
                 child: Icon(
                   Icons.keyboard_arrow_down,
-                  color: AppColors.secondPrimary,
+                  color: Colors.black, // ✅ لون السهم
                 ),
               ),
             ),
-            style: getMediumStyle(color: AppColors.black, fontSize: 14.sp),
+            // ✅ غيّر دي لـ Colors.black
+            style: getMediumStyle(color: Colors.black, fontSize: 14.sp),
             items: items.map((T item) {
               return DropdownMenuItem<T>(
                 value: item,
@@ -140,13 +145,13 @@ class CustomDropdownButtonFormField<T> extends StatelessWidget {
                   itemBuilder(item),
                   maxLines: 1,
                   style: getMediumStyle(
-                    color: AppColors.black,
+                    color: Colors.black, // ✅ لون النص الأسود
                     fontSize: 14.sp,
                   ),
                 ),
               );
             }).toList(),
-            dropdownColor: fillColor ?? AppColors.second2Primary,
+            dropdownColor: Colors.white, // ✅ خلفية القائمة بيضاء
             onChanged: onChanged,
           ),
         ),

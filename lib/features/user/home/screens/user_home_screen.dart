@@ -20,24 +20,16 @@ class UserHomeScreen extends StatefulWidget {
 }
 
 class _UserHomeScreenState extends State<UserHomeScreen> {
-  StreamSubscription? _fcmSubscription;
-
   @override
   void initState() {
     super.initState();
 
     context.read<UserHomeCubit>().getHome(context);
-    _fcmSubscription = FirebaseMessaging.onMessage.listen((message) async {
-      if (!mounted) return;
-      if (message.data['reference_table'] == "trips") {
-        context.read<UserHomeCubit>().getHome(context);
-      }
-    });
+    // ✅ NotificationService هتتعامل مع FCM
   }
 
   @override
   void dispose() {
-    _fcmSubscription?.cancel();
     super.dispose();
   }
 
@@ -62,7 +54,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                       right: getHorizontalPadding(context),
                     ),
                     child: CustomUserInfo(),
-                  ), //! done
+                  ),
                   10.h.verticalSpace,
                   Padding(
                     padding: EdgeInsets.only(
@@ -91,7 +83,6 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                             image: AppIcons.addServiceIcon,
                             title: "add_service".tr(),
                             onTap: () {
-                              //!
                               Navigator.pushNamed(
                                 context,
                                 Routes.addNewTripRoute,
@@ -122,9 +113,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                         children: [
                           Row(
                             mainAxisAlignment: MainAxisAlignment.end,
-
                             children: [
-                              //! change to dropdown with types ENUM
                               Expanded(
                                 child:
                                     CustomDropdownButtonFormField<ServicesType>(
@@ -132,16 +121,12 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                       itemBuilder: (item) => item.displayValue,
                                       value: cubit.serviceType,
                                       fillColor: AppColors.second3Primary,
-
-                                      onChanged: (value) {
-                                        setState(() {
-                                          cubit.serviceType = value;
-                                          cubit.getHome(context);
-                                        });
+                                      onChanged: (value) async {
+                                        cubit.serviceType = value!;
+                                        await cubit.getHome(context);
                                       },
                                     ),
                               ),
-
                               Expanded(
                                 child: InkWell(
                                   onTap: () {
@@ -214,6 +199,9 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                         ),
                                       )
                                     : ListView.separated(
+                                        key: ValueKey(
+                                          '${cubit.serviceType?.name}_${cubit.homeModel?.data?.trips?.length}_${cubit.homeModel?.data?.services?.length}',
+                                        ),
                                         shrinkWrap: true,
                                         padding: EdgeInsets.only(
                                           bottom:
@@ -241,7 +229,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                                     : cubit
                                                           .homeModel!
                                                           .data!
-                                                          .services?[index],
+                                                          .services![index],
                                               ),
                                             ),
                                         separatorBuilder: (context, index) =>

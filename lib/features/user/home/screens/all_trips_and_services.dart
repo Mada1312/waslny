@@ -20,7 +20,6 @@ class _AllTripsScreenRouteState extends State<AllTripsScreenRoute> {
         var cubit = context.read<UserHomeCubit>();
         return Scaffold(
           appBar: AppBar(title: Text('all'.tr())),
-
           body: Column(
             children: [
               Flexible(
@@ -28,7 +27,6 @@ class _AllTripsScreenRouteState extends State<AllTripsScreenRoute> {
                   width: context.w,
                   padding: EdgeInsets.only(
                     left: getHorizontalPadding(context),
-
                     right: getHorizontalPadding(context),
                   ),
                   margin: EdgeInsets.only(top: 8),
@@ -41,7 +39,6 @@ class _AllTripsScreenRouteState extends State<AllTripsScreenRoute> {
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-
                     children: [
                       SizedBox(
                         width: context.w / 2,
@@ -50,16 +47,14 @@ class _AllTripsScreenRouteState extends State<AllTripsScreenRoute> {
                           itemBuilder: (item) => item.displayValue,
                           value: cubit.serviceType,
                           fillColor: AppColors.second3Primary,
-
                           onChanged: (value) {
                             setState(() {
-                              cubit.serviceType = value;
+                              cubit.serviceType = value ?? ServicesType.trips;
                               cubit.getHome(context);
                             });
                           },
                         ),
                       ),
-
                       Flexible(
                         child: SingleChildScrollView(
                           physics: const AlwaysScrollableScrollPhysics(),

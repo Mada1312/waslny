@@ -1,15 +1,12 @@
 // import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:waslny/core/exports.dart';
 import 'package:waslny/core/utils/general_enum.dart';
-import 'package:waslny/core/widgets/custom_divider.dart';
 import 'package:waslny/extention.dart';
 import 'package:waslny/features/general/profile/cubit/cubit.dart';
 import 'package:waslny/features/general/profile/cubit/state.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:waslny/features/user/home/cubit/cubit.dart';
 import 'package:waslny/features/user/home/cubit/state.dart';
-
-import '../../../../core/utils/call_method.dart';
 
 class UserFavTripsAndServices extends StatefulWidget {
   const UserFavTripsAndServices({super.key});
@@ -23,7 +20,6 @@ class _UserFavTripsAndServicesState extends State<UserFavTripsAndServices> {
   @override
   void initState() {
     context.read<ProfileCubit>().getMainFavUserTripsAndServices(context);
-
     super.initState();
   }
 
@@ -45,14 +41,13 @@ class _UserFavTripsAndServicesState extends State<UserFavTripsAndServices> {
                       width: context.w / 2,
                       child: CustomDropdownButtonFormField<ServicesType>(
                         items: ServicesType.values,
-
                         itemBuilder: (item) => item.displayValue,
                         value: context.read<UserHomeCubit>().serviceType,
                         fillColor: AppColors.second2Primary,
-
                         onChanged: (value) {
                           setState(() {
-                            context.read<UserHomeCubit>().serviceType = value;
+                            context.read<UserHomeCubit>().serviceType =
+                                value ?? ServicesType.trips;
                             cubit.getMainFavUserTripsAndServices(context);
                           });
                         },
@@ -105,7 +100,6 @@ class _UserFavTripsAndServicesState extends State<UserFavTripsAndServices> {
                                       ServicesType.trips.name)
                                   ? cubit.mainFavModel?.data!.trips!.length
                                   : cubit.mainFavModel?.data!.services!.length,
-
                               itemBuilder: (context, index) {
                                 var trip =
                                     ((context
@@ -123,7 +117,6 @@ class _UserFavTripsAndServicesState extends State<UserFavTripsAndServices> {
                                   padding: EdgeInsets.all(5.w),
                                   decoration: BoxDecoration(
                                     color: AppColors.second2Primary,
-
                                     borderRadius: BorderRadius.circular(10.r),
                                   ),
                                   child: SizedBox(
@@ -142,7 +135,6 @@ class _UserFavTripsAndServicesState extends State<UserFavTripsAndServices> {
                                             fontweight: FontWeight.w600,
                                           ),
                                         ),
-
                                         Text(
                                           trip.serviceToName != null
                                               ? trip.serviceToName ?? ''
@@ -152,7 +144,6 @@ class _UserFavTripsAndServicesState extends State<UserFavTripsAndServices> {
                                           ),
                                         ),
                                         10.h.verticalSpace,
-
                                         Row(
                                           children: [
                                             10.h.horizontalSpace,
@@ -165,10 +156,8 @@ class _UserFavTripsAndServicesState extends State<UserFavTripsAndServices> {
                                                     controller: cubit
                                                         .selectedDateTimeController,
                                                     isSchedule: false,
-
                                                     context,
                                                     btnOkText: 'confirm'.tr(),
-
                                                     title: 'sure_to_make_trip'
                                                         .tr(),
                                                     onPressedOk: () {
@@ -206,7 +195,6 @@ class _UserFavTripsAndServicesState extends State<UserFavTripsAndServices> {
                                                     },
                                                     context,
                                                     btnOkText: 'confirm'.tr(),
-
                                                     title:
                                                         'sure_to_make_schedule_trip'
                                                             .tr(),
@@ -226,14 +214,12 @@ class _UserFavTripsAndServicesState extends State<UserFavTripsAndServices> {
                                               ),
                                             ),
                                             5.h.horizontalSpace,
-
                                             InkWell(
                                               onTap: () {
                                                 if (trip.isFav == true) {
                                                   warningDialog(
                                                     context,
                                                     btnOkText: 'delete'.tr(),
-
                                                     title: 'remove_from_fav'
                                                         .tr(),
                                                     onPressedOk: () {
@@ -245,14 +231,12 @@ class _UserFavTripsAndServicesState extends State<UserFavTripsAndServices> {
                                                     },
                                                   );
                                                 }
-                                                //! remove form fav
                                               },
                                               child: Container(
                                                 padding: EdgeInsets.all(5),
                                                 decoration: BoxDecoration(
                                                   color:
                                                       AppColors.secondPrimary,
-
                                                   borderRadius:
                                                       BorderRadius.circular(
                                                         10.r,

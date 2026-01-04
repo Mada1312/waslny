@@ -230,7 +230,7 @@ class LoginCubit extends Cubit<LoginState> {
         emit(LoadedLoginState());
         if (r.status == 200) {
           await Preferences.instance.setUser(r);
-          await successGetBar(r.msg);
+          successGetBar(r.msg);
           Navigator.pushNamedAndRemoveUntil(
             context,
             Routes.mainRoute,

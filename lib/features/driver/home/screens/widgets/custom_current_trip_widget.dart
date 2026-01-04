@@ -204,7 +204,7 @@ class CustomsSheduledTripWidet extends StatelessWidget {
                   ],
                   if (trip?.status == 1 &&
                       trip?.isDriverAccept == 1 &&
-                     ( trip?.isDriverArrived == 1 || trip?.isService == 1)) ...[
+                      (trip?.isDriverArrived == 1 || trip?.isService == 1)) ...[
                     Flexible(
                       child: CustomButton(
                         title: trip?.isService == 1

@@ -24,11 +24,12 @@ class ChatCubit extends Cubit<ChatState> {
   ChatCubit(this.chatRepo) : super(ChatInitial());
   ChatRepo chatRepo;
 
-  //! Firebase
-
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   TextEditingController messageController = TextEditingController();
   List<MessageModel> messages = [];
+
+  StreamSubscription? _messagesSubscription;
+
   Future<String?> _getCurrentUserId() async {
     try {
       final userModel = await Preferences.instance.getUserModel();
@@ -37,53 +38,67 @@ class ChatCubit extends Cubit<ChatState> {
       log('Error getting current user ID: $e');
       return null;
     }
-  } /*
-  void listenForMessages(String chatId) {
-    emit(LoadingGetNewMessagteState());
-    _firestore
-        .collection('rooms')
-        .doc(chatId)
-        .collection('messages')
-        .orderBy('time', descending: true)
-        .snapshots()
-        .listen((snapshot) {
-          messages = snapshot.docs
-              .map((doc) => MessageModel.fromJson(doc.data()))
-              .toList();
-          log('messages length : ${messages.length}');
-          emit(ChatLoaded(messages));
-        });
-  }
-*/
-
-  void listenForMessages(String chatId) {
-    emit(LoadingGetNewMessagteState());
-    _firestore
-        .collection('rooms')
-        .doc(chatId)
-        .collection('messages')
-        .orderBy('time', descending: true)
-        .snapshots()
-        .listen((snapshot) {
-          messages = snapshot.docs
-              .map((doc) => MessageModel.fromJson(doc.data()))
-              .toList();
-          log('messages length : ${messages.length}');
-          emit(ChatLoaded(messages));
-        })
-        .onError((e) {
-          log('Error listening to messages: $e');
-          // يمكنك إصدار حالة خطأ هنا
-        });
   }
 
-  //!
-  // --- 2. إرسال رسالة (تم تعديلها لإضافة حقل 'readBy') ---
+  /// 🟢 Guard function: التحقق من صحة chatId
+  bool _isValidChatId(String? chatId) {
+    return chatId != null && chatId.trim().isNotEmpty;
+  }
+
+  /// 🟢 استمع للرسائل مع حماية كاملة
+  void listenForMessages(String? chatId) {
+    if (!_isValidChatId(chatId)) {
+      log('⚠️  listenForMessages skipped: invalid chatId = "$chatId"');
+      emit(MessageErrorState());
+      return;
+    }
+
+    emit(LoadingGetNewMessagteState());
+
+    _messagesSubscription?.cancel();
+
+    try {
+      _messagesSubscription = _firestore
+          .collection('rooms')
+          .doc(chatId!)
+          .collection('messages')
+          .orderBy('time', descending: true)
+          .snapshots()
+          .listen(
+            (snapshot) {
+              try {
+                messages = snapshot.docs
+                    .map((doc) => MessageModel.fromJson(doc.data()))
+                    .toList();
+                log('✅ Messages loaded: ${messages.length}');
+                emit(ChatLoaded(messages));
+              } catch (e) {
+                log('❌ Error processing messages: $e');
+                emit(MessageErrorState());
+              }
+            },
+            onError: (e) {
+              log('❌ Error listening to messages: $e');
+              emit(MessageErrorState());
+            },
+          );
+    } catch (e) {
+      log('❌ Error in listenForMessages: $e');
+      emit(MessageErrorState());
+    }
+  }
+
+  /// 🟢 إرسال الرسالة مع حماية كاملة
   Future<void> sendMessage({
-    required String chatId,
+    required String? chatId,
     required String? receiverId,
     bool isDriverArrived = false,
   }) async {
+    if (!_isValidChatId(chatId)) {
+      log('⚠️  sendMessage skipped: invalid chatId = "$chatId"');
+      return;
+    }
+
     final currentUserId = await _getCurrentUserId();
 
     if (currentUserId == null ||
@@ -92,16 +107,14 @@ class ChatCubit extends Cubit<ChatState> {
     }
 
     try {
-      // Create a new document reference
       final messageRef = _firestore
           .collection('rooms')
-          .doc(chatId)
+          .doc(chatId!)
           .collection('messages')
           .doc();
 
-      // Create message model
       final message = MessageModel(
-        id: messageRef.id, // Set the ID explicitly
+        id: messageRef.id,
         bodyMessage: isDriverArrived
             ? "i_arrived".tr()
             : messageController.text,
@@ -109,14 +122,13 @@ class ChatCubit extends Cubit<ChatState> {
         senderId: currentUserId,
         receiverId: receiverId,
         time: Timestamp.now(),
-        // 💡 التعديل: المرسل هو أول من قرأ الرسالة
         readBy: [currentUserId],
       );
       messageController.clear();
 
-      // Save to Firestore
       await messageRef.set(message.toJson());
-      print("messageRef.id : ${messageRef.id}");
+      log('✅ Message sent with ID: ${messageRef.id}');
+
       unawaited(
         sentNotification(
           message: message.bodyMessage ?? '',
@@ -125,22 +137,26 @@ class ChatCubit extends Cubit<ChatState> {
         ),
       );
     } catch (e) {
-      log('Error sending message: $e');
+      log('❌ Error sending message: $e');
       emit(MessageErrorState());
     }
   }
 
-  Stream<int> getUnreadMessagesCountStream(String roomId) {
-    // 💡 نستخدم switchMap من rxdart للتعامل مع الـ Future قبل الـ Stream
-    // يجب أن يكون الـ import موجودًا لكي يعمل الـ switchMap
+  /// 🟢 عد الرسائل غير المقروءة مع حماية
+  Stream<int> getUnreadMessagesCountStream(String? roomId) {
+    if (!_isValidChatId(roomId)) {
+      log('⚠️  getUnreadMessagesCountStream skipped: invalid roomId');
+      return Stream.value(0);
+    }
+
     return Stream.fromFuture(_getCurrentUserId()).switchMap((currentUserId) {
       if (currentUserId == null) {
-        return Stream.value(0); // لو مفيش ID، رجع صفر
+        return Stream.value(0);
       }
 
       return _firestore
           .collection('rooms')
-          .doc(roomId)
+          .doc(roomId!)
           .collection('messages')
           .snapshots()
           .map((snapshot) {
@@ -159,26 +175,28 @@ class ChatCubit extends Cubit<ChatState> {
             return unreadCount;
           })
           .handleError((error) {
-            log('Error listening to unread count for $roomId: $error');
+            log('❌ Error listening to unread count for $roomId: $error');
             return 0;
           });
     });
   }
 
-  // --- 4. الدالة التي تضع علامة "مقروءة" (عند فتح الشات) ---
-  /// 💡 Method: تحديث حالة الرسائل غير المقروءة إلى "مقروءة"
-  /// يتم استدعاؤها بمجرد فتح المستخدم لشاشة الشات
-  Future<void> markMessagesAsRead(String chatId) async {
+  /// 🟢 تحديث حالة الرسائل غير المقروءة مع حماية
+  Future<void> markMessagesAsRead(String? chatId) async {
+    if (!_isValidChatId(chatId)) {
+      log('⚠️  markMessagesAsRead skipped: invalid chatId');
+      return;
+    }
+
     final currentUserId = await _getCurrentUserId();
     if (currentUserId == null) return;
 
     final messagesRef = _firestore
         .collection('rooms')
-        .doc(chatId)
+        .doc(chatId!)
         .collection('messages');
 
     try {
-      // 1. نجيب الرسائل اللي مبعوته من طرف آخر (SenderId != CurrentUserId)
       final querySnapshot = await messagesRef
           .where('senderId', isNotEqualTo: currentUserId)
           .get();
@@ -190,9 +208,7 @@ class ChatCubit extends Cubit<ChatState> {
         final data = doc.data();
         final List<String> readBy = List<String>.from(data['readBy'] ?? []);
 
-        // لو الـ ID بتاعنا مش موجود في الـ readBy، نعمل تحديث
         if (!readBy.contains(currentUserId)) {
-          // نستخدم FieldValue.arrayUnion عشان نضيف الـ ID بتاعنا
           batch.update(doc.reference, {
             'readBy': FieldValue.arrayUnion([currentUserId]),
           });
@@ -200,119 +216,47 @@ class ChatCubit extends Cubit<ChatState> {
         }
       }
 
-      // 3. ننفذ الـ Batch لو فيه أي تحديثات
       if (needsUpdate) {
         await batch.commit();
-        log(
-          'Batch commit: Messages in $chatId marked as read by $currentUserId',
-        );
+        log('✅ Messages in $chatId marked as read by $currentUserId');
       }
     } catch (e) {
-      log('Error marking messages as read: $e');
+      log('❌ Error marking messages as read: $e');
     }
   }
 
-  //////////!
-  /* Future<void> sendMessage({
-    required String chatId,
+  /// 🟢 إرسال الإشعارات
+  Future<void> sentNotification({
+    required String message,
+    required String? chatId,
     required String? receiverId,
-    bool isDriverArrived = false,
   }) async {
-    if (messageController.text.isEmpty && !isDriverArrived) {
+    if (!_isValidChatId(chatId)) {
+      log('⚠️  sentNotification skipped: invalid chatId');
       return;
     }
+
     try {
-      final userModel = await Preferences.instance.getUserModel();
-      // Create a new document reference
-      final messageRef = _firestore
-          .collection('rooms')
-          .doc(chatId)
-          .collection('messages')
-          .doc();
-
-      // Create message model
-      final message = MessageModel(
-        id: messageRef.id, // Set the ID explicitly
-        bodyMessage: isDriverArrived
-            ? "i_arrived".tr()
-            : messageController.text,
-        chatId: chatId,
-        senderId: userModel.data?.id?.toString(),
-        receiverId: receiverId,
-        time: Timestamp.now(),
+      final res = await chatRepo.sendMessageNotification(
+        message: message,
+        roomToken: chatId!,
+        userId: receiverId,
       );
-      messageController.clear();
 
-      // Save to Firestore
-      await messageRef.set(message.toJson());
-      await sentNotification(
-        message: message.bodyMessage ?? '',
-        chatId: chatId,
-        receiverId: receiverId,
+      res.fold(
+        (l) {
+          log('❌ Error sending notification: $l');
+        },
+        (r) {
+          if (r.status == 200) {
+            log('✅ Notification sent: ${r.msg}');
+          }
+        },
       );
     } catch (e) {
-      log('Error sending message: $e');
-      emit(MessageErrorState());
+      log('❌ Error in sentNotification: $e');
     }
   }
-*/
-  sentNotification({
-    required String message,
-    required String chatId,
-    required String? receiverId,
-  }) async {
-    final res = await chatRepo.sendMessageNotification(
-      message: message,
-      roomToken: chatId,
-      userId: receiverId,
-    );
-
-    res.fold(
-      (l) {
-        log('Error sending message notification: ${l.toString()}');
-      },
-      (r) {
-        if (kDebugMode) {
-          if (r.status == 200) {
-            successGetBar(r.msg);
-          } else {}
-        }
-        log('Message notification sent successfully: ${r.msg}');
-      },
-    );
-  }
-  // Future<void> sendMessage({
-  //   required String chatId,
-  //   required String? receiverId,
-  // }) async {
-  //   try {
-  //     final userModel = await Preferences.instance.getUserModel();
-  //     // Create a new document reference
-  //     final messageRef = _firestore
-  //         .collection('rooms')
-  //         .doc(chatId)
-  //         .collection('messages')
-  //         .doc();
-
-  //     // Create message model
-  //     final message = MessageModel(
-  //       id: messageRef.id, // Set the ID explicitly
-  //       bodyMessage: messageController.text,
-  //       chatId: chatId,
-  //       senderId: userModel.data?.id?.toString(),
-  //       receiverId: receiverId,
-  //       time: Timestamp.now(),
-  //     );
-
-  //     // Save to Firestore
-  //     await messageRef.set(message.toJson());
-
-  //     messageController.clear();
-  //   } catch (e) {
-  //     log('Error sending message: $e');
-  //     emit(MessageErrorState());
-  //   }
-  // }
 
   bool isEmojiVisible = false;
   void toggleEmojiKeyboard() {
@@ -331,33 +275,36 @@ class ChatCubit extends Cubit<ChatState> {
   }
 
   Future<void> deleteMessage({
-    required String chatId,
+    required String? chatId,
     required String messageId,
   }) async {
+    if (!_isValidChatId(chatId)) {
+      log('⚠️  deleteMessage skipped: invalid chatId');
+      return;
+    }
+
     try {
       await _firestore
           .collection('rooms')
-          .doc(chatId)
+          .doc(chatId!)
           .collection('messages')
           .doc(messageId)
           .delete();
 
-      // Update local state
       messages.removeWhere((message) => message.id == messageId);
       emit(ChatLoaded(messages));
     } catch (e) {
-      log('Error deleting message: $e');
+      log('❌ Error deleting message: $e');
       emit(MessageErrorState());
     }
   }
-  //////////!
 
   MainCreateChatRoomModel? createChatRoomModel;
 
   void createChatRoom({String? driverId, String? tripId}) async {
     emit(LoadingCreateChatRoomState());
-    log('xxxxxxxxx ${driverId}');
-    log('xxxxxxxxx ${tripId}');
+    log('Creating chat room - DriverID: $driverId, TripID: $tripId');
+
     final res = await chatRepo.createChatRoom(
       driverId: driverId,
       tripId: tripId,
@@ -365,13 +312,20 @@ class ChatCubit extends Cubit<ChatState> {
 
     res.fold(
       (l) {
+        log('❌ Error creating chat room: $l');
         emit(ErrorCreateChatRoomState());
       },
       (r) async {
-        messages = [];
+        final token = r.data?.roomToken;
+        if (!_isValidChatId(token)) {
+          log('❌ createChatRoom failed: invalid roomToken');
+          emit(ErrorCreateChatRoomState());
+          return;
+        }
 
-        listenForMessages(r.data?.roomToken ?? '');
-        await markMessagesAsRead(r.data?.roomToken ?? '');
+        messages = [];
+        listenForMessages(token);
+        await markMessagesAsRead(token);
 
         createChatRoomModel = r;
         emit(LoadedCreateChatRoomState());
@@ -385,6 +339,7 @@ class ChatCubit extends Cubit<ChatState> {
     final res = await chatRepo.getChatRooms();
     res.fold(
       (l) {
+        log('❌ Error getting chat rooms: $l');
         emit(ErrorCreateChatRoomState());
       },
       (r) {
@@ -429,13 +384,15 @@ class ChatCubit extends Cubit<ChatState> {
       response.fold(
         (failure) {
           Navigator.pop(context);
+          log('❌ Error updating trip status: $failure');
           emit(UpdateTripStatusErrorState());
         },
         (response) {
           Navigator.pop(context);
           if (response.status == 200 || response.status == 201) {
             emit(UpdateTripStatusSuccessState());
-            successGetBar(response.msg ?? "Trip cancelled successfully");
+            successGetBar(response.msg ?? "Trip status updated");
+
             if (isDriver) {
               if (step == TripStep.isDriverAnotherTrip) {
                 Navigator.pushNamedAndRemoveUntil(
@@ -468,20 +425,28 @@ class ChatCubit extends Cubit<ChatState> {
               UserHomeCubit homeCubit = BlocProvider.of<UserHomeCubit>(context);
               homeCubit.getHome(context);
             }
+
             if (step == TripStep.isDriverArrived) {
-              sendMessage(
-                isDriverArrived: true,
-                chatId: chatId ?? "",
-                receiverId: receiverId,
-              );
+              if (_isValidChatId(chatId)) {
+                unawaited(
+                  sendMessage(
+                    isDriverArrived: true,
+                    chatId: chatId,
+                    receiverId: receiverId,
+                  ),
+                );
+              } else {
+                log('⚠️  Skipping arrival message: invalid chatId = "$chatId"');
+              }
             }
           } else {
-            errorGetBar(response.msg ?? "Failed to cancel trip");
+            errorGetBar(response.msg ?? "Failed to update trip");
           }
         },
       );
     } catch (e) {
-      log("Error in cancelShipment: $e");
+      log("❌ Error in updateTripStatus: $e");
+      Navigator.pop(context);
       emit(UpdateTripStatusErrorState());
     }
   }
@@ -496,11 +461,12 @@ class ChatCubit extends Cubit<ChatState> {
       final response = await chatRepo.startTrip(id: tripId);
       response.fold(
         (failure) {
-          Navigator.pop(context); // Close the progress dialog
+          Navigator.pop(context);
+          log('❌ Error starting trip: $failure');
           emit(UpdateTripStatusErrorState());
         },
         (response) {
-          Navigator.pop(context); // Close the progress dialog
+          Navigator.pop(context);
           if (response.status == 200 || response.status == 201) {
             emit(UpdateTripStatusSuccessState());
             successGetBar(response.msg ?? "Trip started successfully");
@@ -512,7 +478,8 @@ class ChatCubit extends Cubit<ChatState> {
         },
       );
     } catch (e) {
-      log("Error in startTrip: $e");
+      log("❌ Error in startTrip: $e");
+      Navigator.pop(context);
       emit(UpdateTripStatusErrorState());
     }
   }
@@ -527,11 +494,12 @@ class ChatCubit extends Cubit<ChatState> {
       final response = await chatRepo.endTrip(id: tripId);
       response.fold(
         (failure) {
-          Navigator.pop(context); // Close the progress dialog
+          Navigator.pop(context);
+          log('❌ Error ending trip: $failure');
           emit(UpdateTripStatusErrorState());
         },
         (response) {
-          Navigator.pop(context); // Close the progress dialog
+          Navigator.pop(context);
           if (response.status == 200 || response.status == 201) {
             emit(UpdateTripStatusSuccessState());
             successGetBar(response.msg ?? "Trip ended successfully");
@@ -542,7 +510,8 @@ class ChatCubit extends Cubit<ChatState> {
         },
       );
     } catch (e) {
-      log("Error in endTrip: $e");
+      log("❌ Error in endTrip: $e");
+      Navigator.pop(context);
       emit(UpdateTripStatusErrorState());
     }
   }
@@ -555,6 +524,7 @@ class ChatCubit extends Cubit<ChatState> {
       final response = await chatRepo.getTripDetails(id: id);
       response.fold(
         (failure) {
+          log('❌ Error getting trip details: $failure');
           emit(GetTripStatusErrorState());
         },
         (response) {
@@ -568,24 +538,26 @@ class ChatCubit extends Cubit<ChatState> {
         },
       );
     } catch (e) {
-      log("Error in cancelShipment: $e");
+      log("❌ Error in getTripDetails: $e");
       emit(GetTripStatusErrorState());
     }
+  }
+
+  @override
+  Future<void> close() {
+    _messagesSubscription?.cancel();
+    messageController.dispose();
+    scrollController.dispose();
+    return super.close();
   }
 }
 
 String extractTimeFromTimestamp(Timestamp timestamp) {
-  // Convert Firestore Timestamp to DateTime
   DateTime dateTime = timestamp.toDate();
-
-  // Create formatter for local timezone (or specify specific zone)
   DateFormat outputFormat = DateFormat('h:mm a');
-
-  // Return formatted time string
   return outputFormat.format(dateTime);
 }
 
-// create enum with trip steps is_user_accept|is_driver_accept|is_driver_arrived|is_user_start_trip|is_driver_start_trip|is_user_change_captain|is_driver_another_trip
 enum TripStep {
   isUserAccept,
   isDriverAccept,

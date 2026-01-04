@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
@@ -15,9 +16,15 @@ class UserHomeCubit extends Cubit<UserHomeState> {
   UserHomeRepo api;
   ServicesType? serviceType = ServicesType.trips;
   GetUserHomeModel? homeModel;
+
   // Rate
   TextEditingController rateCommentController = TextEditingController();
   double rateValue = 3.0;
+
+  // ✅ Polling
+  Timer? _pollingTimer;
+  static const Duration _pollingInterval = Duration(seconds: 5);
+
   Future<void> getHome(BuildContext context, {bool? isVerify = false}) async {
     emit(UserHomeLoading());
     final result = await api.getHome(
@@ -32,6 +39,7 @@ class UserHomeCubit extends Cubit<UserHomeState> {
       homeModel = data;
 
       if (homeModel?.data?.unRatedTripId != null) {
+        _stopPolling(); // ✅ توقف الـ polling لو في تقييم
         rateCommentController.clear();
         rateValue = 0;
         emit(ChangeRateValueState());
@@ -40,9 +48,64 @@ class UserHomeCubit extends Cubit<UserHomeState> {
           btnOkText: 'done'.tr(),
           title: 'reviewing_data'.tr(),
         );
+      } else {
+        _startPolling(context); // ✅ ابدأ polling لو ما في تقييم
       }
       emit(UserHomeLoaded());
     });
+  }
+
+  // ✅ Start Polling
+  void _startPolling(BuildContext context) {
+    if (_pollingTimer != null) return;
+
+    log('🔄 Starting Polling...');
+
+    _pollingTimer = Timer.periodic(_pollingInterval, (_) async {
+      try {
+        final result = await api.getHome(
+          type: serviceType?.name == ServicesType.services.name ? '1' : '0',
+        );
+
+        result.fold(
+          (failure) {
+            log("⚠️ Polling error");
+          },
+          (data) {
+            if (data.status == 200 || data.status == 201) {
+              homeModel = data;
+
+              // لو ظهر تقييم جديد
+              if (homeModel?.data?.unRatedTripId != null) {
+                _stopPolling();
+                rateCommentController.clear();
+                rateValue = 0;
+                emit(ChangeRateValueState());
+                rateTripDialog(
+                  context,
+                  btnOkText: 'done'.tr(),
+                  title: 'reviewing_data'.tr(),
+                );
+              }
+
+              emit(UserHomeLoaded());
+              log('🔄 Home updated (polling)');
+            }
+          },
+        );
+      } catch (e) {
+        log("❌ Polling error: $e");
+      }
+    });
+  }
+
+  // ✅ Stop Polling
+  void _stopPolling() {
+    if (_pollingTimer != null) {
+      _pollingTimer?.cancel();
+      _pollingTimer = null;
+      log('⏹️ Polling stopped');
+    }
   }
 
   void changeRateValue(double value) {
@@ -51,6 +114,7 @@ class UserHomeCubit extends Cubit<UserHomeState> {
   }
 
   Future<void> skipRate() async {
+    _startPolling(null as BuildContext); // ✅ ابدأ polling لما يتخطى التقييم
     await api.skipRate(tripId: homeModel?.data?.unRatedTripId.toString() ?? "");
   }
 
@@ -72,8 +136,12 @@ class UserHomeCubit extends Cubit<UserHomeState> {
           Navigator.pop(context); // Close the progress dialog
 
           if (response.status == 200 || response.status == 201) {
-            Navigator.pop(context); // Close bottom sheet
+            Navigator.pop(context); // Close rating dialog
             emit(AddRateForDriverSuccessState());
+
+            // ✅ ابدأ polling بعد التقييم
+            _startPolling(context);
+
             successGetBar(response.msg ?? "Rate added successfully");
           } else {
             errorGetBar(response.msg ?? "Failed to add rate");
@@ -84,6 +152,14 @@ class UserHomeCubit extends Cubit<UserHomeState> {
       log("Error in addRateForUser: $e");
       emit(AddRateForDriverErrorState());
     }
+  }
+
+  // ✅ Dispose
+  @override
+  Future<void> close() {
+    _stopPolling();
+    rateCommentController.dispose();
+    return super.close();
   }
 }
 
