@@ -7,6 +7,7 @@ import 'package:waslny/features/driver/home/data/models/driver_home_model.dart';
 import 'package:waslny/features/general/chat/cubit/chat_cubit.dart';
 // import 'package:waslny/features/general/chat/screens/message_screen.dart';
 import 'package:waslny/features/general/location/cubit/location_cubit.dart';
+import 'package:waslny/features/general/navigation/navigation_screen.dart';
 import 'package:waslny/features/user/trip_and_services/screens/widgets/call_message.dart';
 
 class CustomsSheduledTripWidet extends StatelessWidget {
@@ -115,24 +116,45 @@ class CustomsSheduledTripWidet extends StatelessWidget {
                       child: CustomButton(
                         title: "accept".tr(),
                         onPressed: () {
-                          trip?.isService == 1
-                              ? cubit.updateTripStatus(
-                                  id: trip?.id ?? 0,
-                                  step: TripStep.isDriverAccept,
-                                  context: context,
-                                )
-                              : warningDialog(
-                                  context,
-                                  title: "are_you_sure_you_want_to_accept_trip"
-                                      .tr(),
-                                  onPressedOk: () {
-                                    cubit.updateTripStatus(
+                          // ✅ لو خدمة → مباشرة يقبل (بدون navigation)
+                          if (trip?.isService == 1) {
+                            cubit.updateTripStatus(
+                              id: trip?.id ?? 0,
+                              step: TripStep.isDriverAccept,
+                              context: context,
+                            );
+                          }
+                          // ✅ لو رحلة عادية → warning dialog + navigation
+                          else {
+                            warningDialog(
+                              context,
+                              title: "are_you_sure_you_want_to_accept_trip"
+                                  .tr(),
+                              onPressedOk: () {
+                                cubit
+                                    .updateTripStatus(
                                       id: trip?.id ?? 0,
                                       step: TripStep.isDriverAccept,
                                       context: context,
-                                    );
-                                  },
-                                );
+                                    )
+                                    .then((_) {
+                                      // ✅ Navigation تفتح **فقط** بعد الـ dialog + API success
+                                      if (trip != null) {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (_) => NavigationScreen(
+                                              currentTrip: trip!,
+                                              mode:
+                                                  NavigationTargetMode.toPickup,
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                    });
+                              },
+                            );
+                          }
                         },
                       ),
                     ),
@@ -150,19 +172,12 @@ class CustomsSheduledTripWidet extends StatelessWidget {
                         textColor: AppColors.primary,
                         isDisabled: trip?.isUserAccept == 0,
                         onPressed: () {
-                          warningDialog(
-                            context,
-                            title: "are_you_sure_you_want_to_confirm_arrival"
-                                .tr(),
-                            onPressedOk: () {
-                              cubit.updateTripStatus(
-                                id: trip?.id ?? 0,
-                                step: TripStep.isDriverArrived,
-                                context: context,
-                                receiverId: trip?.userId.toString(),
-                                chatId: trip?.roomToken,
-                              );
-                            },
+                          cubit.updateTripStatus(
+                            id: trip?.id ?? 0,
+                            step: TripStep.isDriverArrived,
+                            context: context,
+                            receiverId: trip?.userId.toString(),
+                            chatId: trip?.roomToken,
                           );
                         },
                       ),
@@ -180,24 +195,48 @@ class CustomsSheduledTripWidet extends StatelessWidget {
                         isDisabled: trip?.isUserAccept == 0,
                         onPressed: () {
                           trip?.isService == 1
-                              ? cubit.startTrip(
-                                  tripId: trip?.id ?? 0,
-                                  context: context,
-                                )
-                              : warningDialog(
-                                  context,
-                                  title: "are_you_sure_you_want_to_start_trip"
-                                      .tr(),
-                                  onPressedOk: () {
-                                    context.read<DriverHomeCubit>().startTrip(
+                              ? cubit
+                                    .startTrip(
                                       tripId: trip?.id ?? 0,
                                       context: context,
-                                    );
-                                  },
-                                );
+                                    )
+                                    .then((_) {
+                                      // ✅ بعد بدء الخدمة → Navigation للوجهة النهائية
+                                      if (trip != null) {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (_) => NavigationScreen(
+                                              currentTrip: trip!,
+                                              mode: NavigationTargetMode
+                                                  .toDestination, // ✅ للوجهة النهائية
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                    })
+                              : context
+                                    .read<DriverHomeCubit>()
+                                    .startTrip(
+                                      tripId: trip?.id ?? 0,
+                                      context: context,
+                                    )
+                                    .then((_) {
+                                      // ✅ بعد بدء الرحلة العادية → Navigation للوجهة النهائية
+                                      if (trip != null) {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (_) => NavigationScreen(
+                                              currentTrip: trip!,
+                                              mode: NavigationTargetMode
+                                                  .toDestination, // ✅ للوجهة النهائية
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                    });
                         },
-                        // btnColor: AppColors.secondPrimary,
-                        // textColor: AppColors.primary,
                       ),
                     ),
                     10.w.horizontalSpace,
@@ -220,16 +259,9 @@ class CustomsSheduledTripWidet extends StatelessWidget {
                                   tripId: trip?.id ?? 0,
                                   context: context,
                                 )
-                              : warningDialog(
-                                  context,
-                                  title: "are_you_sure_you_want_to_end_trip"
-                                      .tr(),
-                                  onPressedOk: () {
-                                    context.read<DriverHomeCubit>().endTrip(
-                                      tripId: trip?.id ?? 0,
-                                      context: context,
-                                    );
-                                  },
+                              : context.read<DriverHomeCubit>().endTrip(
+                                  tripId: trip?.id ?? 0,
+                                  context: context,
                                 );
                         },
                       ),

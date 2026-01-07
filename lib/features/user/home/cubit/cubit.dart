@@ -4,7 +4,10 @@ import 'dart:developer';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:waslny/core/exports.dart';
+import 'package:waslny/core/notification_services/service/local_notification_service.dart';
 import 'package:waslny/core/utils/general_enum.dart';
+import 'package:waslny/features/driver/home/data/models/driver_home_model.dart';
+import 'package:waslny/features/general/price/pricing_widget.dart';
 import 'package:waslny/features/user/home/data/models/get_home_model.dart';
 
 import '../data/repo.dart';
@@ -24,6 +27,9 @@ class UserHomeCubit extends Cubit<UserHomeState> {
   // ✅ Polling
   Timer? _pollingTimer;
   static const Duration _pollingInterval = Duration(seconds: 5);
+
+  // ✅ Track trip states to detect changes
+  TripAndServiceModel? _lastTrip;
 
   Future<void> getHome(BuildContext context, {bool? isVerify = false}) async {
     emit(UserHomeLoading());
@@ -59,7 +65,7 @@ class UserHomeCubit extends Cubit<UserHomeState> {
   void _startPolling(BuildContext context) {
     if (_pollingTimer != null) return;
 
-    log('🔄 Starting Polling...');
+    log('🔄 Starting Polling for User...');
 
     _pollingTimer = Timer.periodic(_pollingInterval, (_) async {
       try {
@@ -73,7 +79,51 @@ class UserHomeCubit extends Cubit<UserHomeState> {
           },
           (data) {
             if (data.status == 200 || data.status == 201) {
+              // ✅ احصل على الـ trip الأخير (الحالي)
+              final newTrips = serviceType?.name == ServicesType.services.name
+                  ? data.data?.services
+                  : data.data?.trips;
+              final newTrip = newTrips?.isNotEmpty == true
+                  ? newTrips?.first
+                  : null;
+
               homeModel = data;
+
+              // ✅ اكتشف التغييرات وأرسل الإشعارات
+              if (newTrip != null && _lastTrip != null) {
+                _detectTripChangesAndNotify(_lastTrip!, newTrip);
+              }
+
+              // ✅ تحقق من انهاء الرحلة (الرحلة اختفت من القائمة)
+              if (_lastTrip != null && newTrip == null) {
+                log('✨ TRIP COMPLETED');
+                LocalNotificationService.showTripEndedNotification();
+
+                // **هنا تضيف السطور دي بس:**
+                showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (_) => PricingDialog(
+                    trip: _lastTrip as DriverTripModel,
+                    isFemaleDriver: false,
+                    onConfirm: () async {
+                      Navigator.pop(context);
+
+                      rateCommentController.clear();
+                      rateValue = 0;
+                      emit(ChangeRateValueState());
+                      await rateTripDialog(
+                        context,
+                        btnOkText: 'done'.tr(),
+                        title: 'reviewing_data'.tr(),
+                      );
+                    },
+                  ),
+                );
+              }
+
+              // ✅ حدّث الـ last trip
+              _lastTrip = newTrip;
 
               // لو ظهر تقييم جديد
               if (homeModel?.data?.unRatedTripId != null) {
@@ -99,6 +149,46 @@ class UserHomeCubit extends Cubit<UserHomeState> {
     });
   }
 
+  // ✅ Detect trip changes and send notifications
+  void _detectTripChangesAndNotify(
+    TripAndServiceModel oldTrip,
+    TripAndServiceModel newTrip,
+  ) {
+    // ✅ تحقق من تعيين كابتن جديد
+    if ((oldTrip.isDriverAccept ?? 0) != (newTrip.isDriverAccept ?? 0) &&
+        (newTrip.isDriverAccept ?? 0) == 1) {
+      log('🚗 CAPTAIN ASSIGNED');
+      LocalNotificationService.showCaptainAssignedNotification(
+        captainName: newTrip.driver?.name ?? 'الكابتن',
+      );
+    }
+
+    // ✅ تحقق من قبول الكابتن للرحلة
+    if ((oldTrip.isUserAccept ?? 0) != (newTrip.isUserAccept ?? 0) &&
+        (newTrip.isUserAccept ?? 0) == 1) {
+      log('✅ CAPTAIN ACCEPTED TRIP');
+      LocalNotificationService.showCaptainAcceptedNotification(
+        captainName: newTrip.driver?.name ?? 'الكابتن',
+      );
+    }
+
+    // ✅ تحقق من وصول الكابتن
+    if ((oldTrip.isDriverArrived ?? 0) != (newTrip.isDriverArrived ?? 0) &&
+        (newTrip.isDriverArrived ?? 0) == 1) {
+      log('📍 CAPTAIN ARRIVED');
+      LocalNotificationService.showCaptainArrivedNotification(
+        captainName: newTrip.driver?.name ?? 'الكابتن',
+      );
+    }
+
+    // ✅ تحقق من بدء الرحلة
+    if ((oldTrip.isDriverStartTrip ?? 0) != (newTrip.isDriverStartTrip ?? 0) &&
+        (newTrip.isDriverStartTrip ?? 0) == 1) {
+      log('🚗 TRIP STARTED');
+      LocalNotificationService.showTripStartedNotification();
+    }
+  }
+
   // ✅ Stop Polling
   void _stopPolling() {
     if (_pollingTimer != null) {
@@ -113,11 +203,13 @@ class UserHomeCubit extends Cubit<UserHomeState> {
     emit(ChangeRateValueState());
   }
 
-  Future<void> skipRate() async {
-    _startPolling(null as BuildContext); // ✅ ابدأ polling لما يتخطى التقييم
+  // ✅ استقبال Context لتجنب الـ crash
+  Future<void> skipRate(BuildContext context) async {
+    _startPolling(context);
     await api.skipRate(tripId: homeModel?.data?.unRatedTripId.toString() ?? "");
   }
 
+  // ✅ بدون رسايل يدوية - الاعتماد على الـ Polling فقط
   Future<void> addRateForDriver({required BuildContext context}) async {
     AppWidget.createProgressDialog(context, msg: "...");
     emit(AddRateForDriverLoadingState());
@@ -141,10 +233,6 @@ class UserHomeCubit extends Cubit<UserHomeState> {
 
             // ✅ ابدأ polling بعد التقييم
             _startPolling(context);
-
-            successGetBar(response.msg ?? "Rate added successfully");
-          } else {
-            errorGetBar(response.msg ?? "Failed to add rate");
           }
         },
       );
@@ -211,7 +299,8 @@ Future<void> rateTripDialog(
                                   child: GestureDetector(
                                     onTap: () {
                                       Navigator.pop(context);
-                                      cubit.skipRate();
+                                      // ✅ تمرير الـ Context هنا لتجنب الخطأ
+                                      cubit.skipRate(context);
                                     },
                                     child: Icon(
                                       Icons.close,
@@ -225,7 +314,6 @@ Future<void> rateTripDialog(
                                   textAlign: TextAlign.center,
                                   style: getSemiBoldStyle(fontSize: 18.sp),
                                 ),
-
                                 10.verticalSpace,
                                 CustomTextField(
                                   hintText: "write_comment".tr(),

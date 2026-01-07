@@ -4,6 +4,7 @@ import 'package:waslny/core/exports.dart';
 
 import 'package:waslny/core/widgets/network_image.dart';
 import 'package:waslny/features/general/chat/cubit/chat_cubit.dart';
+import 'package:waslny/features/general/navigation/user_tracking_screen.dart';
 import 'package:waslny/features/user/home/data/models/get_home_model.dart';
 import 'package:waslny/features/user/trip_and_services/cubit/cubit.dart';
 
@@ -123,29 +124,36 @@ class _CustomDriverInfoState extends State<CustomDriverInfo> {
                       : "start_trip".tr(),
                   height: 40.h,
                   fontSize: 14.sp,
-
                   isDisabled:
                       widget.trip?.isDriverAccept == 0 ||
                       widget.trip?.isDriverArrived == 0,
-                  //
                   onPressed: () {
-                    widget.trip?.isService == 1
-                        ? cubit.updateTripStatus(
-                            id: widget.trip?.id ?? 0,
-                            step: TripStep.isUserStartTrip,
-                            context: context,
-                          )
-                        : warningDialog(
-                            context,
-                            title: "are_you_sure_you_want_to_start_trip".tr(),
-                            onPressedOk: () {
-                              cubit.updateTripStatus(
-                                id: widget.trip?.id ?? 0,
-                                step: TripStep.isUserStartTrip,
-                                context: context,
-                              );
-                            },
-                          );
+                    // ✅ خادم واحد للحالتين (خدمة أو رحلة عادية)
+                    cubit
+                        .updateTripStatus(
+                          id: widget.trip?.id ?? 0,
+                          step: TripStep.isUserStartTrip,
+                          context: context,
+                        )
+                        .then((_) {
+                          // ✅ بعد النجاح → افتح UserTrackingScreen
+                          if (widget.trip != null) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => UserTrackingScreen(
+                                  trip: widget.trip!,
+                                  mode: NavigationTargetMode
+                                      .toDestination, // ✅ للوجهة النهائية
+                                ),
+                              ),
+                            );
+                          }
+                        })
+                        .catchError((e) {
+                          // ✅ في حالة الفشل - لا تفتح الصفحة
+                          log("Error starting trip: $e");
+                        });
                   },
                 ),
               ),

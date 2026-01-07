@@ -85,7 +85,7 @@ class DriverTripModel {
   Driver? driver;
   Driver? user;
   int? isService;
- String? distance;
+  String? distance;
   DriverTripModel({
     this.id,
     this.driverId,
@@ -191,18 +191,21 @@ class User {
   int? isActive;
   int? isVerified;
   int? isDataUploaded;
+  String? userType; // ✅ أضف هذا السطر
 
-  User({this.isActive, this.isVerified, this.isDataUploaded});
+  User({this.isActive, this.isVerified, this.isDataUploaded, this.userType});
 
   factory User.fromJson(Map<String, dynamic> json) => User(
     isActive: json["is_active"],
     isVerified: json["is_verified"],
     isDataUploaded: json["is_data_uploaded"],
+    userType: json["user_type"]?.toString(),
   );
 
   Map<String, dynamic> toJson() => {
     "is_active": isActive,
     "is_verified": isVerified,
     "is_data_uploaded": isDataUploaded,
+    "user_type": userType,
   };
 }

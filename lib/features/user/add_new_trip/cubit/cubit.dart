@@ -262,5 +262,42 @@ class AddNewTripCubit extends Cubit<AddNewTripState> {
     emit(SuccessSelectedLocationToFields());
   }
 
+  // ✅ الدالة الجديدة لتحديث بيانات الموقع المختار من البحث بالضبط
+  void updateLocationFromSearch({
+    required bool isFromField, // true لـ (From) و false لـ (To)
+    required String searchName, // الاسم المختار من البحث بالضبط
+    required double lat,
+    required double lng,
+  }) {
+    if (isFromField) {
+      fromAddressController.text = searchName; // تحديث النص في الحقل
+      fromSelectedLocation = loc.LocationData.fromMap({
+        "latitude": lat,
+        "longitude": lng,
+      });
+    } else {
+      toAddressController.text = searchName; // تحديث النص في الحقل
+      toSelectedLocation = loc.LocationData.fromMap({
+        "latitude": lat,
+        "longitude": lng,
+      });
+    }
+
+    // حساب المسافة تلقائياً إذا وجد الموقعين
+    if (fromSelectedLocation != null && toSelectedLocation != null) {
+      final distanceInMeters = const Distance().as(
+        LengthUnit.Meter,
+        LatLng(
+          fromSelectedLocation!.latitude!,
+          fromSelectedLocation!.longitude!,
+        ),
+        LatLng(toSelectedLocation!.latitude!, toSelectedLocation!.longitude!),
+      );
+      distance = (distanceInMeters / 1000); // تحويل لكيلومتر
+    }
+
+    emit(SuccessSelectedLocationToFields()); // تحديث الواجهة فوراً
+  }
+
   //! END
 }

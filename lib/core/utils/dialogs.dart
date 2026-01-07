@@ -1,4 +1,5 @@
 import 'package:waslny/core/exports.dart';
+import 'package:waslny/core/notification_services/notification_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:waslny/core/utils/app_globals.dart';
@@ -12,53 +13,58 @@ void _showTopSnackBar({
   Duration duration = const Duration(seconds: 3),
   IconData? icon,
 }) {
-  final messenger = rootMessengerKey.currentState;
-  if (messenger == null) return;
+  try {
+    final context = NotificationService.navigatorKey.currentContext;
 
-  // اقفل أي snackbar مفتوحة
-  messenger.hideCurrentSnackBar();
+    if (context == null) {
+      print("⚠️ Context is null - Cannot show SnackBar");
+      return;
+    }
 
-  // جيب top padding من safe area
-  final topPadding =
-      WidgetsBinding.instance.platformDispatcher.views.first.padding.top /
-      WidgetsBinding.instance.platformDispatcher.views.first.devicePixelRatio;
+    // Hide any existing snackbar
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
-  messenger.showSnackBar(
-    SnackBar(
-      behavior: SnackBarBehavior.floating,
-      elevation: 8,
-      duration: duration,
-      dismissDirection: DismissDirection.up,
-      showCloseIcon: true,
-      closeIconColor: Colors.white,
+    // Get top padding
+    final topPadding = MediaQuery.of(context).padding.top;
 
-      // ✅ تخليها فوق
-      margin: EdgeInsets.only(top: topPadding + 12, left: 12, right: 12),
-
-      backgroundColor: backgroundColor,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      content: Row(
-        children: [
-          if (icon != null) ...[
-            Icon(icon, color: Colors.white, size: 24),
-            const SizedBox(width: 12),
-          ],
-          Expanded(
-            child: Text(
-              message,
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.w600,
-                fontSize: 15,
+    // Show snackbar
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        behavior: SnackBarBehavior.floating,
+        elevation: 8,
+        duration: duration,
+        dismissDirection: DismissDirection.up,
+        showCloseIcon: true,
+        closeIconColor: Colors.white,
+        margin: EdgeInsets.only(top: topPadding + 12, left: 12, right: 12),
+        backgroundColor: backgroundColor,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        content: Row(
+          children: [
+            if (icon != null) ...[
+              Icon(icon, color: Colors.white, size: 24),
+              const SizedBox(width: 12),
+            ],
+            Expanded(
+              child: Text(
+                message,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 15,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
             ),
-          ),
-        ],
+          ],
+        ),
       ),
-    ),
-  );
+    );
+    print("✅ SnackBar shown successfully: $message");
+  } catch (e) {
+    print("❌ Error showing SnackBar: $e");
+  }
 }
 
 /*============================================================================*/
@@ -99,7 +105,6 @@ void messageGetBar(String? message) {
       ? message!.trim()
       : 'done'.tr();
 
-  // ✅ استبدلت AppColors.info بـ AppColors.secondPrimary
   _showTopSnackBar(
     message: msg,
     backgroundColor: AppColors.secondPrimary,

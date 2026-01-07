@@ -1,14 +1,10 @@
-import 'dart:async';
 import 'dart:developer';
-
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:waslny/core/exports.dart';
 import 'package:waslny/core/utils/general_enum.dart';
 import 'package:waslny/core/utils/user_info.dart';
 import 'package:waslny/features/user/add_new_trip/screens/add_new_trip.dart';
 import 'package:waslny/features/user/trip_and_services/screens/widgets/trip_and_service_widget.dart';
-
 import '../cubit/cubit.dart';
 import '../cubit/state.dart';
 

@@ -43,12 +43,12 @@ class MessageScreen extends StatefulWidget {
 
 class _MessageScreenState extends State<MessageScreen> {
   StreamSubscription? _fcmSubscription;
-
   @override
   void initState() {
     super.initState();
     getUserModel();
-    MessageStateManager().enterChatRoom(widget.model.chatId ?? '0');
+    MessageStateManager().enterChatRoom("0");
+    // MessageStateManager().enterChatRoom(widget.model.chatId ?? '');
     log('999999999 ${widget.model.chatId}');
     log('8888888888 ${widget.model.driverId.toString()}');
     log('7777777777 ${widget.model.tripId.toString()}');
@@ -66,10 +66,8 @@ class _MessageScreenState extends State<MessageScreen> {
 
     context.read<ChatCubit>().getTripDetails(id: widget.model.tripId ?? '');
 
-    _fcmSubscription?.cancel();
     _fcmSubscription = FirebaseMessaging.onMessage.listen((message) async {
       if (!mounted) return;
-
       if (message.data['reference_table'] == "trips") {
         context.read<ChatCubit>().getTripDetails(id: widget.model.tripId ?? '');
         if (widget.model.isDriver == true) {
@@ -82,11 +80,11 @@ class _MessageScreenState extends State<MessageScreen> {
   }
 
   @override
-  void dispose() {
+  dispose() {
     super.dispose();
     _fcmSubscription?.cancel();
-    MessageStateManager().leaveChatRoom(widget.model.chatId ?? '0');
-    context.read<ChatCubit>().close();
+
+    MessageStateManager().leaveChatRoom('0');
   }
 
   LoginModel? loginModel;
@@ -115,13 +113,14 @@ class _MessageScreenState extends State<MessageScreen> {
           },
           child: AnnotatedRegion<SystemUiOverlayStyle>(
             value: SystemUiOverlayStyle(
-              statusBarColor: AppColors.white,
+              statusBarColor: AppColors.white, // your custom color
               statusBarIconBrightness: Brightness.dark,
               statusBarBrightness: Brightness.dark,
             ),
             child: SafeArea(
               child: Scaffold(
                 resizeToAvoidBottomInset: true,
+
                 body:
                     (state is LoadingGetNewMessagteState ||
                         state is LoadingCreateChatRoomState)
@@ -140,6 +139,7 @@ class _MessageScreenState extends State<MessageScreen> {
                               children: [
                                 CustomChatHeader(
                                   isDriver: widget.model.isDriver ?? false,
+
                                   isNotification:
                                       widget.model.isNotification ?? false,
                                 ),
@@ -160,12 +160,15 @@ class _MessageScreenState extends State<MessageScreen> {
                                         isSender:
                                             ((loginModel?.data?.id.toString() ==
                                             item.senderId.toString())),
+                                        // image: item.fileUrl,
                                         message: item.bodyMessage ?? '',
                                         time: item.time!,
                                       );
                                     },
                                   ),
+                                  // : Container(),
                                 ),
+                                // Input Field
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: IntrinsicHeight(
@@ -213,6 +216,7 @@ class _MessageScreenState extends State<MessageScreen> {
                                                     cursorWidth: 2.w,
                                                     textInputAction:
                                                         TextInputAction.newline,
+
                                                     controller:
                                                         cubit.messageController,
                                                     decoration: InputDecoration(
@@ -240,6 +244,57 @@ class _MessageScreenState extends State<MessageScreen> {
                                                     ),
                                                   ),
                                                 ),
+
+                                                // IconButton(
+                                                //   onPressed: () {
+                                                //     showModalBottomSheet(
+                                                //       isScrollControlled: true,
+                                                //       context: context,
+                                                //       enableDrag: true,
+                                                //       builder: (context) {
+                                                //         return Container(
+                                                //           width: double.infinity,
+                                                //           child: Column(
+                                                //             mainAxisSize: MainAxisSize.min,
+                                                //             children: [
+                                                //               TextButton(
+                                                //                   onPressed: () {
+                                                //                     cubit.pickImage(
+                                                //                       context,
+                                                //                       isGallery: false,
+                                                //                       chatId: widget.model.chatId ??
+                                                //                           cubit.createChatRoomModel
+                                                //                               ?.data?.uuid ??
+                                                //                           '',
+                                                //                     );
+                                                //                   },
+                                                //                   child: Text('Camera')),
+                                                //               TextButton(
+                                                //                   onPressed: () {
+                                                //                     cubit.pickImage(
+                                                //                       context,
+                                                //                       isGallery: true,
+                                                //                       chatId: widget.model.chatId ??
+                                                //                           cubit.createChatRoomModel
+                                                //                               ?.data?.uuid ??
+                                                //                           '',
+                                                //                     );
+                                                //                   },
+                                                //                   child: Text('Gallary')),
+                                                //             ],
+                                                //           ),
+                                                //         );
+                                                //       },
+                                                //     );
+                                                //   },
+                                                //   icon: Padding(
+                                                //     padding: const EdgeInsets.all(4.0),
+                                                //     child: SvgPicture.asset(
+                                                //       ImageAssets.attachIcon,
+                                                //       color: AppColors.gray,
+                                                //     ),
+                                                //   ),
+                                                // ),
                                               ],
                                             ),
                                           ),
@@ -304,16 +359,18 @@ class _MessageScreenState extends State<MessageScreen> {
   void _showBottomSheet(BuildContext context, ChatCubit cubit) {
     showModalBottomSheet(
       context: context,
-      isScrollControlled: true,
-      barrierColor: Colors.black.withOpacity(0.3),
+      isScrollControlled: true, // Allows the bottom sheet to adjust its height
+      barrierColor: Colors.transparent,
       builder: (BuildContext context) {
-        return Container(
-          height: cubit.isEmojiVisible ? 400.h : 100.h,
+        return Padding(
           padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
+            bottom: MediaQuery.of(
+              context,
+            ).viewInsets.bottom, // Adjust for keyboard
           ),
           child: Column(
-            mainAxisSize: MainAxisSize.min,
+            mainAxisSize:
+                MainAxisSize.min, // Ensures the column takes minimal space
             children: [
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
@@ -321,7 +378,7 @@ class _MessageScreenState extends State<MessageScreen> {
                   children: [
                     IconButton(
                       onPressed: () {
-                        Navigator.pop(context);
+                        Navigator.pop(context); // Close the bottom sheet
                       },
                       icon: Icon(
                         Icons.close,
@@ -377,17 +434,17 @@ class _MessageScreenState extends State<MessageScreen> {
                   ],
                 ),
               ),
+
               Offstage(
-                offstage: !cubit.isEmojiVisible,
+                offstage: cubit.isEmojiVisible,
                 child: SizedBox(
-                  height: 300.h,
+                  height: 300.h, // Adjust the height as needed
                   child: EmojiPicker(
                     onEmojiSelected: (category, emoji) {
                       cubit.messageController.text += emoji.emoji;
                     },
                     textEditingController: cubit.messageController,
                     config: Config(
-                      height: 300.h,
                       bottomActionBarConfig: BottomActionBarConfig(
                         backgroundColor: AppColors.primary,
                       ),
@@ -395,6 +452,7 @@ class _MessageScreenState extends State<MessageScreen> {
                   ),
                 ),
               ),
+              // TextField inside the bottom sheet
             ],
           ),
         );
