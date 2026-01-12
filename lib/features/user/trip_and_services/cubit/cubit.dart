@@ -1,13 +1,10 @@
 import 'dart:developer';
 import 'dart:io';
-
 import 'package:waslny/core/exports.dart';
 import 'package:waslny/core/utils/general_enum.dart';
 import 'package:waslny/features/general/chat/cubit/chat_cubit.dart';
 import 'package:waslny/features/user/home/cubit/cubit.dart';
 import 'package:waslny/features/user/home/data/models/get_home_model.dart';
-import 'package:waslny/features/user/trip_and_services/data/models/get_shipments.dart';
-import 'package:waslny/features/user/trip_and_services/data/models/shipment_details.dart';
 import 'package:waslny/features/general/location/cubit/location_cubit.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:screenshot/screenshot.dart';

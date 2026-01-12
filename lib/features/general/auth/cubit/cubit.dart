@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter_meta_sdk/flutter_meta_sdk.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:waslny/core/utils/general_enum.dart';
 import 'package:waslny/features/driver/home/cubit/cubit.dart';
@@ -44,28 +45,40 @@ class LoginCubit extends Cubit<LoginState> {
   Future<void> login(BuildContext context, bool isDriver) async {
     AppWidget.createProgressDialog(context, msg: 'loading'.tr());
     emit(LoadingLoginState());
+
     final res = await api.login(
       fullPhoneNumber ?? '',
       passwordController.text,
       isDriver: isDriver,
     );
+
     res.fold(
       (l) {
         errorGetBar(l.toString());
         emit(ErrorLoginState());
         Navigator.pop(context);
-
-        //!
       },
       (r) async {
         try {
-          //! Nav to Main Screen
           emit(LoadedLoginState());
+
           if (r.status == 200) {
             await Preferences.instance.setUser(r);
+
+            // ✅ حفظ بيانات Realtime
+            final prefs = await SharedPreferences.getInstance();
+            await prefs.setString(
+              'user_phone',
+              r.data?.phone?.toString() ?? '',
+            );
+            await prefs.setString('user_id', r.data?.id?.toString() ?? '');
+            await prefs.setString('user_name', r.data?.name ?? '');
+            log(
+              '✅ Saved to SharedPrefs: phone=${r.data?.phone}, id=${r.data?.id}',
+            );
+
             successGetBar(r.msg);
             Navigator.pop(context);
-
             Navigator.pushNamedAndRemoveUntil(
               context,
               Routes.mainRoute,
@@ -76,17 +89,13 @@ class LoginCubit extends Cubit<LoginState> {
           } else {
             errorGetBar(r.msg ?? '');
             Navigator.pop(context);
-
             emit(ErrorLoginState());
           }
         } catch (e) {
           errorGetBar(e.toString());
           Navigator.pop(context);
-
           emit(ErrorLoginState());
         }
-
-        //!
       },
     );
   }

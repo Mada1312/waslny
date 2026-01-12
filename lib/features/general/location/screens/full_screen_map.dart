@@ -291,7 +291,7 @@ class _FullScreenMapState extends State<FullScreenMap>
       context.read<AddNewTripCubit>().fromSelectedLocation =
           cubit.selectedLocation;
     }
-    context.read<AddNewTripCubit>().distance = cubit.routeDistance;
+    context.read<AddNewTripCubit>().distance = cubit.routeDistance.toDouble();
 
     log(
       'dis ${context.read<AddNewTripCubit>().distance} : ${cubit.routeDistance}',

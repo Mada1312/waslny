@@ -493,7 +493,7 @@ class _FromToScreenMapState extends State<FromToScreenMap>
       context.read<AddNewTripCubit>().fromSelectedLocation =
           cubit.selectedLocation;
     }
-    context.read<AddNewTripCubit>().distance = cubit.routeDistance;
+    context.read<AddNewTripCubit>().distance = cubit.routeDistance.toDouble();
 
     log(
       'dis ${context.read<AddNewTripCubit>().distance} : ${cubit.routeDistance}',

@@ -171,9 +171,29 @@ class DriverHomeUI extends StatelessWidget {
                                                       AppColors.white,
                                                   thumbColor: AppColors.primary,
                                                   onChanged: (value) {
-                                                    cubit.changeActiveStatus();
+                                                    cubit.changeActiveStatus(
+                                                      context,
+                                                    ); // ✅ مرّر context
                                                   },
                                                 ),
+
+                                          // : CupertinoSwitch(
+                                          //     value:
+                                          //         cubit
+                                          //             .homeModel
+                                          //             ?.data
+                                          //             ?.user
+                                          //             ?.isActive ==
+                                          //         1,
+                                          //     activeTrackColor:
+                                          //         AppColors.secondPrimary,
+                                          //     inactiveThumbColor:
+                                          //         AppColors.white,
+                                          //     thumbColor: AppColors.primary,
+                                          //     onChanged: (value) {
+                                          //       cubit.changeActiveStatus();
+                                          //     },
+                                          //   ),
                                         ],
                                       ),
                                     ),

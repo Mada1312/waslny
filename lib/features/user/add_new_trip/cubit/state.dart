@@ -1,3 +1,5 @@
+import 'package:waslny/core/real-time/realtime_api.dart';
+
 abstract class AddNewTripState {}
 
 class AddNewTripInitState extends AddNewTripState {}
@@ -28,3 +30,13 @@ class LoadedGetLatestLocation extends AddNewTripState {}
 class ErrorGetLatestLocation extends AddNewTripState {}
 
 class SuccessSelectedLocationToFields extends AddNewTripState {}
+
+// ✅ الـ States الجديدة للكباتن
+class SearchingNearestCaptainState extends AddNewTripState {}
+
+class NearestCaptainFound extends AddNewTripState {
+  final NearestCaptain captain;
+  NearestCaptainFound(this.captain);
+}
+
+class NoCaptainAvailableState extends AddNewTripState {}

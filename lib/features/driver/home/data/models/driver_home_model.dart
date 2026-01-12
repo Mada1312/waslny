@@ -188,14 +188,28 @@ class DriverTripModel {
 }
 
 class User {
+  int? id; // ✅ معرف السائق
+  String? phone; // ✅ رقم الهاتف
+  String? name; // ✅ اسم السائق
   int? isActive;
   int? isVerified;
   int? isDataUploaded;
-  String? userType; // ✅ أضف هذا السطر
+  String? userType;
 
-  User({this.isActive, this.isVerified, this.isDataUploaded, this.userType});
+  User({
+    this.id,
+    this.phone,
+    this.name,
+    this.isActive,
+    this.isVerified,
+    this.isDataUploaded,
+    this.userType,
+  });
 
   factory User.fromJson(Map<String, dynamic> json) => User(
+    id: json["id"],
+    phone: json["phone"],
+    name: json["name"],
     isActive: json["is_active"],
     isVerified: json["is_verified"],
     isDataUploaded: json["is_data_uploaded"],
@@ -203,6 +217,9 @@ class User {
   );
 
   Map<String, dynamic> toJson() => {
+    "id": id,
+    "phone": phone,
+    "name": name,
     "is_active": isActive,
     "is_verified": isVerified,
     "is_data_uploaded": isDataUploaded,

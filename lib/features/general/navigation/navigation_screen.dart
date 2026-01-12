@@ -306,7 +306,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
     // ✅ rerouting
     if (_routeReady && !_isFetchingRoute) {
       final distToRoute = _getMinDistanceToRoute(filtered, _route);
-      if (distToRoute > 45.0 && (now - _lastRerouteTime > 5000)) {
+      if (distToRoute > 45.0 && (now - _lastRerouteTime > 1500)) {
         _lastRerouteTime = now;
         _loadRoute(filtered, _destination);
       }
@@ -347,7 +347,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
       );
     }
 
-    const int animDuration = 1500;
+    const int animDuration = 5000;
 
     _lastCameraTarget = displayPos;
 

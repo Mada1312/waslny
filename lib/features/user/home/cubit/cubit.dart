@@ -104,7 +104,7 @@ class UserHomeCubit extends Cubit<UserHomeState> {
                   context: context,
                   barrierDismissible: false,
                   builder: (_) => PricingDialog(
-                    trip: _lastTrip as DriverTripModel,
+                    trip: _lastTrip,
                     isFemaleDriver: false,
                     onConfirm: () async {
                       Navigator.pop(context);
