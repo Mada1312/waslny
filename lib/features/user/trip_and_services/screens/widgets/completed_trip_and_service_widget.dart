@@ -227,6 +227,8 @@ class TripDetailsBottomSheet extends StatelessWidget {
                   serviceTo: tripDetails?.serviceToName,
                   toLat: tripDetails?.toLat,
                   toLng: tripDetails?.toLong,
+                  isDriverAccepted: tripDetails?.isDriverAccept == 1,
+                  isDriverArrived: tripDetails?.isDriverArrived == 1,
                 ),
 
                 // if (!(isDriver == true))
@@ -246,7 +248,7 @@ class TripDetailsBottomSheet extends StatelessWidget {
                       10.w.horizontalSpace,
                       Flexible(
                         child: Text(
-                          "${((tripDetails?.distance?.length ?? 0) > 4 ? (tripDetails?.distance ?? '').substring(0, 4) : (tripDetails?.distance ?? ''))} ${'km'.tr()}",
+                          "${(tripDetails?.distance != null && tripDetails!.distance!.isNotEmpty) ? tripDetails!.distance : '--'} ${'km'.tr()}",
                           style: getMediumStyle(fontSize: 14.sp),
                         ),
                       ),

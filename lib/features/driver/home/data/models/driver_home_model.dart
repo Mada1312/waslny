@@ -5,6 +5,7 @@
 import 'dart:convert';
 
 import 'package:waslny/features/general/chat/data/model/room_model.dart';
+import 'package:waslny/features/general/price/pricing_engine.dart';
 
 GetDriverHomeModel getDriverHomeModelFromJson(String str) =>
     GetDriverHomeModel.fromJson(json.decode(str));

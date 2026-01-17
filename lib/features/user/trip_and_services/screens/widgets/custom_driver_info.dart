@@ -138,13 +138,13 @@ class _CustomDriverInfoState extends State<CustomDriverInfo> {
                         .then((_) {
                           // ✅ بعد النجاح → افتح UserTrackingScreen
                           if (widget.trip != null) {
+                            // استخدم الـ trip من widget مباشرة
                             Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (_) => UserTrackingScreen(
-                                  trip: widget.trip!,
-                                  mode: NavigationTargetMode
-                                      .toDestination, // ✅ للوجهة النهائية
+                                  trip: widget.trip!, // ✅ من الـ StatefulWidget
+                                  mode: UserTrackingMode.toDestination,
                                 ),
                               ),
                             );

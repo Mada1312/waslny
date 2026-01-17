@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 import 'package:waslny/core/exports.dart';
@@ -18,8 +19,50 @@ class UserTripAndServicesCubit extends Cubit<UserTripAndServicesState> {
   UserTripAndServicesCubit(this.api) : super(ShipmentsInitial());
 
   UserShipmentsRepo api;
-
   ShipmentsStatusEnum selectedStatus = ShipmentsStatusEnum.newShipments;
+
+  // ✅ ETA & Timer Logic
+  Timer? _etaTimer;
+  int remainingSecondsToArrival = 0;
+  bool isDriverWaiting = false;
+
+  String get formattedArrivalETA {
+    if (isDriverWaiting) return "وصل الكابتن";
+    if (remainingSecondsToArrival <= 0) return "قريباً";
+
+    final minutes = remainingSecondsToArrival ~/ 60;
+    final seconds = remainingSecondsToArrival % 60;
+    return "${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}";
+  }
+
+  void startArrivalCountdown(int initialMinutes) {
+    _etaTimer?.cancel();
+    isDriverWaiting = false;
+    remainingSecondsToArrival = initialMinutes * 60;
+
+    _etaTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (remainingSecondsToArrival > 0) {
+        remainingSecondsToArrival--;
+        emit(UpdateTripStatusSuccessState()); // تحديث الواجهة كل ثانية
+      } else {
+        timer.cancel();
+        emit(UpdateTripStatusSuccessState());
+      }
+    });
+  }
+
+  // ✅ دالة إيقاف العداد
+  void stopArrivalCountdown() {
+    _etaTimer?.cancel();
+    remainingSecondsToArrival = 0;
+    isDriverWaiting = false;
+  }
+
+  // ✅ Pricing Engine (حساب السعر بناءً على مسافة المسار)
+  double calculateTripPrice(double totalDistanceMeters, double pricePerKm) {
+    double distanceInKm = totalDistanceMeters / 1000;
+    return distanceInKm * pricePerKm;
+  }
 
   //!TRIP AND SERVICES
 
@@ -35,11 +78,9 @@ class UserTripAndServicesCubit extends Cubit<UserTripAndServicesState> {
           if (success.status == 200) {
             model?.isFav = !(model.isFav ?? false);
             successGetBar(success.msg);
-
             emit(LoadedChangeStatusOfTripAndServiceState());
           } else {
             errorGetBar(success.msg ?? 'Failed to change status');
-
             emit(ErrorChangeStatusOfTripAndServiceState());
           }
         },
@@ -55,6 +96,7 @@ class UserTripAndServicesCubit extends Cubit<UserTripAndServicesState> {
     required int id,
     required BuildContext context,
   }) async {
+    // التحقق من الموقع عند الوصول
     if (step == TripStep.isDriverArrived) {
       if (context.read<LocationCubit>().currentLocation == null) {
         await context.read<LocationCubit>().checkAndRequestLocationPermission(
@@ -66,8 +108,10 @@ class UserTripAndServicesCubit extends Cubit<UserTripAndServicesState> {
         return;
       }
     }
+
     AppWidget.createProgressDialog(context, msg: "...");
     emit(UpdateTripStatusLoadingState());
+
     try {
       final response = await api.updateTripStatus(
         id: id,
@@ -79,6 +123,7 @@ class UserTripAndServicesCubit extends Cubit<UserTripAndServicesState> {
             ? null
             : context.read<LocationCubit>().currentLocation?.longitude,
       );
+
       response.fold(
         (failure) {
           Navigator.pop(context);
@@ -87,23 +132,30 @@ class UserTripAndServicesCubit extends Cubit<UserTripAndServicesState> {
         (response) {
           Navigator.pop(context);
           if (response.status == 200 || response.status == 201) {
-            emit(UpdateTripStatusSuccessState());
-            successGetBar(response.msg ?? "Trip cancelled successfully");
+            // ✅ إدارة حالات العداد التنازلي
+            if (step == TripStep.isDriverArrived) {
+              stopArrivalCountdown();
+              isDriverWaiting = true;
+            } else if (step == TripStep.isDriverStartTrip ||
+                step == TripStep.isUserStartTrip) {
+              stopArrivalCountdown();
+            }
 
+            emit(UpdateTripStatusSuccessState());
+            successGetBar(response.msg ?? "Status updated successfully");
             context.read<UserHomeCubit>().getHome(context);
-            // getDriverHomeData(context);
           } else {
-            errorGetBar(response.msg ?? "Failed to cancel trip");
+            errorGetBar(response.msg ?? "Failed to update status");
           }
         },
       );
     } catch (e) {
-      log("Error in cancelShipment: $e");
+      log("Error in updateTripStatus: $e");
       emit(UpdateTripStatusErrorState());
     }
   }
 
-  // Rate
+  // Rate logic
   TextEditingController rateCommentController = TextEditingController();
   double rateValue = 0;
   void changeRateValue(double value) {
@@ -129,24 +181,22 @@ class UserTripAndServicesCubit extends Cubit<UserTripAndServicesState> {
       );
       response.fold(
         (failure) {
-          Navigator.pop(context); // Close the progress dialog
+          Navigator.pop(context);
           emit(AddRateForDriverErrorState());
         },
         (response) {
-          Navigator.pop(context); // Close the progress dialog
-
+          Navigator.pop(context);
           if (response.status == 200 || response.status == 201) {
-            Navigator.pop(context); // Close bottom sheet
+            Navigator.pop(context);
             emit(AddRateForDriverSuccessState());
             successGetBar(response.msg ?? "Rate added successfully");
-            // getShipmentDetails(id: shipmentId);
           } else {
             errorGetBar(response.msg ?? "Failed to add rate");
           }
         },
       );
     } catch (e) {
-      log("Error in addRateForUser: $e");
+      log("Error in addRateForDriver: $e");
       emit(AddRateForDriverErrorState());
     }
   }
@@ -154,12 +204,10 @@ class UserTripAndServicesCubit extends Cubit<UserTripAndServicesState> {
   ScreenshotController screenshotController = ScreenshotController();
 
   captureScreenshot() async {
-    Uint8List? imageInUnit8List = await screenshotController
-        .capture(); // store unit8List image here ;
+    Uint8List? imageInUnit8List = await screenshotController.capture();
     final tempDir = await getTemporaryDirectory();
     File file = await File('${tempDir.path}/image.png').create();
     file.writeAsBytesSync(imageInUnit8List!.toList(growable: true));
-
     Share.shareXFiles([XFile(file.path)], text: "مشاركة الشحنة");
     emit(ScreenshootState());
   }
@@ -187,7 +235,7 @@ class UserTripAndServicesCubit extends Cubit<UserTripAndServicesState> {
     final res = await api.cancelTrip(tripId: tripId);
     res.fold(
       (failure) {
-        log("Error in getCompletedTripsAndServices");
+        log("Error in cancelTrip");
         emit(ErrorCancelTripAndServiceState());
       },
       (r) {
@@ -195,6 +243,12 @@ class UserTripAndServicesCubit extends Cubit<UserTripAndServicesState> {
         emit(LoadedCancelTripAndServiceState());
       },
     );
+  }
+
+  @override
+  Future<void> close() {
+    _etaTimer?.cancel();
+    return super.close();
   }
 }
 

@@ -23,6 +23,8 @@ class ShipmentDetailsUserBody extends StatelessWidget {
           toLat: null,
           toLng: null,
           fromLng: shipmentData?.long,
+          isDriverAccepted: false, // اضف هذا
+          isDriverArrived: false, // اضف هذا
         ),
         10.h.verticalSpace,
         Divider(color: AppColors.grey.withOpacity(0.3), height: 1),

@@ -212,7 +212,6 @@ class AddNewTripCubit extends Cubit<AddNewTripState> {
       await locationCubit.getRouteBetweenLocations(from, to);
 
       final double drivingKm = locationCubit.getRouteDistanceInKilometers();
-
       final int drivingMinutes = locationCubit.getRouteDurationInMinutes();
 
       Navigator.pop(context);
@@ -285,6 +284,14 @@ class AddNewTripCubit extends Cubit<AddNewTripState> {
             clearTripData();
             emit(AddNewTripLoaded());
             context.read<UserHomeCubit>().getHome(context);
+
+            // ✅ التحويل للصفحة الرئيسية بعد إنشاء الرحلة
+            Navigator.pushNamedAndRemoveUntil(
+              context,
+              Routes.mainRoute,
+              (route) => false,
+              arguments: false,
+            );
           } else {
             errorGetBar('❌ ${r.msg}');
             emit(AddNewTripError());

@@ -3,29 +3,36 @@ import 'dart:developer';
 import 'dart:math' as math;
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:flutter_swipe_button/flutter_swipe_button.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart' as ll;
 import 'package:maplibre_gl/maplibre_gl.dart';
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:waslny/core/api/base_api_consumer.dart';
-import 'package:waslny/features/driver/home/data/models/driver_home_model.dart';
 import 'package:waslny/features/general/navigation/navigation_filters.dart';
 import 'package:waslny/features/general/navigation/navigation_repo.dart';
 import '../../../../injector.dart' as injector;
 
-enum NavigationTargetMode { toDestination, toPickup }
+// ✅ Added مرة واحدة فقط
+enum NavigationTargetMode { toPickup, toDropoff }
 
 class NavigationScreen extends StatefulWidget {
-  final DriverTripModel currentTrip;
+  final ll.LatLng destination;
+
+  // ✅ Added
   final NavigationTargetMode mode;
+
+  /// لو اتبعت اسم جاهز هنعرضه مباشرة، لو null/فارغ هنعمله Reverse Geocoding.
+  final String? destinationName;
 
   const NavigationScreen({
     super.key,
-    required this.currentTrip,
-    this.mode = NavigationTargetMode.toDestination,
+    required this.destination,
+    this.mode = NavigationTargetMode.toDropoff,
+    this.destinationName,
   });
 
   @override
@@ -37,87 +44,83 @@ class _NavigationScreenState extends State<NavigationScreen> {
   StreamSubscription<Position>? _sub;
 
   late final NavigationRepo _repo;
-  final KalmanFilterLatLng _kalman = KalmanFilterLatLng(15.0);
+  final KalmanFilterLatLng _kalman = KalmanFilterLatLng(20.0);
 
   List<ll.LatLng> _route = [];
   bool _routeReady = false;
 
   double _speedKmh = 0;
-  ll.LatLng _lastCameraTarget = const ll.LatLng(30.0444, 31.2357); // ✅ FIX
-
-  // ✅ Route Bearing Controller
-  late final RouteBearingController _bearingController;
-  double _sCurrent = 0.0;
-  double get _routeLengthMeters => _route.isEmpty ? 0.0 : _totalRouteDistance;
-
-  // ✅ حساب إجمالي طول المسار
-  double get _totalRouteDistance {
-    if (_route.length < 2) return 0.0;
-    const distance = ll.Distance();
-    double total = 0.0;
-    for (int i = 0; i < _route.length - 1; i++) {
-      total += distance.as(ll.LengthUnit.Meter, _route[i], _route[i + 1]);
-    }
-    return total;
-  }
+  double _currentBearing = 0.0;
+  ll.LatLng? _lastCameraTarget;
 
   bool _isFetchingRoute = false;
   int _lastRerouteTime = 0;
-
-  bool _showBottomPanel = false;
-
-  late final ll.LatLng _destination;
-  late final String _destinationName;
 
   static const String _styleUrl =
       'https://tiles.baraddy.com/styles/basic-preview/style.json';
   static const LatLng _fallback = LatLng(30.0444, 31.2357);
 
+  // ✅ Added: اسم الوجهة المعروض في الـ UI
+  String _destinationName = "جاري تحديد العنوان...";
+
   @override
   void initState() {
     super.initState();
     _repo = NavigationRepo(injector.serviceLocator<BaseApiConsumer>());
-    _bearingController = RouteBearingController();
+
+    // ✅ منع الشاشة من الانطفاء عند بدء الملاحة
     WakelockPlus.enable();
 
-    // ✅ حدد الوجهة حسب mode
-    final String? latStr = widget.mode == NavigationTargetMode.toPickup
-        ? widget.currentTrip.fromLat
-        : widget.currentTrip.toLat;
-
-    final String? lngStr = widget.mode == NavigationTargetMode.toPickup
-        ? widget.currentTrip.fromLong
-        : widget.currentTrip.toLong;
-
-    final String nameStr = widget.mode == NavigationTargetMode.toPickup
-        ? (widget.currentTrip.from ?? "").trim()
-        : ((widget.currentTrip.serviceToName ?? widget.currentTrip.to) ?? "")
-              .trim();
-
-    final toLat = double.tryParse(latStr ?? "");
-    final toLng = double.tryParse(lngStr ?? "");
-
-    if (toLat == null || toLng == null) {
-      throw Exception(
-        "Invalid lat/long in currentTrip => $latStr / $lngStr (mode=${widget.mode})",
-      );
+    // ✅ لو الاسم متبعت جاهز استخدمه، غير كده اعمل Reverse Geocoding
+    final passedName = (widget.destinationName ?? "").trim();
+    if (passedName.isNotEmpty) {
+      _destinationName = passedName;
+    } else {
+      _resolveDestinationName(); // Reverse Geocoding
     }
-
-    _destination = ll.LatLng(toLat, toLng);
-    _destinationName = nameStr.isEmpty
-        ? (widget.mode == NavigationTargetMode.toPickup
-              ? "مكان العميل"
-              : "الوجهة")
-        : nameStr;
   }
 
   @override
   void dispose() {
+    // ✅ السماح للشاشة بالانطفاء عند الخروج (توفير البطارية)
     WakelockPlus.disable();
     _sub?.cancel();
     super.dispose();
   }
 
+  // ======================= Reverse Geocoding =================================
+  Future<void> _resolveDestinationName() async {
+    try {
+      final placemarks = await placemarkFromCoordinates(
+        widget.destination.latitude,
+        widget.destination.longitude,
+      ); // ✅ geocoding package [web:22]
+
+      if (placemarks.isEmpty) return;
+
+      final p = placemarks.first;
+
+      // صياغة بسيطة (عدّلها حسب اللي يناسبك)
+      final parts = <String>[
+        if ((p.street ?? "").trim().isNotEmpty) p.street!.trim(),
+        if ((p.subLocality ?? "").trim().isNotEmpty) p.subLocality!.trim(),
+        if ((p.locality ?? "").trim().isNotEmpty) p.locality!.trim(),
+        if ((p.administrativeArea ?? "").trim().isNotEmpty)
+          p.administrativeArea!.trim(),
+      ];
+
+      final name = parts.isEmpty ? "الموقع المحدد" : parts.join("، ");
+
+      if (!mounted) return;
+      setState(() => _destinationName = name);
+    } catch (e) {
+      log("Reverse geocoding error: $e");
+      if (!mounted) return;
+      setState(() => _destinationName = "الموقع المحدد");
+    }
+  }
+
+  // ======================= MAP STARTUP ======================================
   void _onMapCreated(MapLibreMapController c) async {
     _mapController = c;
     await _start();
@@ -149,7 +152,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
       ),
     );
 
-    await _loadRoute(ll.LatLng(startLat, startLng), _destination);
+    await _loadRoute(ll.LatLng(startLat, startLng), widget.destination);
 
     const settings = LocationSettings(
       accuracy: LocationAccuracy.bestForNavigation,
@@ -170,6 +173,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
     }
   }
 
+  // ======================= ROUTE API ========================================
   Future<void> _loadRoute(ll.LatLng from, ll.LatLng to) async {
     if (_isFetchingRoute) return;
     _isFetchingRoute = true;
@@ -228,17 +232,15 @@ class _NavigationScreenState extends State<NavigationScreen> {
     for (final key in path) {
       if (cur == null) return null;
       if (key is int) {
-        if (cur is List && cur.length > key) {
+        if (cur is List && cur.length > key)
           cur = cur[key];
-        } else {
+        else
           return null;
-        }
       } else {
-        if (cur is Map && cur.containsKey(key)) {
+        if (cur is Map && cur.containsKey(key))
           cur = cur[key];
-        } else {
+        else
           return null;
-        }
       }
     }
     return cur;
@@ -252,50 +254,20 @@ class _NavigationScreenState extends State<NavigationScreen> {
       LineOptions(
         geometry: _route.map((p) => LatLng(p.latitude, p.longitude)).toList(),
         lineColor: "#4285F4",
-        lineWidth: 7.0,
+        lineWidth: 10.0,
         lineOpacity: 1.0,
         lineJoin: "round",
       ),
     );
   }
 
-  /// ✅ دالة تحسب LatLng من مسافة s على المسار
-  ll.LatLng latLngOnRouteFromS(double s) {
-    if (_route.isEmpty) return _destination;
-
-    const distance = ll.Distance();
-    double accumulated = 0.0;
-
-    for (int i = 0; i < _route.length - 1; i++) {
-      final segmentDist = distance.as(
-        ll.LengthUnit.Meter,
-        _route[i],
-        _route[i + 1],
-      );
-
-      if (accumulated + segmentDist >= s) {
-        // النقطة على الـ segment ده
-        final t = (s - accumulated) / segmentDist;
-        return ll.LatLng(
-          _route[i].latitude +
-              t * (_route[i + 1].latitude - _route[i].latitude),
-          _route[i].longitude +
-              t * (_route[i + 1].longitude - _route[i].longitude),
-        );
-      }
-
-      accumulated += segmentDist;
-    }
-
-    // لو s أكبر من طول المسار، ارجع آخر نقطة
-    return _route.last;
-  }
-
+  // ======================= GPS LOOP =========================================
   void _onGps(Position raw) async {
     if (_mapController == null) return;
 
     final now = DateTime.now().millisecondsSinceEpoch;
 
+    // 1. Filter
     final filtered = _kalman.filter(
       lat: raw.latitude,
       lng: raw.longitude,
@@ -303,15 +275,16 @@ class _NavigationScreenState extends State<NavigationScreen> {
       timestampMs: now,
     );
 
-    // ✅ rerouting
+    // 2. Reroute Check
     if (_routeReady && !_isFetchingRoute) {
       final distToRoute = _getMinDistanceToRoute(filtered, _route);
-      if (distToRoute > 45.0 && (now - _lastRerouteTime > 1500)) {
+      if (distToRoute > 45.0 && (now - _lastRerouteTime > 5000)) {
         _lastRerouteTime = now;
-        _loadRoute(filtered, _destination);
+        _loadRoute(filtered, widget.destination);
       }
     }
 
+    // 3. Snap Logic
     ll.LatLng displayPos = filtered;
     if (_routeReady) {
       final snapped = RouteSnapper.snapToRoute(
@@ -324,47 +297,52 @@ class _NavigationScreenState extends State<NavigationScreen> {
         filtered,
         snapped,
       );
-      if (dist < 40) {
-        displayPos = snapped;
-        // ✅ احسب المسافة على المسار
-        _sCurrent = distanceAlongRoute(_route, displayPos);
-      }
+      if (dist < 40) displayPos = snapped;
     }
 
+    // 4. Speed Logic
     double instantSpeed = (raw.speed * 3.6);
     if (instantSpeed < 0) instantSpeed = 0;
     _speedKmh = (_speedKmh * 0.20) + (instantSpeed * 0.80);
 
-    // ✅ استخدم Route Bearing بدل GPS heading
-    double routeBearing = 0.0;
-    if (_routeReady && _speedKmh > 3) {
-      routeBearing = _bearingController.update(
-        sCurrent: _sCurrent,
-        routeLengthMeters: _routeLengthMeters,
-        latLngOnRouteFromS: latLngOnRouteFromS,
-        lookAheadMeters: 12.0,
-        alpha: 0.15,
-      );
+    // 5. Bearing Logic
+    double bearing = raw.heading;
+
+    if (_speedKmh < 5) {
+      bearing = _currentBearing;
+    } else {
+      if ((bearing - _currentBearing).abs() > 180) {
+        _currentBearing = bearing;
+      } else {
+        _currentBearing = (_currentBearing * 0.1) + (bearing * 0.9);
+      }
     }
 
-    const int animDuration = 5000;
+    // 6. Camera Animation
+    int animDuration = 5000; // Normal smooth duration
 
+    if (_lastCameraTarget != null) {
+      final distMove = const ll.Distance().as(
+        ll.LengthUnit.Meter,
+        _lastCameraTarget!,
+        displayPos,
+      );
+    }
     _lastCameraTarget = displayPos;
 
     double z = 17.0;
-    if (_speedKmh > 80) {
+    if (_speedKmh > 80)
       z = 15.0;
-    } else if (_speedKmh > 40) {
+    else if (_speedKmh > 40)
       z = 16.0;
-    }
 
     await _mapController!.animateCamera(
       CameraUpdate.newCameraPosition(
         CameraPosition(
           target: LatLng(displayPos.latitude, displayPos.longitude),
-          bearing: routeBearing,
+          bearing: _currentBearing,
           zoom: z,
-          tilt: 60.0,
+          tilt: 50.0,
         ),
       ),
       duration: Duration(milliseconds: animDuration),
@@ -377,33 +355,41 @@ class _NavigationScreenState extends State<NavigationScreen> {
     if (poly.isEmpty) return 0.0;
     double minMeters = double.infinity;
     final ll.Distance distance = const ll.Distance();
-    for (int i = 0; i < poly.length; i += 5) {
+    for (int i = 0; i < poly.length; i += 3) {
       final d = distance.as(ll.LengthUnit.Meter, p, poly[i]);
       if (d < minMeters) minMeters = d;
     }
     return minMeters;
   }
 
+  // ======================= Google Maps ======================================
   Future<void> _openGoogleMaps() async {
+    final lat = widget.destination.latitude;
+    final lng = widget.destination.longitude;
+
     final url =
-        'https://www.google.com/maps/dir/?api=1&destination=${_destination.latitude},${_destination.longitude}&travelmode=driving';
+        'https://www.google.com/maps/dir/?api=1&destination=$lat,$lng&travelmode=driving';
 
     final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    try {
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      } else {
+        log("Cannot launch Google Maps");
+      }
+    } catch (e) {
+      log("Error opening Google Maps: $e");
     }
   }
 
+  // ======================= Finish Trip Stub ======================
+  // ✅ علشان build اللي انت عايزه فيه SwipeButton و _finishTrip
+  // لو عندك implementation حطها مكان ده
   Future<void> _finishTrip() async {
-    final navLocal = Navigator.of(context);
-    if (await navLocal.maybePop()) return;
-
-    final navRoot = Navigator.of(context, rootNavigator: true);
-    if (await navRoot.maybePop()) return;
-
-    navLocal.pop();
+    Navigator.of(context).maybePop();
   }
 
+  // ======================= BUILD (زي ما طلبت) ===============================
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -418,7 +404,6 @@ class _NavigationScreenState extends State<NavigationScreen> {
             ),
             myLocationEnabled: false,
             compassEnabled: false,
-            attributionButtonPosition: AttributionButtonPosition.topRight,
           ),
           Positioned(
             top: 50,
@@ -430,11 +415,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: const [
-                  BoxShadow(
-                    color: Colors.black12,
-                    blurRadius: 15,
-                    spreadRadius: 2,
-                  ),
+                  BoxShadow(color: Colors.black12, blurRadius: 15),
                 ],
               ),
               child: Column(
@@ -444,9 +425,9 @@ class _NavigationScreenState extends State<NavigationScreen> {
                     widget.mode == NavigationTargetMode.toPickup
                         ? "مكان العميل:"
                         : "الوجهة:",
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 14,
-                      color: Colors.grey[600],
+                      color: Colors.black,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -491,19 +472,10 @@ class _NavigationScreenState extends State<NavigationScreen> {
                       decoration: BoxDecoration(
                         color: Colors.white.withOpacity(0.75),
                         shape: BoxShape.circle,
-                        border: Border.all(
-                          color: Colors.white.withOpacity(0.2),
-                          width: 1.5,
-                        ),
                         boxShadow: const [
-                          BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 15,
-                            spreadRadius: 2,
-                          ),
+                          BoxShadow(color: Colors.black12, blurRadius: 15),
                         ],
                       ),
-                      padding: const EdgeInsets.all(10),
                       child: const Icon(
                         Icons.navigation_rounded,
                         size: 38,
@@ -524,13 +496,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
               decoration: const BoxDecoration(
                 color: Colors.white,
                 shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black26,
-                    blurRadius: 20,
-                    spreadRadius: 3,
-                  ),
-                ],
+                boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 20)],
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -551,6 +517,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
               ),
             ),
           ),
+
           Positioned(
             bottom: 20,
             left: 20,
@@ -566,7 +533,6 @@ class _NavigationScreenState extends State<NavigationScreen> {
               ),
               onSwipe: () async => _finishTrip(),
               activeThumbColor: Colors.green,
-              activeTrackColor: Colors.green.withOpacity(0.3),
               thumb: Container(
                 decoration: BoxDecoration(
                   color: Colors.green,

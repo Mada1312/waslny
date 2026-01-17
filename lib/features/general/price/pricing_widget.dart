@@ -1,205 +1,171 @@
-// import 'package:flutter/material.dart';
-// import 'package:waslny/core/exports.dart';
-// import 'package:waslny/features/driver/home/data/models/driver_home_model.dart';
-// import 'package:waslny/features/user/home/data/models/get_home_model.dart';
-// import 'pricing_engine.dart';
-
-// class PricingDialog extends StatelessWidget {
-//   final DriverTripModel trip;
-//   final bool isFemaleDriver;
-//   final VoidCallback onConfirm;
-
-//   const PricingDialog({
-//     super.key,
-//     required this.trip,
-//     required this.isFemaleDriver,
-//     required this.onConfirm,
-//   });
-
-//   @override
-//   Widget build(BuildContext context) {
-//     // ✅ حساب السعر من الرحلة نفسها
-//     final int finalPrice = PricingEngine.calculateFare(
-//       trip: trip,
-//       isFemaleDriver: isFemaleDriver,
-//     );
-
-//     return Dialog(
-//       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
-//       elevation: 10,
-//       backgroundColor: Colors.transparent,
-//       child: Container(
-//         width: 300,
-//         padding: const EdgeInsets.all(20),
-//         decoration: BoxDecoration(
-//           color: Colors.white,
-//           borderRadius: BorderRadius.circular(25),
-//         ),
-//         child: Column(
-//           mainAxisSize: MainAxisSize.min,
-//           children: [
-//             // أيقونة السعر
-//             CircleAvatar(
-//               radius: 36,
-//               backgroundColor: AppColors.primary.withOpacity(0.1),
-//               child: Icon(
-//                 Icons.account_balance_wallet_rounded,
-//                 color: AppColors.primary,
-//                 size: 40,
-//               ),
-//             ),
-//             const SizedBox(height: 20),
-
-//             Text(
-//               "تكلفة الرحلة".tr(),
-//               style: getBoldStyle(color: Colors.grey.shade700, fontSize: 16),
-//             ),
-//             const SizedBox(height: 12),
-
-//             // السعر
-//             Row(
-//               mainAxisAlignment: MainAxisAlignment.center,
-//               crossAxisAlignment: CrossAxisAlignment.baseline,
-//               textBaseline: TextBaseline.alphabetic,
-//               children: [
-//                 Text(
-//                   finalPrice.toString(),
-//                   style: getBoldStyle(color: Colors.red, fontSize: 42),
-//                 ),
-//                 const SizedBox(width: 6),
-//                 Text(
-//                   "جنيهاَ".tr(),
-//                   style: getMediumStyle(color: Colors.red, fontSize: 18),
-//                 ),
-//               ],
-//             ),
-
-//             const SizedBox(height: 30),
-
-//             // زر التأكيد
-//             SizedBox(
-//               width: double.infinity,
-//               height: 52,
-//               child: ElevatedButton(
-//                 style: ElevatedButton.styleFrom(
-//                   backgroundColor: AppColors.primary,
-//                   shape: RoundedRectangleBorder(
-//                     borderRadius: BorderRadius.circular(16),
-//                   ),
-//                 ),
-//                 onPressed: onConfirm,
-//                 child: Text(
-//                   "confirm".tr(),
-//                   style: getMediumStyle(color: Colors.black, fontSize: 18),
-//                 ),
-//               ),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
-
 import 'package:flutter/material.dart';
 import 'package:waslny/core/exports.dart';
-import 'package:waslny/features/driver/home/data/models/driver_home_model.dart';
-import 'package:waslny/features/user/home/data/models/get_home_model.dart';
-import 'pricing_engine.dart';
 
-class PricingDialog extends StatelessWidget {
-  final dynamic trip; // ✅ تم التعديل ليقبل أي نوع رحلة
+class PaymentConfirmationDialog extends StatelessWidget {
+  final double tripPrice;
+  final double distanceKm;
   final bool isFemaleDriver;
   final VoidCallback onConfirm;
+  final VoidCallback onWaiting;
 
-  const PricingDialog({
+  const PaymentConfirmationDialog({
     super.key,
-    required this.trip,
+    required this.tripPrice,
+    required this.distanceKm,
     required this.isFemaleDriver,
     required this.onConfirm,
+    required this.onWaiting,
   });
 
   @override
   Widget build(BuildContext context) {
-    // ✅ حساب السعر من الرحلة نفسها
-    final int finalPrice = PricingEngine.calculateFare(
-      trip: trip,
-      isFemaleDriver: isFemaleDriver,
-    );
-
     return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
-      elevation: 10,
-      backgroundColor: Colors.transparent,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.r)),
       child: Container(
-        width: 300,
-        padding: const EdgeInsets.all(20),
+        padding: EdgeInsets.all(24.sp),
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(25),
+          color: AppColors.white,
+          borderRadius: BorderRadius.circular(20.r),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // أيقونة السعر
-            CircleAvatar(
-              radius: 36,
-              backgroundColor: AppColors.primary.withOpacity(0.1),
+            // أيقونة المال
+            Container(
+              width: 80.sp,
+              height: 80.sp,
+              decoration: BoxDecoration(
+                color: Colors.green.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
               child: Icon(
-                Icons.account_balance_wallet_rounded,
-                color: AppColors.primary,
-                size: 40,
+                Icons.monetization_on,
+                size: 50.sp,
+                color: Colors.green,
               ),
             ),
-            const SizedBox(height: 20),
 
+            20.h.verticalSpace,
+
+            // العنوان
             Text(
-              "تكلفة الرحلة".tr(),
-              style: getBoldStyle(color: Colors.grey.shade700, fontSize: 16),
+              'تفاصيل الرحلة',
+              style: getBoldStyle(
+                fontSize: 20.sp,
+                color: AppColors.secondPrimary,
+              ),
+              textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 12),
 
-            // السعر
+            16.h.verticalSpace,
+
+            // تفاصيل التسعيرة
+            Container(
+              padding: EdgeInsets.all(16.sp),
+              decoration: BoxDecoration(
+                color: AppColors.second2Primary,
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+              child: Column(
+                children: [
+                  _buildDetailRow(
+                    'نوع الكابتن',
+                    isFemaleDriver ? 'Female'.tr() : 'Male'.tr(),
+                  ),
+                  8.h.verticalSpace,
+                  _buildDetailRow(
+                    'المسافة',
+                    '${distanceKm.toStringAsFixed(2)} كم',
+                  ),
+                  8.h.verticalSpace,
+                  Divider(color: AppColors.grey.withOpacity(0.3)),
+                  8.h.verticalSpace,
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'المبلغ المستحق',
+                        style: getBoldStyle(
+                          fontSize: 16.sp,
+                          color: AppColors.secondPrimary,
+                        ),
+                      ),
+                      Text(
+                        '${tripPrice.toStringAsFixed(0)} جنيه',
+                        style: getBoldStyle(
+                          fontSize: 24.sp,
+                          color: Colors.green,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+
+            24.h.verticalSpace,
+
+            // الأزرار
             Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.baseline,
-              textBaseline: TextBaseline.alphabetic,
               children: [
-                Text(
-                  finalPrice.toString(),
-                  style: getBoldStyle(color: Colors.red, fontSize: 42),
-                ),
-                const SizedBox(width: 6),
-                Text(
-                  "جنيهاَ".tr(),
-                  style: getMediumStyle(color: Colors.red, fontSize: 18),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 30),
-
-            // زر التأكيد
-            SizedBox(
-              width: double.infinity,
-              height: 52,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
+                Expanded(
+                  child: CustomButton(
+                    title: 'تأكيد',
+                    height: 50.h,
+                    onPressed: onConfirm,
                   ),
                 ),
-                onPressed: onConfirm,
-                child: Text(
-                  "confirm".tr(),
-                  style: getMediumStyle(color: Colors.black, fontSize: 18),
-                ),
-              ),
+              ],
             ),
           ],
         ),
       ),
     );
   }
+
+  Widget _buildDetailRow(String label, String value) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: getRegularStyle(fontSize: 14.sp, color: AppColors.grey),
+        ),
+        Text(
+          value,
+          style: getSemiBoldStyle(
+            fontSize: 14.sp,
+            color: AppColors.secondPrimary,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// دالة عرض الـ Dialog
+void showPaymentConfirmationDialog(
+  BuildContext context, {
+  required double tripPrice,
+  required double distanceKm,
+  required bool isFemaleDriver,
+  required VoidCallback onPaymentConfirmed,
+}) {
+  showDialog(
+    context: context,
+    barrierDismissible: false, // منع الإغلاق بالضغط خارج الـ Dialog
+    builder: (context) => PaymentConfirmationDialog(
+      tripPrice: tripPrice,
+      distanceKm: distanceKm,
+      isFemaleDriver: isFemaleDriver,
+      onConfirm: () {
+        Navigator.pop(context); // إغلاق الـ Dialog
+        onPaymentConfirmed(); // إنهاء الرحلة
+      },
+      onWaiting: () {
+        Navigator.pop(context); // إغلاق الـ Dialog فقط
+        // لا يتم إنهاء الرحلة، ينتظر السائق
+      },
+    ),
+  );
 }

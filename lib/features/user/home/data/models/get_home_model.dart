@@ -1,8 +1,5 @@
-// To parse this JSON data, do
-//
-//     final getUserHomeModel = getUserHomeModelFromJson(jsonString);
-
 import 'dart:convert';
+import 'package:geolocator/geolocator.dart';
 
 GetUserHomeModel getUserHomeModelFromJson(String str) =>
     GetUserHomeModel.fromJson(json.decode(str));
@@ -111,6 +108,9 @@ class TripAndServiceModel {
   int? isUserChangeCaptain;
   int? isDriverAnotherTrip;
   int? isService;
+  int? estimatedArrivalMinutes;
+  bool? isCancelled;
+
   TripAndServiceModel({
     this.id,
     this.code,
@@ -138,6 +138,8 @@ class TripAndServiceModel {
     this.isDriverAnotherTrip,
     this.cannotFindDriver,
     this.isService,
+    this.estimatedArrivalMinutes,
+    this.isCancelled,
   });
 
   factory TripAndServiceModel.fromJson(Map<String, dynamic> json) =>
@@ -168,6 +170,8 @@ class TripAndServiceModel {
         isUserChangeCaptain: json["is_user_change_captain"],
         isDriverAnotherTrip: json["is_driver_another_trip"],
         isService: json["is_service"],
+        estimatedArrivalMinutes: json["estimated_arrival_minutes"],
+        isCancelled: json["is_cancelled"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -198,7 +202,62 @@ class TripAndServiceModel {
     "is_user_change_captain": isUserChangeCaptain,
     "is_driver_another_trip": isDriverAnotherTrip,
     "is_service": isService,
+    "estimated_arrival_minutes": estimatedArrivalMinutes,
+    "is_cancelled": isCancelled,
   };
+
+  String get driverDistance {
+    if (driver?.lat != null &&
+        driver?.long != null &&
+        fromLat != null &&
+        fromLong != null) {
+      try {
+        double dist = Geolocator.distanceBetween(
+          double.parse(driver!.lat!),
+          double.parse(driver!.long!),
+          double.parse(fromLat!),
+          double.parse(fromLong!),
+        );
+        return (dist / 1000).toStringAsFixed(2);
+      } catch (e) {
+        return "0.00";
+      }
+    }
+    return "0.00";
+  }
+}
+
+// ====================
+// Extensions for formatted fields
+// ====================
+extension TripAndServiceModelExtensions on TripAndServiceModel {
+  String get formattedDay {
+    if (day != null) {
+      return "${day!.year.toString().padLeft(4, '0')}-${day!.month.toString().padLeft(2, '0')}-${day!.day.toString().padLeft(2, '0')}";
+    }
+    return "--";
+  }
+
+  String get formattedDriverDistance {
+    try {
+      return double.tryParse(driverDistance)?.toStringAsFixed(1) ?? "0.0";
+    } catch (_) {
+      return "0.0";
+    }
+  }
+
+  String get formattedETA {
+    if (estimatedArrivalMinutes != null) {
+      final hours = estimatedArrivalMinutes! ~/ 60;
+      final minutes = estimatedArrivalMinutes! % 60;
+      if (hours > 0) {
+        return "${hours}س ${minutes}د";
+      } else {
+        return "${minutes}د";
+      }
+    }
+    return "--";
+  }
 }
 
 class Driver {
@@ -207,8 +266,22 @@ class Driver {
   String? phone;
   String? image;
   String? vehiclePlateNumber;
+  String? lat;
+  String? long;
+  String? captainInternalId;
+  String? userType; // ✅ أضف هنا (1 = male, 2 = female)
 
-  Driver({this.id, this.name, this.phone, this.image, this.vehiclePlateNumber});
+  Driver({
+    this.id,
+    this.name,
+    this.phone,
+    this.image,
+    this.vehiclePlateNumber,
+    this.lat,
+    this.long,
+    this.captainInternalId,
+    this.userType, // ✅ أضف هنا
+  });
 
   factory Driver.fromJson(Map<String, dynamic> json) => Driver(
     id: json["id"],
@@ -216,6 +289,10 @@ class Driver {
     phone: json["phone"],
     image: json["image"],
     vehiclePlateNumber: json["vehicle_plate_number"],
+    lat: json["lat"]?.toString(),
+    long: json["long"]?.toString(),
+    captainInternalId: json["captain_internal_id"]?.toString(),
+    userType: json["user_type"]?.toString(), // ✅ أضف هنا
   );
 
   Map<String, dynamic> toJson() => {
@@ -223,8 +300,11 @@ class Driver {
     "name": name,
     "phone": phone,
     "image": image,
-
     "vehicle_plate_number": vehiclePlateNumber,
+    "lat": lat,
+    "long": long,
+    "captainInternalId": captainInternalId,
+    "user_type": userType, // ✅ أضف هنا
   };
 }
 

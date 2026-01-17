@@ -83,6 +83,8 @@ class DriverTripPrServiceItemWidget extends StatelessWidget {
             fromLng: trip?.fromLong,
             toLat: trip?.toLat,
             toLng: trip?.toLong,
+            isDriverAccepted: trip?.isDriverAccept == 1,
+            isDriverArrived: trip?.isDriverArrived == 1,
           ),
           // 10.h.verticalSpace,
           Padding(

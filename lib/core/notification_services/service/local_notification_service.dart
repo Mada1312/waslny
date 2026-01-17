@@ -75,6 +75,43 @@ class LocalNotificationService {
     );
   }
 
+  // ✅ إشعار إلغاء الرحلة (للعميل)
+  static Future<void> showTripCancelledNotification({
+    String message = "تم إلغاء الرحلة 🚫",
+  }) async {
+    final AndroidNotificationDetails androidDetails =
+        AndroidNotificationDetails(
+          'trip_cancelled_channel',
+          'إلغاء الرحلة',
+          channelDescription: 'إشعارات إلغاء الرحلات',
+          importance: Importance.max,
+          priority: Priority.high,
+          icon: '@mipmap/ic_launcher',
+          color: AppColors.error,
+          playSound: true,
+          sound: const RawResourceAndroidNotificationSound('ringtone'),
+        );
+
+    const DarwinNotificationDetails iOSDetails = DarwinNotificationDetails(
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+    );
+
+    final NotificationDetails notificationDetails = NotificationDetails(
+      android: androidDetails,
+      iOS: iOSDetails,
+    );
+
+    await _notificationsPlugin.show(
+      10, // رقم فريد للإشعار
+      message,
+      'تم إلغاء الرحلة من قبل العميل',
+      notificationDetails,
+      payload: 'trip_cancelled',
+    );
+  }
+
   // ✅ إشعار تعيين كابتن (للعميل)
   static Future<void> showCaptainAssignedNotification({
     required String captainName,

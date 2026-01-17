@@ -12,9 +12,11 @@ import 'package:waslny/core/exports.dart';
 import 'package:waslny/core/notification_services/service/local_notification_service.dart';
 import 'package:waslny/core/preferences/preferences.dart';
 import 'package:waslny/core/real-time/realtime_api.dart';
+import 'package:waslny/core/utils/get_route_distance.dart';
 import 'package:waslny/features/driver/home/data/models/driver_home_model.dart';
 import 'package:waslny/features/general/chat/cubit/chat_cubit.dart';
 import 'package:waslny/features/general/location/cubit/location_cubit.dart';
+import 'package:waslny/features/general/price/pricing_engine.dart';
 import 'package:waslny/features/general/price/pricing_widget.dart';
 import 'package:waslny/features/main/screens/main_screen.dart';
 
@@ -29,25 +31,74 @@ class DriverHomeCubit extends Cubit<DriverHomeState> {
   GetDriverHomeModel? homeModel;
   bool isLoggedOut = false;
 
-  // ================== Polling Timer (للـ Trips فقط) ==================
+  // ================== Polling Timer ==================
   Timer? _idlePollingTimer;
   static const Duration _idlePollingInterval = Duration(seconds: 5);
+  bool _pollingInProgress = false;
 
-  // ================== Location Timer (مستقل 100%) ==================
+  // ================== Location Timer ==================
   Timer? _locationTimer;
   static const Duration _locationInterval = Duration(seconds: 10);
 
-  // ✅ سيرفر الـ Realtime الجديد
+  // ================== HEARTBEAT TIMER ==================
+  Timer? _heartbeatTimer;
+  static const Duration _heartbeatInterval = Duration(seconds: 60);
+
+  // ✅ سيرفر الـ Realtime
   final RealtimeApiClient _realtimeClient = RealtimeApiClient(
     baseUrl: 'https://realtime.baraddy.com',
   );
 
   RealtimeApiClient get realtimeClient => _realtimeClient;
 
-  // ✅ LocationCubit reference (تخزين مرة واحدة)
+  // ✅ LocationCubit reference
   LocationCubit? _locationCubit;
 
-  String? _captainInternalId; // UUID من Register
+  String? _captainInternalId;
+
+  // ✅ القاعدة الذهبية: الـ polling يقف فقط لو Offline أو LoggedOut
+  bool get _canPoll => !isLoggedOut && homeModel?.data?.user?.isActive == 1;
+
+  // ================== START HEARTBEAT ==================
+  void _startHeartbeat() {
+    _stopHeartbeat();
+
+    if (_captainInternalId == null ||
+        isLoggedOut ||
+        homeModel?.data?.user?.isActive != 1) {
+      log(
+        '⚠️ Heartbeat BLOCKED: internalId=$_captainInternalId active=${homeModel?.data?.user?.isActive}',
+      );
+      return;
+    }
+
+    log(
+      '💓 Starting Heartbeat Timer ($_heartbeatInterval) internalId=$_captainInternalId',
+    );
+
+    _heartbeatTimer = Timer.periodic(_heartbeatInterval, (_) async {
+      if (isLoggedOut ||
+          homeModel?.data?.user?.isActive != 1 ||
+          _captainInternalId == null) {
+        _stopHeartbeat();
+        return;
+      }
+
+      try {
+        await _realtimeClient.heartbeat(captainInternalId: _captainInternalId!);
+        log('💓 Heartbeat sent');
+      } catch (e) {
+        log('❌ Heartbeat failed: $e');
+      }
+    });
+  }
+
+  // ================== STOP HEARTBEAT ==================
+  void _stopHeartbeat() {
+    _heartbeatTimer?.cancel();
+    _heartbeatTimer = null;
+    log('⏹️ Heartbeat Timer stopped');
+  }
 
   Future<void> getDriverHomeData(
     BuildContext context, {
@@ -93,6 +144,7 @@ class DriverHomeCubit extends Cubit<DriverHomeState> {
         if (homeModel?.data?.user?.isActive == 1) {
           log('📌 Driver already Online from start - initializing Realtime');
           _registerRealtimeCaptain(context);
+          _startHeartbeat();
           _startLocationTracking(context);
           _startIdlePolling();
         }
@@ -103,10 +155,10 @@ class DriverHomeCubit extends Cubit<DriverHomeState> {
     }
   }
 
-  // ================== POLLING (Trips فقط) ==================
+  // ================== POLLING (محسّن) ==================
   void _startIdlePolling() {
-    if (isLoggedOut || homeModel?.data?.user?.isActive != 1) {
-      log('⏹️ Polling not started: Driver offline');
+    if (!_canPoll) {
+      log('⏹️ Polling not started: Driver offline or logged out');
       _stopIdlePolling();
       return;
     }
@@ -116,82 +168,88 @@ class DriverHomeCubit extends Cubit<DriverHomeState> {
       return;
     }
 
-    log('🔄 Starting Polling Timer... (Trips only)');
+    log('🔄 Starting Polling Timer...');
 
     _idlePollingTimer = Timer.periodic(_idlePollingInterval, (_) async {
-      if (isLoggedOut || homeModel?.data?.user?.isActive != 1) {
+      if (!_canPoll) {
         _stopIdlePolling();
         return;
       }
+
+      // ✅ منع التداخل: لو polling جاري - طلع
+      if (_pollingInProgress) {
+        log('⚠️ Polling already in progress, skipping...');
+        return;
+      }
+
+      _pollingInProgress = true;
 
       try {
         final result = await api.getHome();
         if (isLoggedOut) {
           _stopIdlePolling();
+          _pollingInProgress = false;
           return;
         }
 
-        result.fold((failure) => log("⚠️ Polling error"), (data) {
-          try {
-            if (_isSameTripData(
-              homeModel?.data?.currentTrip,
-              data.data?.currentTrip,
-            )) {
-              return;
-            }
-
-            _detectTripChangesAndNotify(
-              homeModel?.data?.currentTrip,
-              data.data?.currentTrip,
-            );
-
-            homeModel = data;
-            emit(DriverHomeLoaded());
-            log('✅ Trip Updated: ${data.data?.currentTrip?.id ?? "none"}');
-          } catch (e) {
-            log('⚠️ Polling error: $e');
-            homeModel = data;
-            emit(DriverHomeLoaded());
-          }
+        result.fold((failure) => log("⚠️ Polling error: $failure"), (data) {
+          _handlePollingUpdate(data);
         });
       } catch (e) {
-        log("❌ Polling error: $e");
+        log("❌ Polling API error: $e");
+      } finally {
+        _pollingInProgress = false;
       }
     });
+  }
+
+  // ✅ دالة موحدة لتحديث البيانات من polling
+  void _handlePollingUpdate(GetDriverHomeModel data) {
+    try {
+      final oldTrip = homeModel?.data?.currentTrip;
+      final newTrip = data.data?.currentTrip;
+
+      if (!_isSameTripData(oldTrip, newTrip)) {
+        _detectTripChangesAndNotify(oldTrip, newTrip);
+      } else {
+        log('✅ Trip data unchanged');
+      }
+
+      // ✅ حدث البيانات بعد التحليل
+      homeModel = data;
+      emit(DriverHomeLoaded());
+
+      log('📊 Polling update: Trip=${newTrip?.id ?? "none"}');
+    } catch (e) {
+      log('⚠️ Polling parse error: $e');
+      // ✅ تحديث البيانات على الأقل
+      emit(DriverHomeLoaded());
+    }
   }
 
   void _stopIdlePolling() {
     _idlePollingTimer?.cancel();
     _idlePollingTimer = null;
+    _pollingInProgress = false;
     log('⏹️ Polling stopped');
   }
 
-  // ================== REALTIME REGISTER (مرة واحدة) ==================
+  // ================== REALTIME REGISTER ==================
   Future<void> _registerRealtimeCaptain(BuildContext context) async {
-    // 🛡️ Guard: منع تكرار التسجيل
+    // 🛡️ Guard: منع التكرار
     if (_captainInternalId != null || isLoggedOut) return;
 
     try {
-      // ✅ استخدم Preferences.instance بدل SharedPreferences
       final userData = await Preferences.instance.getUserModel();
 
-      // استخرج البيانات من LoginModel
       final phone = userData.data?.phone;
       final name = userData.data?.name ?? 'Captain';
       final driverId = userData.data?.id ?? 0;
 
-      log(
-        '🧪 Realtime guard check | '
-        'internalId=$_captainInternalId '
-        'phone=$phone '
-        'driverId=$driverId',
-      );
-
-      // ✅ تحقق من المتطلبات الأساسية
       if (phone == null || phone.isEmpty || driverId == 0) {
-        log('❌ Register FAILED: Missing phone=$phone or driverId=$driverId');
+        log('❌ Register FAILED: Missing phone or driverId');
 
-        // 🔄 Retry بعد 2 ثانية إذا البيانات مش جاهزة
+        // Retry خفيف
         Future.delayed(const Duration(seconds: 2), () {
           if (!isLoggedOut) _registerRealtimeCaptain(context);
         });
@@ -207,29 +265,29 @@ class DriverHomeCubit extends Cubit<DriverHomeState> {
         vehicleType: 'car',
       );
 
-      if (regResult.internalId != null && regResult.internalId!.isNotEmpty) {
-        _captainInternalId = regResult.internalId;
-        log('✅ Realtime REGISTERED: $_captainInternalId');
-
-        // ✅ بمجرد التسجيل الناجح: بدء Location وPolling إذا السائق Online
-        if (homeModel?.data?.user?.isActive == 1) {
-          _startLocationTracking(context);
-          _startIdlePolling();
-        }
-      } else {
+      if (regResult.internalId == null || regResult.internalId!.isEmpty) {
         log('⚠️ Register returned null internalId');
+        return;
+      }
+
+      _captainInternalId = regResult.internalId;
+      log('✅ Realtime REGISTERED: $_captainInternalId');
+
+      // ✅ نشغّل الخدمات بناءً على الحالة المحلية فقط
+      if (_canPoll) {
+        _startHeartbeat();
+        _startLocationTracking(context);
+        _startIdlePolling();
       }
     } catch (e) {
       log('❌ Register ERROR: $e');
     }
   }
 
-  // ================== LOCATION TIMER (مستقل 100%) ==================
+  // ================== LOCATION TIMER ==================
   void _startLocationTracking(BuildContext context) {
-    // 🛡️ Guard: منع التشغيل المزدوج
     _stopLocationTracking();
 
-    // 🛡️ Guard: تأكد من الشروط
     if (_captainInternalId == null ||
         isLoggedOut ||
         homeModel?.data?.user?.isActive != 1) {
@@ -242,7 +300,6 @@ class DriverHomeCubit extends Cubit<DriverHomeState> {
       return;
     }
 
-    // ✅ تخزين LocationCubit reference مرة واحدة
     _locationCubit = context.read<LocationCubit>();
 
     log(
@@ -264,7 +321,6 @@ class DriverHomeCubit extends Cubit<DriverHomeState> {
         return;
       }
 
-      // تجاهل القراءات غير الدقيقة
       if (location.accuracy != null && location.accuracy! > 50) {
         log('⚠️ Accuracy too low: ${location.accuracy}');
         return;
@@ -321,22 +377,28 @@ class DriverHomeCubit extends Cubit<DriverHomeState> {
             LocalNotificationService.showSuccessNotification(' انت متصل الان');
             log('✅ Driver is now ONLINE');
 
-            // ✅ سجل في السيرفر الجديد (مرة واحدة)
             await _registerRealtimeCaptain(context);
-
-            // ✅ ابدأ إرسال الموقع كل 10 ثوانى
+            _startHeartbeat();
             _startLocationTracking(context);
-
-            // ✅ ابدأ polling للـ Trips كل 5 ثوانى
             _startIdlePolling();
           } else {
             LocalNotificationService.showErrorNotification('انت غير متصل');
             log('🔴 Driver went OFFLINE - stopping all services');
 
-            // ✅ تصفير _captainInternalId لـ clean registration
-            _captainInternalId = null;
+            if (_captainInternalId != null) {
+              try {
+                await _realtimeClient.updateCaptainStatus(
+                  captainInternalId: _captainInternalId!,
+                  status: 'offline',
+                );
+              } catch (_) {}
+            }
+
+            // ✅ إيقاف الخدمات عند الانقطاع فقط
+            _stopHeartbeat();
             _stopIdlePolling();
             _stopLocationTracking();
+            _captainInternalId = null;
           }
 
           getDriverHomeDataSilent();
@@ -430,12 +492,24 @@ class DriverHomeCubit extends Cubit<DriverHomeState> {
     }
   }
 
+  // ✅ تحسين Trip Comparison مع لوغز مفصلة
   bool _isSameTripData(DriverTripModel? oldTrip, DriverTripModel? newTrip) {
-    if (oldTrip == null && newTrip == null) return true;
-    if (oldTrip == null || newTrip == null) return false;
+    // Case 1: كلاهما null = نفس الشيء
+    if (oldTrip == null && newTrip == null) {
+      log('📌 Both trips null - no change');
+      return true;
+    }
 
+    // Case 2: أحدهما null = تغيير
+    if (oldTrip == null || newTrip == null) {
+      log('🔄 Trip state changed: old=$oldTrip != new=$newTrip');
+      return false;
+    }
+
+    // Case 3: كلاهما موجود - قارن التفاصيل
     try {
-      return oldTrip.id == newTrip.id &&
+      final isSame =
+          oldTrip.id == newTrip.id &&
           oldTrip.status == newTrip.status &&
           oldTrip.statusName == newTrip.statusName &&
           oldTrip.isDriverArrived == newTrip.isDriverArrived &&
@@ -445,6 +519,26 @@ class DriverHomeCubit extends Cubit<DriverHomeState> {
           oldTrip.isDriverAccept == newTrip.isDriverAccept &&
           oldTrip.isUserChangeCaptain == newTrip.isUserChangeCaptain &&
           oldTrip.isDriverAnotherTrip == newTrip.isDriverAnotherTrip;
+
+      if (!isSame) {
+        log('🔄 Trip data CHANGED:');
+        if (oldTrip.status != newTrip.status)
+          log('  - Status: ${oldTrip.status} → ${newTrip.status}');
+        if (oldTrip.isDriverArrived != newTrip.isDriverArrived)
+          log(
+            '  - Arrived: ${oldTrip.isDriverArrived} → ${newTrip.isDriverArrived}',
+          );
+        if (oldTrip.isUserStartTrip != newTrip.isUserStartTrip)
+          log(
+            '  - User Started: ${oldTrip.isUserStartTrip} → ${newTrip.isUserStartTrip}',
+          );
+        if (oldTrip.isDriverStartTrip != newTrip.isDriverStartTrip)
+          log(
+            '  - Driver Started: ${oldTrip.isDriverStartTrip} → ${newTrip.isDriverStartTrip}',
+          );
+      }
+
+      return isSame;
     } catch (e) {
       log('❌ Error comparing trips: $e');
       return false;
@@ -455,6 +549,7 @@ class DriverHomeCubit extends Cubit<DriverHomeState> {
   void stopPolling() {
     isLoggedOut = true;
     _captainInternalId = null;
+    _stopHeartbeat();
     _stopIdlePolling();
     _stopLocationTracking();
     log('🚫 Global stop: All services cleared');
@@ -499,7 +594,7 @@ class DriverHomeCubit extends Cubit<DriverHomeState> {
             LocalNotificationService.showSuccessNotification(
               'تم بدء الرحلة 🚗',
             );
-            _stopIdlePolling();
+            // ✅ لا نوقف polling هنا - يستمر في الخلفية
             getDriverHomeData(context);
           } else {
             errorGetBar(response.msg ?? "Failed to start trip");
@@ -520,18 +615,49 @@ class DriverHomeCubit extends Cubit<DriverHomeState> {
 
     final trip = homeModel?.data?.currentTrip;
     if (trip == null) return;
+    log('🧭 CAPTAIN RAW COORDS:');
+    log('  fromLat (raw): ${trip.fromLat}');
+    log('  fromLong (raw): ${trip.fromLong}');
+    log('  toLat (raw): ${trip.toLat}');
+    log('  toLong (raw): ${trip.toLong}');
+    final fromLatParsed = double.tryParse(trip.fromLat ?? '0') ?? 0;
+    final fromLngParsed = double.tryParse(trip.fromLong ?? '0') ?? 0;
+    final toLatParsed = double.tryParse(trip.toLat ?? '0') ?? 0;
+    final toLngParsed = double.tryParse(trip.toLong ?? '0') ?? 0;
 
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) => PricingDialog(
-        trip: trip,
-        isFemaleDriver: homeModel?.data?.user?.userType == '2',
-        onConfirm: () async {
-          Navigator.pop(context);
-          await _executeEndTripApi(tripId: tripId, context: context);
-        },
-      ),
+    log('🧭 CAPTAIN PARSED COORDS:');
+    log('  fromLat: $fromLatParsed');
+    log('  fromLong: $fromLngParsed');
+    log('  toLat: $toLatParsed');
+    log('  toLong: $toLngParsed');
+    final distanceKm =
+        await getRouteDistance(
+          double.tryParse(trip.fromLat ?? '0') ?? 0,
+          double.tryParse(trip.fromLong ?? '0') ?? 0,
+          double.tryParse(trip.toLat ?? '0') ?? 0,
+          double.tryParse(trip.toLong ?? '0') ?? 0,
+        ) ??
+        4.0;
+    log('📏 CAPTAIN distanceKm: $distanceKm');
+
+    final isFemale = homeModel?.data?.user?.userType == '2' ?? false;
+    log('👤 CAPTAIN isFemale: $isFemale');
+
+    // ✅ احسب السعر من المسافة
+    final price = PricingEngine.calculateTripPrice(
+      distanceKm: distanceKm,
+      isFemaleDriver: isFemale,
+    );
+    log('💰 CAPTAIN price: $price');
+    log('═══════════════════════════════════');
+
+    showPaymentConfirmationDialog(
+      context,
+      tripPrice: price,
+      distanceKm: distanceKm,
+      isFemaleDriver: isFemale,
+      onPaymentConfirmed: () =>
+          _executeEndTripApi(tripId: tripId, context: context),
     );
   }
 
@@ -563,8 +689,7 @@ class DriverHomeCubit extends Cubit<DriverHomeState> {
               'تم انهاء الرحلة ✅',
             );
 
-            _stopIdlePolling();
-
+            // ✅ لا نوقف polling هنا - يستمر في الخلفية
             Navigator.pushNamed(context, Routes.mainRoute, arguments: true);
 
             getDriverHomeData(context);
@@ -603,7 +728,7 @@ class DriverHomeCubit extends Cubit<DriverHomeState> {
             emit(UpdateTripStatusSuccessState());
             LocalNotificationService.showErrorNotification('تم إلغاء الرحلة ❌');
             Navigator.pushNamed(context, Routes.mainRoute, arguments: true);
-            _stopIdlePolling();
+            // ✅ لا نوقف polling هنا - يستمر في الخلفية
             getDriverHomeData(context);
           } else {
             errorGetBar(response.msg ?? "Failed to cancel trip");
@@ -672,7 +797,7 @@ class DriverHomeCubit extends Cubit<DriverHomeState> {
               );
             }
 
-            _stopIdlePolling();
+            // ✅ لا نوقف polling هنا - يستمر في الخلفية
             getDriverHomeData(context);
 
             if (step == TripStep.isDriverArrived) {

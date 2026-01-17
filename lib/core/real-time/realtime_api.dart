@@ -157,12 +157,10 @@ class Shift {
   }
 }
 
-/// Response of POST /api/v1/captains
 class RegisterCaptainResponse {
   final bool success;
   final String? error;
   final String? code;
-
   final String? internalId;
   final Captain? captain;
   final Shift? shift;
@@ -422,7 +420,6 @@ class RealtimeApiClient {
 
     final json = _safeJsonMap(res.body);
 
-    // السيرفر ممكن يرجع 409 Conflict عند phone مستخدم
     if (res.statusCode != 200) {
       throw ApiException(
         statusCode: res.statusCode,
@@ -484,6 +481,51 @@ class RealtimeApiClient {
     return UpdateLocationResponse.fromJson(json);
   }
 
+  /// 💓 NEW: Heartbeat - إرسال نبضة حياة كل 60 ثانية
+  Future<void> heartbeat({required String captainInternalId}) async {
+    final res = await _client
+        .post(_uri('/api/v1/captains/$captainInternalId/heartbeat'))
+        .timeout(
+          timeout,
+          onTimeout: () => throw ApiException(message: 'Heartbeat timeout'),
+        );
+
+    final json = _safeJsonMap(res.body);
+    if (res.statusCode != 200) {
+      throw ApiException(
+        statusCode: res.statusCode,
+        message: 'Heartbeat failed',
+        raw: json.isEmpty ? res.body : json,
+      );
+    }
+  }
+
+  /// 🔴 NEW: Update Status - تحديث حالة الكابتن (online/offline)
+  Future<void> updateCaptainStatus({
+    required String captainInternalId,
+    required String status,
+  }) async {
+    final res = await _client
+        .patch(
+          _uri('/api/v1/captains/$captainInternalId/status'),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({'status': status}),
+        )
+        .timeout(
+          timeout,
+          onTimeout: () => throw ApiException(message: 'Update status timeout'),
+        );
+
+    final json = _safeJsonMap(res.body);
+    if (res.statusCode != 200) {
+      throw ApiException(
+        statusCode: res.statusCode,
+        message: 'Update status failed',
+        raw: json.isEmpty ? res.body : json,
+      );
+    }
+  }
+
   Future<NearestResponse> getNearestCaptain({
     required double lat,
     required double lng,
@@ -528,61 +570,21 @@ class RealtimeApiClient {
       return <String, dynamic>{'raw': body};
     }
   }
-}
 
-/// =======================
-/// Example usage (main)
-/// =======================
-Future<void> main() async {
-  final client = RealtimeApiClient();
+  Future<CaptainLocation> getCaptainLocationByDriverId({
+    required int driverId,
+  }) async {
+    final res = await _client
+        .get(_uri('/api/v1/drivers/$driverId/location'))
+        .timeout(timeout);
 
-  try {
-    final health = await client.health();
-    print(
-      'Health: ${health.status} at ${health.timestamp} env=${health.environment}',
-    );
-
-    // ✅ Register / get internal_id first
-    final reg = await client.registerCaptain(
-      driverId: 15,
-      phone: '0123456790',
-      name: 'Ali',
-      vehicleType: 'bike',
-    );
-
-    final internalId = reg.internalId!;
-    print('Captain internal_id: $internalId');
-
-    // ✅ Then use internal_id for location updates
-    final update = await client.updateCaptainLocation(
-      captainInternalId: internalId,
-      latitude: 30.06263,
-      longitude: 31.24967,
-      accuracy: 5.0,
-      heading: 90.0,
-      speed: 10.5,
-    );
-    print('Update success: ${update.success} at ${update.location?.timestamp}');
-
-    final nearest = await client.getNearestCaptain(
-      lat: 30.06263,
-      lng: 31.24967,
-    );
-    final cap = nearest.nearest;
-
-    if (cap != null) {
-      print('Nearest: ${cap.name} (${cap.phone})');
-      print('Online: ${cap.isOnline} distance=${cap.distanceMeters}m');
-      print('LatLng: ${cap.latLng.lat}, ${cap.latLng.lng}');
-      print('Time: ${cap.formattedTimestamp}');
-    } else {
-      print('No nearest captain found');
+    final json = _safeJsonMap(res.body);
+    if (res.statusCode != 200) {
+      throw ApiException(
+        statusCode: res.statusCode,
+        message: 'Get location failed',
+      );
     }
-  } on ApiException catch (e) {
-    print('API Error: $e raw=${e.raw}');
-  } catch (e) {
-    print('Error: $e');
-  } finally {
-    client.dispose();
+    return CaptainLocation.fromJson(json['location']);
   }
 }

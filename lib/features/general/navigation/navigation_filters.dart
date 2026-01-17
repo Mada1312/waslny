@@ -197,3 +197,11 @@ class RouteSnapper {
 // ✅ Helpers
 double _degToRad(double deg) => deg * math.pi / 180.0;
 double _radToDeg(double rad) => rad * 180.0 / math.pi;
+
+double? _toDouble(dynamic v) {
+  if (v == null) return null;
+  if (v is double) return v;
+  if (v is int) return v.toDouble();
+  if (v is String) return double.tryParse(v.trim());
+  return null;
+}
