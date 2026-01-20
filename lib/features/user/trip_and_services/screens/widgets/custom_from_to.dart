@@ -248,7 +248,7 @@ class _CustomFromToWidgetState extends State<CustomFromToWidget> {
 
         if (snapshot.hasData && snapshot.data != null) {
           final distanceKm = snapshot.data!;
-          distanceText = "${distanceKm.toStringAsFixed(1)} km";
+          distanceText = "${distanceKm.toStringAsFixed(1)} ${'km'.tr()}";
 
           final estimatedMinutes = (distanceKm / 40 * 60).round();
           if (estimatedMinutes >= 60) {
@@ -256,7 +256,7 @@ class _CustomFromToWidgetState extends State<CustomFromToWidget> {
             final minutes = estimatedMinutes % 60;
             durationText = "${hours}h ${minutes}m";
           } else {
-            durationText = "$estimatedMinutes min";
+            durationText = "$estimatedMinutes ${'min'.tr()}";
           }
 
           final isFemaleDriver = false;
@@ -264,7 +264,7 @@ class _CustomFromToWidgetState extends State<CustomFromToWidget> {
             distanceKm: distanceKm,
             isFemaleDriver: isFemaleDriver,
           );
-          priceText = "${tripPrice.toStringAsFixed(1)}";
+          priceText = "${tripPrice.toStringAsFixed(0)} ${'pound'.tr()}";
         }
 
         return Container(
@@ -277,13 +277,20 @@ class _CustomFromToWidgetState extends State<CustomFromToWidget> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildInfoItem(Icons.monetization_on, priceText),
+              _buildPriceItem(priceText),
               _buildInfoItem(Icons.directions_car, distanceText),
               _buildInfoItem(Icons.access_time, durationText),
             ],
           ),
         );
       },
+    );
+  }
+
+  Widget _buildPriceItem(String text) {
+    return Text(
+      text,
+      style: getBoldStyle(fontSize: 12.sp, color: AppColors.secondPrimary),
     );
   }
 
@@ -311,17 +318,12 @@ class EtaCountdownController {
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (remainingSeconds > 0) {
         remainingSeconds--;
-        try {
-          if (onUpdate != null) onUpdate();
-        } catch (_) {}
       } else {
         _timer?.cancel();
         _timer = null;
         remainingSeconds = 0;
-        try {
-          if (onUpdate != null) onUpdate();
-        } catch (_) {}
       }
+      onUpdate();
     });
   }
 

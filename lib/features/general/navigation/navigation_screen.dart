@@ -12,6 +12,8 @@ import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:waslny/core/api/base_api_consumer.dart';
+import 'package:waslny/core/real-time/captain_service.dart';
+import 'package:waslny/core/real-time/realtime_service.dart';
 import 'package:waslny/features/general/navigation/navigation_filters.dart';
 import 'package:waslny/features/general/navigation/navigation_repo.dart';
 import '../../../../injector.dart' as injector;
@@ -21,6 +23,7 @@ enum NavigationTargetMode { toPickup, toDropoff }
 
 class NavigationScreen extends StatefulWidget {
   final ll.LatLng destination;
+  final int driverId;
 
   // ✅ Added
   final NavigationTargetMode mode;
@@ -33,6 +36,7 @@ class NavigationScreen extends StatefulWidget {
     required this.destination,
     this.mode = NavigationTargetMode.toDropoff,
     this.destinationName,
+    required this.driverId,
   });
 
   @override
@@ -42,6 +46,19 @@ class NavigationScreen extends StatefulWidget {
 class _NavigationScreenState extends State<NavigationScreen> {
   MapLibreMapController? _mapController;
   StreamSubscription<Position>? _sub;
+
+  late final CaptainTrackingService _tracking; // للقراءة
+  late final RealtimeService _realtime; // للإرسال
+  String? _internalId; // uuid
+  Timer? _pushTimer;
+
+  ll.LatLng? _lastPos;
+  double _lastSpeedMps = 0;
+  double _lastBearing = 0;
+
+  bool _pushInFlight = false;
+
+  bool _styleLoaded = false;
 
   late final NavigationRepo _repo;
   final KalmanFilterLatLng _kalman = KalmanFilterLatLng(20.0);
@@ -66,6 +83,15 @@ class _NavigationScreenState extends State<NavigationScreen> {
   @override
   void initState() {
     super.initState();
+    _tracking = CaptainTrackingService(baseUrl: 'https://realtime.baraddy.com');
+    _realtime = RealtimeService();
+
+    _loadInternalId();
+
+    _pushTimer = Timer.periodic(const Duration(seconds: 2), (_) {
+      _pushRealtime();
+    });
+
     _repo = NavigationRepo(injector.serviceLocator<BaseApiConsumer>());
 
     // ✅ منع الشاشة من الانطفاء عند بدء الملاحة
@@ -83,9 +109,22 @@ class _NavigationScreenState extends State<NavigationScreen> {
   @override
   void dispose() {
     // ✅ السماح للشاشة بالانطفاء عند الخروج (توفير البطارية)
-    WakelockPlus.disable();
+    _pushTimer?.cancel();
+    _tracking.dispose();
+    _realtime.dispose();
     _sub?.cancel();
+    WakelockPlus.disable();
     super.dispose();
+  }
+
+  Future<void> _loadInternalId() async {
+    try {
+      final data = await _tracking.getTrackingByDriverId(widget.driverId);
+      _internalId = data.captain.internalId;
+      log("✅ internalId loaded: $_internalId");
+    } catch (e) {
+      log("❌ Failed to load internalId: $e");
+    }
   }
 
   // ======================= Reverse Geocoding =================================
@@ -188,15 +227,35 @@ class _NavigationScreenState extends State<NavigationScreen> {
 
       final decoded = _extractRoutePolyline(json);
 
-      if (decoded.isNotEmpty) {
-        setState(() {
-          _route = decoded;
-          _routeReady = true;
-        });
+      log(
+        "Route decoded points = ${decoded.length}, styleLoaded=$_styleLoaded",
+      );
+
+      if (decoded.isEmpty) {
+        // لو مفيش نقاط، اعتبرها route غير جاهزة
+        if (mounted) {
+          setState(() {
+            _route = [];
+            _routeReady = false;
+          });
+        }
+        return;
+      }
+
+      if (!mounted) return;
+
+      setState(() {
+        _route = decoded;
+        _routeReady = true;
+      });
+
+      // ✅ ارسم بس لما الستايل يكون جاهز
+      if (_styleLoaded) {
         await _drawRoute();
       }
-    } catch (e) {
-      log("Route API error: $e");
+      // لو الستايل مش جاهز، onStyleLoadedCallback هيعمل draw تلقائي
+    } catch (e, st) {
+      log("Route API error: $e\n$st");
     } finally {
       _isFetchingRoute = false;
     }
@@ -248,6 +307,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
 
   Future<void> _drawRoute() async {
     if (_mapController == null || _route.isEmpty) return;
+    if (!_styleLoaded) return; // ✅ مهم جداً
 
     await _mapController!.clearLines();
     await _mapController!.addLine(
@@ -348,6 +408,10 @@ class _NavigationScreenState extends State<NavigationScreen> {
       duration: Duration(milliseconds: animDuration),
     );
 
+    _lastPos = displayPos;
+    _lastSpeedMps = raw.speed.isFinite ? raw.speed : 0; // m/s
+    _lastBearing = _currentBearing;
+
     if (mounted) setState(() {});
   }
 
@@ -360,6 +424,30 @@ class _NavigationScreenState extends State<NavigationScreen> {
       if (d < minMeters) minMeters = d;
     }
     return minMeters;
+  }
+
+  // ======================= Real Time ======================================
+  Future<void> _pushRealtime() async {
+    if (_pushInFlight) return;
+    if (_lastPos == null) return;
+    if (_internalId == null) return; // لسه ما اتحملش
+    _pushInFlight = true;
+
+    final p = _lastPos!;
+    try {
+      await _realtime.updateLocation(
+        internalId: _internalId!, // ✅ uuid
+        lat: p.latitude,
+        lng: p.longitude,
+        speed: _lastSpeedMps, // m/s
+        heading: _lastBearing, // bearing
+        accuracy: 25,
+      );
+    } catch (e) {
+      log("Realtime push error: $e");
+    } finally {
+      _pushInFlight = false;
+    }
   }
 
   // ======================= Google Maps ======================================
@@ -395,9 +483,27 @@ class _NavigationScreenState extends State<NavigationScreen> {
     return Scaffold(
       body: Stack(
         children: [
+          // MapLibreMap(
+          //   styleString: _styleUrl,
+          //   onMapCreated: _onMapCreated,
+          //   initialCameraPosition: const CameraPosition(
+          //     target: _fallback,
+          //     zoom: 15,
+          //   ),
+          //   myLocationEnabled: false,
+          //   compassEnabled: false,
+          // ),
           MapLibreMap(
             styleString: _styleUrl,
             onMapCreated: _onMapCreated,
+            onStyleLoadedCallback: () async {
+              _styleLoaded = true;
+
+              // لو الـ route كانت اتحسبت قبل تحميل الستايل، ارسمها هنا
+              if (_route.isNotEmpty) {
+                await _drawRoute();
+              }
+            },
             initialCameraPosition: const CameraPosition(
               target: _fallback,
               zoom: 15,
@@ -405,6 +511,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
             myLocationEnabled: false,
             compassEnabled: false,
           ),
+
           Positioned(
             top: 50,
             left: 16,

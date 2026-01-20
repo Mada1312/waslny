@@ -144,27 +144,26 @@ class PaymentConfirmationDialog extends StatelessWidget {
 }
 
 // دالة عرض الـ Dialog
-void showPaymentConfirmationDialog(
+Future<void> showPaymentConfirmationDialog(
   BuildContext context, {
   required double tripPrice,
   required double distanceKm,
   required bool isFemaleDriver,
   required VoidCallback onPaymentConfirmed,
 }) {
-  showDialog(
+  return showDialog(
     context: context,
-    barrierDismissible: false, // منع الإغلاق بالضغط خارج الـ Dialog
+    barrierDismissible: false,
     builder: (context) => PaymentConfirmationDialog(
       tripPrice: tripPrice,
       distanceKm: distanceKm,
       isFemaleDriver: isFemaleDriver,
       onConfirm: () {
         Navigator.pop(context); // إغلاق الـ Dialog
-        onPaymentConfirmed(); // إنهاء الرحلة
+        onPaymentConfirmed(); // callback
       },
       onWaiting: () {
-        Navigator.pop(context); // إغلاق الـ Dialog فقط
-        // لا يتم إنهاء الرحلة، ينتظر السائق
+        Navigator.pop(context);
       },
     ),
   );

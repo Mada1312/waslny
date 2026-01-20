@@ -9,11 +9,6 @@ import '../data/models/get_home_model.dart';
 import '../data/repo.dart';
 import 'state.dart';
 
-class TripCompletedState extends UserHomeState {
-  final TripAndServiceModel trip;
-  TripCompletedState(this.trip);
-}
-
 class UserHomeCubit extends Cubit<UserHomeState> {
   UserHomeCubit(this.api) : super(UserHomeInitial());
 
@@ -21,6 +16,16 @@ class UserHomeCubit extends Cubit<UserHomeState> {
 
   ServicesType? serviceType = ServicesType.trips;
   GetUserHomeModel? homeModel;
+
+  // ---- Track current trip by ID (fix .first issue) ----
+  int? _trackedTripId;
+
+  // ---- Debounce missing trip ----
+  int _missingTripCount = 0;
+  static const int _missingTripThreshold = 3; // 3 * 5s = 15 ثانية
+
+  // ---- Prevent showing end dialog twice ----
+  final Set<int> _endedDialogShownTripIds = {};
 
   // Rate
   final TextEditingController rateCommentController = TextEditingController();
@@ -34,6 +39,17 @@ class UserHomeCubit extends Cubit<UserHomeState> {
 
   // Track trips that already fired dialogs
   final Set<int> _notifiedTripIds = {};
+  // -------------------------
+  // Helper
+  // -------------------------
+
+  TripAndServiceModel? _findTripById(List<TripAndServiceModel>? list, int? id) {
+    if (list == null || list.isEmpty || id == null) return null;
+    for (final t in list) {
+      if (t.id == id) return t;
+    }
+    return null;
+  }
 
   // -------------------------
   // Detect trip changes and send notifications
@@ -51,18 +67,13 @@ class UserHomeCubit extends Cubit<UserHomeState> {
       );
     }
 
-    // ✅ User accepted trip → emit TripCompletedState to show Dialog
+    // ✅ User accepted trip (إشعار فقط - ممنوع فتح التقييم هنا)
     if ((oldTrip.isUserAccept ?? 0) != (newTrip.isUserAccept ?? 0) &&
         (newTrip.isUserAccept ?? 0) == 1) {
       log('✅ CAPTAIN ACCEPTED TRIP');
       LocalNotificationService.showCaptainAcceptedNotification(
         captainName: newTrip.driver?.name ?? 'الكابتن',
       );
-
-      if (newTrip.id != null && !_notifiedTripIds.contains(newTrip.id)) {
-        _notifiedTripIds.add(newTrip.id!);
-        emit(TripCompletedState(newTrip));
-      }
     }
 
     // ✅ Captain arrived
@@ -103,50 +114,71 @@ class UserHomeCubit extends Cubit<UserHomeState> {
           if (isClosed) return;
 
           if (data.status == 200 || data.status == 201) {
-            final newTrips = serviceType?.name == ServicesType.services.name
+            final tripsList = serviceType?.name == ServicesType.services.name
                 ? data.data?.services
                 : data.data?.trips;
 
-            final newTrip = newTrips?.isNotEmpty == true
-                ? newTrips?.first
-                : null;
+            // ✅ اختار نفس الرحلة اللي بتتابعها بالـ id
+            TripAndServiceModel? currentTrip;
+            if (_trackedTripId != null) {
+              currentTrip = _findTripById(tripsList, _trackedTripId);
+            } else {
+              // أول مرة: امسك أول رحلة وابدأ تتبعها
+              currentTrip = (tripsList?.isNotEmpty == true)
+                  ? tripsList!.first
+                  : null;
+              _trackedTripId = currentTrip?.id;
+            }
 
-            // ✅ Trip completed (disappeared)
-            // if (_lastTrip != null && newTrip == null) {
-            //   log('✨ TRIP COMPLETED');
-            //   LocalNotificationService.showTripEndedNotification();
+            // ✅ 1) الرحلة اختفت مؤقتًا؟
+            if (_lastTrip != null && currentTrip == null) {
+              _missingTripCount++;
 
-            //   final completedTrip = _lastTrip!;
-            //   final int tripId = completedTrip.id ?? 0;
+              // ما نعتبرهاش انتهت إلا بعد اختفاء متكرر
+              if (_missingTripCount >= _missingTripThreshold) {
+                final id = _lastTrip!.id;
 
-            //   if (!_notifiedTripIds.contains(tripId)) {
-            //     _notifiedTripIds.add(tripId);
-            //     emit(TripCompletedState(completedTrip));
-            //   }
-            // }
-            if (_lastTrip != null && newTrip == null) {
-              if (_lastTrip!.isCancelled == true) {
-                log('🚫 Trip was cancelled by user');
-                LocalNotificationService.showTripCancelledNotification();
-                // ما تعرضش السعر أو التقييم
-              } else {
-                log('✨ Trip completed normally');
-                LocalNotificationService.showTripEndedNotification();
+                if (id != null && !_endedDialogShownTripIds.contains(id)) {
+                  _endedDialogShownTripIds.add(id);
 
-                if (!_notifiedTripIds.contains(_lastTrip!.id)) {
-                  _notifiedTripIds.add(_lastTrip!.id!);
-                  emit(TripCompletedState(_lastTrip!));
+                  log('✨ TRIP ENDED (confirmed)');
+                  LocalNotificationService.showTripEndedNotification();
+
+                  _stopPolling();
+                  emit(TripEndedState(_lastTrip!));
+
+                  // تنظيف التتبع
+                  _trackedTripId = null;
+                  _lastTrip = null;
+                  _missingTripCount = 0;
+                  homeModel = data;
+
+                  return; // مهم: ما تعملش emit(UserHomeLoaded) بعدها
                 }
               }
             }
+            // ✅ 2) الرحلة موجودة ومستمرّة
+            else if (_lastTrip != null && currentTrip != null) {
+              _missingTripCount = 0;
+              _detectTripChangesAndNotify(_lastTrip!, currentTrip);
 
-            // ✅ Detect normal changes
-            if (_lastTrip != null && newTrip != null) {
-              _detectTripChangesAndNotify(_lastTrip!, newTrip);
+              _lastTrip = currentTrip;
+              _trackedTripId = currentTrip.id;
+            }
+            // ✅ 3) أول مرة تمسك رحلة
+            else if (_lastTrip == null && currentTrip != null) {
+              _missingTripCount = 0;
+              _lastTrip = currentTrip;
+              _trackedTripId = currentTrip.id;
+            }
+            // ✅ 4) لا توجد رحلة
+            else {
+              _missingTripCount = 0;
+              _lastTrip = null;
+              _trackedTripId = null;
             }
 
             homeModel = data;
-            _lastTrip = newTrip;
             emit(UserHomeLoaded());
           }
         });
@@ -197,6 +229,8 @@ class UserHomeCubit extends Cubit<UserHomeState> {
                 : data.data!.trips!.first)
           : null;
 
+      _trackedTripId = _lastTrip?.id;
+      _missingTripCount = 0;
       _startPolling();
       emit(UserHomeLoaded());
     });

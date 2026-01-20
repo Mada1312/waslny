@@ -16,7 +16,8 @@ Future<double?> getRouteDistance(
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       if (data['routes'] != null && data['routes'].isNotEmpty) {
-        double distanceMeters = data['routes'][0]['distance'];
+        final double distanceMeters = (data['routes'][0]['distance'] as num)
+            .toDouble();
         return distanceMeters / 1000; // بالكيلومتر
       }
     }

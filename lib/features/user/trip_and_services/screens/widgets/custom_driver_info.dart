@@ -5,6 +5,7 @@ import 'package:waslny/core/exports.dart';
 import 'package:waslny/core/widgets/network_image.dart';
 import 'package:waslny/features/general/chat/cubit/chat_cubit.dart';
 import 'package:waslny/features/general/navigation/user_tracking_screen.dart';
+import 'package:waslny/features/user/home/cubit/cubit.dart';
 import 'package:waslny/features/user/home/data/models/get_home_model.dart';
 import 'package:waslny/features/user/trip_and_services/cubit/cubit.dart';
 
@@ -142,9 +143,12 @@ class _CustomDriverInfoState extends State<CustomDriverInfo> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (_) => UserTrackingScreen(
-                                  trip: widget.trip!, // ✅ من الـ StatefulWidget
-                                  mode: UserTrackingMode.toDestination,
+                                builder: (_) => BlocProvider.value(
+                                  value: context.read<UserHomeCubit>(),
+                                  child: UserTrackingScreen(
+                                    trip: widget.trip!,
+                                    mode: UserTrackingMode.toDestination,
+                                  ),
                                 ),
                               ),
                             );

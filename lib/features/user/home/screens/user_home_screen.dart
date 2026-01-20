@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -13,7 +12,6 @@ import 'package:waslny/features/user/home/data/models/get_home_model.dart';
 import 'package:waslny/features/user/trip_and_services/screens/widgets/trip_and_service_widget.dart';
 import '../cubit/cubit.dart';
 import '../cubit/state.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:waslny/features/general/price/pricing_engine.dart';
 
 class UserHomeScreen extends StatefulWidget {
@@ -34,7 +32,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
   Widget build(BuildContext context) {
     return BlocListener<UserHomeCubit, UserHomeState>(
       listener: (context, state) async {
-        if (state is TripCompletedState) {
+        if (state is TripEndedState) {
           log('🚀 TripCompletedState detected, showing dialogs...');
 
           final trip = state.trip;
@@ -201,7 +199,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                     ? Padding(
                                         padding: EdgeInsets.only(top: 100.h),
                                         child: CustomNoDataWidget(
-                                          message: 'no_trips'.tr(),
+                                          message: 'Welcome to waslny'.tr(),
                                           onTap: () {
                                             cubit.getHome(context);
                                           },
@@ -344,7 +342,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
     // ─────────────────────────────────────────────
     // 5️⃣ Show confirmation dialog
     // ─────────────────────────────────────────────
-    showPaymentConfirmationDialog(
+    await showPaymentConfirmationDialog(
       context,
       tripPrice: tripPrice,
       distanceKm: distanceKm,
@@ -455,7 +453,11 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                 children: [
                   Expanded(
                     child: TextButton(
-                      onPressed: () => Navigator.pop(context),
+                      onPressed: () async {
+                        Navigator.pop(context);
+                        if (!context.mounted) return;
+                        await context.read<UserHomeCubit>().getHome(context);
+                      },
                       child: Text("تخطي"),
                     ),
                   ),
