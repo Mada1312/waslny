@@ -548,6 +548,42 @@ class _UserTrackingScreenState extends State<UserTrackingScreen> {
     }
   }
 
+  // Future<void> _upsertCaptainMarker(ll.LatLng pos) async {
+  //   final c = _mapController;
+  //   if (c == null || !_styleLoaded) return;
+
+  //   try {
+  //     await _ensureCarIconAdded();
+  //     final geo = LatLng(pos.latitude, pos.longitude);
+
+  //     final rotate =
+  //         (_currentBearing + 180) %
+  //         360; // جرّب 0 بدل 180 لو الأيقونة أصلاً قدّام
+
+  //     if (_captainSymbol == null) {
+  //       _captainSymbol = await c.addSymbol(
+  //         SymbolOptions(
+  //           geometry: geo,
+  //           iconImage: _carIconName,
+  //           iconSize: 0.2,
+  //           iconRotate: rotate,
+  //           iconAnchor: 'center',
+  //         ),
+  //       );
+  //     } else {
+  //       await c.updateSymbol(
+  //         _captainSymbol!,
+  //         SymbolOptions(
+  //           geometry: geo,
+  //           iconRotate: rotate,
+  //           iconAnchor: 'center',
+  //         ),
+  //       );
+  //     }
+  //   } catch (e) {
+  //     log('❌ Error updating captain marker: $e');
+  //   }
+  // }
   Future<void> _upsertCaptainMarker(ll.LatLng pos) async {
     final c = _mapController;
     if (c == null || !_styleLoaded) return;
@@ -556,19 +592,31 @@ class _UserTrackingScreenState extends State<UserTrackingScreen> {
       await _ensureCarIconAdded();
       final geo = LatLng(pos.latitude, pos.longitude);
 
+      // بما إن الخريطة نفسها بتلف مع اتجاه الحركة:
+      // خلي العربية ثابتة لفوق (forward on screen)
+      double rotate = 0;
+
+      // لو لقيت العربية بالعكس (ورا لقدّام) خليها:
+      // double rotate = 180;
+
       if (_captainSymbol == null) {
         _captainSymbol = await c.addSymbol(
           SymbolOptions(
             geometry: geo,
             iconImage: _carIconName,
             iconSize: 0.2,
-            iconRotate: _currentBearing,
+            iconRotate: rotate,
+            iconAnchor: 'center',
           ),
         );
       } else {
         await c.updateSymbol(
           _captainSymbol!,
-          SymbolOptions(geometry: geo, iconRotate: _currentBearing),
+          SymbolOptions(
+            geometry: geo,
+            iconRotate: rotate,
+            iconAnchor: 'center',
+          ),
         );
       }
     } catch (e) {
@@ -747,6 +795,12 @@ class _UserTrackingScreenState extends State<UserTrackingScreen> {
       }
     }
 
+    // 6) Bearing = from route (forward)
+    if (snap != null) {
+      final b = _bearingFromRouteSnap(snap);
+      _currentBearing = _smoothAngle(_currentBearing, b, 0.25);
+    }
+
     // 5) Speed Logic (smooth)
     _updateSpeedKmh(
       speedMpsFromServer: speedMps,
@@ -756,7 +810,7 @@ class _UserTrackingScreenState extends State<UserTrackingScreen> {
 
     // 6) Bearing Logic (from movement + smooth)
     // _updateBearingFromMovement(displayPos: displayPos);
-    _updateBearingFromPositions(displayPos);
+    // _updateBearingFromPositions(displayPos);
 
     // 7) Remaining + ETA (بدون OSRM polling)
     if (snap != null) {
@@ -781,7 +835,7 @@ class _UserTrackingScreenState extends State<UserTrackingScreen> {
     await _upsertCaptainMarker(displayPos);
 
     // camera (always follow)
-    await _animateCamera(displayPos);
+    await _moveCameraInstant(displayPos);
 
     if (mounted) setState(() {});
   }
@@ -856,6 +910,20 @@ class _UserTrackingScreenState extends State<UserTrackingScreen> {
     }
   }
 
+  double _bearingFromRouteSnap(RouteSnapResult snap) {
+    if (_route.length < 2) return _currentBearing;
+
+    int i = snap.segIndex;
+
+    // لو العربية قربت من نهاية السيجمنت، استخدم اللي بعده عشان ما يهزش
+    if (snap.t > 0.85 && i < _route.length - 2) i++;
+
+    return _calculateBearing(
+      _route[i],
+      _route[i + 1],
+    ); // forward direction of route
+  }
+
   double _calculateBearing(ll.LatLng from, ll.LatLng to) {
     final lat1 = from.latitude * pi / 180;
     final lat2 = to.latitude * pi / 180;
@@ -867,7 +935,7 @@ class _UserTrackingScreenState extends State<UserTrackingScreen> {
     return (bearing + 360) % 360;
   }
 
-  Future<void> _animateCamera(ll.LatLng target) async {
+  Future<void> _moveCameraInstant(ll.LatLng target) async {
     if (_mapController == null) return;
 
     final movedMeters = _lastCameraTarget == null
@@ -878,7 +946,7 @@ class _UserTrackingScreenState extends State<UserTrackingScreen> {
             target,
           );
 
-    // نفس سلوكك: مايتحركش لو الحركة ضعيفة جدًا
+    // نفس فلتر الاهتزاز
     if (movedMeters >= 3) {
       _lastCameraTarget = target;
 
@@ -890,7 +958,7 @@ class _UserTrackingScreenState extends State<UserTrackingScreen> {
       }
 
       try {
-        await _mapController?.animateCamera(
+        _mapController?.moveCamera(
           CameraUpdate.newCameraPosition(
             CameraPosition(
               target: LatLng(target.latitude, target.longitude),
@@ -899,10 +967,9 @@ class _UserTrackingScreenState extends State<UserTrackingScreen> {
               tilt: 50.0,
             ),
           ),
-          duration: const Duration(milliseconds: 900),
         );
       } catch (e) {
-        log('❌ Error animating camera: $e');
+        log('❌ Error moving camera: $e');
       }
     }
   }
