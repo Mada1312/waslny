@@ -47,6 +47,50 @@ class CustomsSheduledTripWidet extends StatelessWidget {
           padding: EdgeInsets.all(15.sp),
           child: Column(
             children: [
+              // ✅ Banner يظهر فقط لو Service
+              if (trip?.isService == 1) ...[
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 14.w,
+                    vertical: 12.h,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.yellowAccent,
+                    borderRadius: BorderRadius.circular(14.r),
+                    border: Border.all(color: Colors.amberAccent),
+                  ),
+                  child: RichText(
+                    text: TextSpan(
+                      style: getSemiBoldStyle(fontSize: 12.sp),
+                      children: [
+                        const TextSpan(
+                          text:
+                              'يتم احتساب خدمة شحن مدكور / طلب المشتريات بقيمة (',
+                        ),
+                        TextSpan(
+                          text: '45 جنيهاً',
+                          style: getSemiBoldStyle(
+                            fontSize: 12.sp,
+                            fontweight: FontWeight.w800,
+                          ),
+                        ),
+                        const TextSpan(text: ') للمحل الواحد، مع إضافة '),
+                        TextSpan(
+                          text: '10 جنيهاً',
+                          style: getSemiBoldStyle(
+                            fontSize: 12.sp,
+                            fontweight: FontWeight.w800,
+                          ),
+                        ),
+                        const TextSpan(text: ' لكل محل إضافي ضمن نفس الطلب.'),
+                      ],
+                    ),
+                  ),
+                ),
+                8.h.verticalSpace,
+              ],
+
               // From
               FromToContainer(
                 isFrom: true,
@@ -228,12 +272,29 @@ class CustomsSheduledTripWidet extends StatelessWidget {
     );
   }
 
+  // String _getActionButtonTitle(DriverTripModel? trip) {
+  //   if (trip == null) return '';
+  //   if (trip.isService == 1 && trip.isDriverArrived == 0)
+  //     return "start_service".tr();
+  //   if (trip.isService == 0 && trip.isDriverArrived == 0) return "arrived".tr();
+  //   if (trip.isDriverStartTrip == 0) return "start_trip".tr();
+  //   return '';
+  // }
   String _getActionButtonTitle(DriverTripModel? trip) {
     if (trip == null) return '';
-    if (trip.isService == 1 && trip.isDriverArrived == 0)
-      return "start_service".tr();
-    if (trip.isService == 0 && trip.isDriverArrived == 0) return "arrived".tr();
+
+    // ✅ SERVICE: زر بدء الخدمة يظهر فقط لو لسه ما بدأهاش
+    if (trip.isService == 1) {
+      if (trip.isDriverStartTrip == 0) return "start_service".tr();
+      return ''; // ✅ بعد ما يبدأ الخدمة -> الزر يختفي
+    }
+
+    // ✅ TRIP: قبل الوصول -> وصلّت
+    if (trip.isDriverArrived == 0) return "arrived".tr();
+
+    // ✅ بعد الوصول ولسه ما بدأ الرحلة
     if (trip.isDriverStartTrip == 0) return "start_trip".tr();
+
     return '';
   }
 
@@ -248,7 +309,8 @@ class CustomsSheduledTripWidet extends StatelessWidget {
       "Action Button Pressed: tripId=${trip.id}, isService=${trip.isService}",
     );
 
-    if (trip.isService == 1 && trip.isDriverArrived == 0) {
+    // ✅ Service: ابدأ الخدمة طالما لسه ما بدأهاش
+    if (trip.isService == 1 && trip.isDriverStartTrip == 0) {
       cubit.startTrip(tripId: trip.id ?? 0, context: context);
       return;
     }

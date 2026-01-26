@@ -6,6 +6,37 @@ import 'package:waslny/core/exports.dart';
 import 'package:waslny/features/general/compound_services/data/models/get_compound_model.dart';
 
 // import 'package:intl/intl.dart';
+String formatEgyptE164Plus(dynamic v) {
+  if (v == null) return '';
+
+  String s = v.toString().trim();
+  if (s.isEmpty) return '';
+
+  // scientific notation
+  if (RegExp(r'[eE]').hasMatch(s)) {
+    final n = num.tryParse(s);
+    if (n != null) s = n.toInt().toString();
+  }
+
+  // trailing .0
+  if (s.endsWith('.0')) s = s.substring(0, s.length - 2);
+
+  // digits only
+  String digits = s.replaceAll(RegExp(r'\D'), '');
+  if (digits.isEmpty) return '';
+
+  // 0020...
+  if (digits.startsWith('00')) digits = digits.substring(2);
+
+  // 20...
+  if (digits.startsWith('20')) return '+$digits';
+
+  // 010...
+  if (digits.startsWith('0')) return '+20${digits.substring(1)}';
+
+  // 10...
+  return '+20$digits';
+}
 
 class CompoundServicesListView extends StatelessWidget {
   const CompoundServicesListView({
@@ -51,15 +82,27 @@ class ContactCard extends StatelessWidget {
   // --- Launch Logic Functions ---
 
   // 📞 Function to launch the phone dialer
+  // void _launchCaller() async {
+  //   final Uri phoneUri = Uri(scheme: 'tel', path: contact.phone.toString());
+  //   if (await canLaunchUrl(phoneUri)) {
+  //     await launchUrl(phoneUri);
+  //   } else {
+  //     // Handle error (e.g., show a Snackbar)
+  //     debugPrint(
+  //       'Could not launch phone dialer for ${contact.phone.toString()}',
+  //     );
+  //   }
+  // }
   void _launchCaller() async {
-    final Uri phoneUri = Uri(scheme: 'tel', path: contact.phone.toString());
+    final formattedPhone = formatEgyptE164Plus(contact.phone); // +2010...
+    if (formattedPhone.isEmpty) return;
+
+    final Uri phoneUri = Uri(scheme: 'tel', path: formattedPhone);
+
     if (await canLaunchUrl(phoneUri)) {
       await launchUrl(phoneUri);
     } else {
-      // Handle error (e.g., show a Snackbar)
-      debugPrint(
-        'Could not launch phone dialer for ${contact.phone.toString()}',
-      );
+      debugPrint('Could not launch phone dialer for $formattedPhone');
     }
   }
 

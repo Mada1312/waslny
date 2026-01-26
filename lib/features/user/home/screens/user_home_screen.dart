@@ -31,20 +31,35 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocListener<UserHomeCubit, UserHomeState>(
+      // listener: (context, state) async {
+      //   if (state is TripEndedState) {
+      //     log('🚀 TripCompletedState detected, showing dialogs...');
+
+      //     final trip = state.trip;
+      //     final tripId = trip.id?.toString() ?? '';
+
+      //     await _showTripDetailsDialog(context, trip);
+
+      //     if (context.mounted) {
+      //       _showRatingDialog(context, trip, tripId);
+      //     }
+      //   }
+      // },
       listener: (context, state) async {
         if (state is TripEndedState) {
-          log('🚀 TripCompletedState detected, showing dialogs...');
-
           final trip = state.trip;
           final tripId = trip.id?.toString() ?? '';
 
-          await _showTripDetailsDialog(context, trip);
+          if (trip.isService != 1) {
+            await _showTripDetailsDialog(context, trip);
+          }
 
           if (context.mounted) {
             _showRatingDialog(context, trip, tripId);
           }
         }
       },
+
       child: BlocBuilder<UserHomeCubit, UserHomeState>(
         builder: (context, state) {
           var cubit = context.read<UserHomeCubit>();

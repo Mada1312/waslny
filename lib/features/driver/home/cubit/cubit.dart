@@ -577,36 +577,122 @@ class DriverHomeCubit extends Cubit<DriverHomeState> {
     required BuildContext context,
   }) async {
     if (isLoggedOut) return;
+
+    final currentTrip = homeModel?.data?.currentTrip;
+
+    // ✅ Optimistic UI + rollback value
+    int? oldStart;
+    if (currentTrip != null && currentTrip.isService == 1) {
+      oldStart = currentTrip.isDriverStartTrip;
+      currentTrip.isDriverStartTrip = 1;
+      emit(DriverHomeLoaded());
+    }
+
     AppWidget.createProgressDialog(context, msg: "...");
     emit(UpdateTripStatusLoadingState());
+
     try {
       final response = await api.startTrip(id: tripId);
       if (isLoggedOut) return;
+
       response.fold(
         (failure) {
           Navigator.pop(context);
+
+          // ✅ rollback لو فشل
+          if (oldStart != null && currentTrip != null) {
+            currentTrip.isDriverStartTrip = oldStart!;
+            emit(DriverHomeLoaded());
+          }
+
           emit(UpdateTripStatusErrorState());
         },
         (response) {
           Navigator.pop(context);
+
           if (response.status == 200 || response.status == 201) {
             emit(UpdateTripStatusSuccessState());
             LocalNotificationService.showSuccessNotification(
               'تم بدء الرحلة 🚗',
             );
-            // ✅ لا نوقف polling هنا - يستمر في الخلفية
             getDriverHomeData(context);
           } else {
+            // ✅ rollback لو السيرفر رفض
+            if (oldStart != null && currentTrip != null) {
+              currentTrip.isDriverStartTrip = oldStart!;
+              emit(DriverHomeLoaded());
+            }
+
             errorGetBar(response.msg ?? "Failed to start trip");
           }
         },
       );
     } catch (e) {
       log("Error in startTrip: $e");
+
+      // ✅ rollback في exception
+      if (oldStart != null && currentTrip != null) {
+        currentTrip.isDriverStartTrip = oldStart!;
+        emit(DriverHomeLoaded());
+      }
+
       emit(UpdateTripStatusErrorState());
     }
   }
 
+  // Future<void> endTrip({
+  //   required int tripId,
+  //   required BuildContext context,
+  // }) async {
+  //   if (isLoggedOut) return;
+
+  //   final trip = homeModel?.data?.currentTrip;
+  //   if (trip == null) return;
+  //   log('🧭 CAPTAIN RAW COORDS:');
+  //   log('  fromLat (raw): ${trip.fromLat}');
+  //   log('  fromLong (raw): ${trip.fromLong}');
+  //   log('  toLat (raw): ${trip.toLat}');
+  //   log('  toLong (raw): ${trip.toLong}');
+  //   final fromLatParsed = double.tryParse(trip.fromLat ?? '0') ?? 0;
+  //   final fromLngParsed = double.tryParse(trip.fromLong ?? '0') ?? 0;
+  //   final toLatParsed = double.tryParse(trip.toLat ?? '0') ?? 0;
+  //   final toLngParsed = double.tryParse(trip.toLong ?? '0') ?? 0;
+
+  //   log('🧭 CAPTAIN PARSED COORDS:');
+  //   log('  fromLat: $fromLatParsed');
+  //   log('  fromLong: $fromLngParsed');
+  //   log('  toLat: $toLatParsed');
+  //   log('  toLong: $toLngParsed');
+  //   final distanceKm =
+  //       await getRouteDistance(
+  //         double.tryParse(trip.fromLat ?? '0') ?? 0,
+  //         double.tryParse(trip.fromLong ?? '0') ?? 0,
+  //         double.tryParse(trip.toLat ?? '0') ?? 0,
+  //         double.tryParse(trip.toLong ?? '0') ?? 0,
+  //       ) ??
+  //       4.0;
+  //   log('📏 CAPTAIN distanceKm: $distanceKm');
+
+  //   final isFemale = homeModel?.data?.user?.userType == '2' ?? false;
+  //   log('👤 CAPTAIN isFemale: $isFemale');
+
+  //   // ✅ احسب السعر من المسافة
+  //   final price = PricingEngine.calculateTripPrice(
+  //     distanceKm: distanceKm,
+  //     isFemaleDriver: isFemale,
+  //   );
+  //   log('💰 CAPTAIN price: $price');
+  //   log('═══════════════════════════════════');
+
+  //   showPaymentConfirmationDialog(
+  //     context,
+  //     tripPrice: price,
+  //     distanceKm: distanceKm,
+  //     isFemaleDriver: isFemale,
+  //     onPaymentConfirmed: () =>
+  //         _executeEndTripApi(tripId: tripId, context: context),
+  //   );
+  // }
   Future<void> endTrip({
     required int tripId,
     required BuildContext context,
@@ -615,21 +701,14 @@ class DriverHomeCubit extends Cubit<DriverHomeState> {
 
     final trip = homeModel?.data?.currentTrip;
     if (trip == null) return;
-    log('🧭 CAPTAIN RAW COORDS:');
-    log('  fromLat (raw): ${trip.fromLat}');
-    log('  fromLong (raw): ${trip.fromLong}');
-    log('  toLat (raw): ${trip.toLat}');
-    log('  toLong (raw): ${trip.toLong}');
-    final fromLatParsed = double.tryParse(trip.fromLat ?? '0') ?? 0;
-    final fromLngParsed = double.tryParse(trip.fromLong ?? '0') ?? 0;
-    final toLatParsed = double.tryParse(trip.toLat ?? '0') ?? 0;
-    final toLngParsed = double.tryParse(trip.toLong ?? '0') ?? 0;
 
-    log('🧭 CAPTAIN PARSED COORDS:');
-    log('  fromLat: $fromLatParsed');
-    log('  fromLong: $fromLngParsed');
-    log('  toLat: $toLatParsed');
-    log('  toLong: $toLngParsed');
+    // ✅ لو Service: انهي مباشرة بدون عرض السعر
+    if (trip.isService == 1) {
+      _executeEndTripApi(tripId: tripId, context: context);
+      return;
+    }
+
+    // ✅ Trips فقط: احسب المسافة والسعر واعرض التأكيد
     final distanceKm =
         await getRouteDistance(
           double.tryParse(trip.fromLat ?? '0') ?? 0,
@@ -638,18 +717,13 @@ class DriverHomeCubit extends Cubit<DriverHomeState> {
           double.tryParse(trip.toLong ?? '0') ?? 0,
         ) ??
         4.0;
-    log('📏 CAPTAIN distanceKm: $distanceKm');
 
     final isFemale = homeModel?.data?.user?.userType == '2' ?? false;
-    log('👤 CAPTAIN isFemale: $isFemale');
 
-    // ✅ احسب السعر من المسافة
     final price = PricingEngine.calculateTripPrice(
       distanceKm: distanceKm,
       isFemaleDriver: isFemale,
     );
-    log('💰 CAPTAIN price: $price');
-    log('═══════════════════════════════════');
 
     showPaymentConfirmationDialog(
       context,
